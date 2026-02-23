@@ -1,0 +1,11 @@
+/* App specific styles */
+.min-h-screen { min-height: 100vh; }
+.justify-center { justify-content: center; }
+.space-y-8 > :not([hidden]) ~ :not([hidden]) { margin-top: 2rem; }
+.text-4xl { font-size: 2.25rem; }
+.sm\:text-6xl { font-size: 3.75rem; }
+.tracking-tight { letter-spacing: -0.025em; }
+.text-lg { font-size: 1.125rem; }
+.max-w-2xl { max-width: 42rem; }
+.fixed { position: fixed; }
+.bottom-8 { bottom: 2rem; }
