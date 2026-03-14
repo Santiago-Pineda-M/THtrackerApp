@@ -21,7 +21,7 @@ describe('GetHealthUseCase', () => {
         const result = await useCase.execute();
 
         expect(result).toBe(true);
-        expect(httpClient.get).toHaveBeenCalledWith('/api/health/status');
+        expect(httpClient.get).toHaveBeenCalledWith('/api/v1/health');
     });
 
     it('should return false when API responds with a non-200 status', async () => {

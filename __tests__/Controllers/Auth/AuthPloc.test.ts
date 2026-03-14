@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuthPloc } from '../../../src/Controllers/Auth/AuthPloc';
 import { AuthStatus } from '../../../src/Domain';
-import type { LoginUseCase } from '../../../src/Application/Auth/LoginUseCase';
-import type { RegisterUseCase } from '../../../src/Application/Auth/RegisterUseCase';
-import type { RefreshTokenUseCase } from '../../../src/Application/Auth/RefreshTokenUseCase';
-import type { GetSessionUserUseCase } from '../../../src/Application/Auth/GetSessionUserUseCase';
-import { createMockStorage } from '../../__mocks__/mockStorage';
+import type { IAuthSessionRepository } from '../../../src/Domain/Repositories/IAuthSessionRepository';
+import type { LoginUserUseCase, RefreshTokenUseCases } from '../../../src/Application/AuthUsesCase/LoginUseCases';
+import type { RegisterUseCases } from '../../../src/Application/AuthUsesCase/RegisterUsesCase';
+import type { LogoutUseCase } from '../../../src/Application/AuthUsesCase/LogoutUseCase';
+import type { CheckAuthSessionUseCase, CheckAuthSessionOutput } from '../../../src/Application/AuthUsesCase';
 
 /**
  * TEST - Controllers Layer
@@ -14,28 +14,37 @@ import { createMockStorage } from '../../__mocks__/mockStorage';
  */
 describe('AuthPloc', () => {
     let ploc: AuthPloc;
-    let loginUseCase: { execute: ReturnType<typeof vi.fn> };
-    let registerUseCase: { execute: ReturnType<typeof vi.fn> };
-    let refreshTokenUseCase: { execute: ReturnType<typeof vi.fn> };
-    let getSessionUserUseCase: { execute: ReturnType<typeof vi.fn> };
-    let storage: ReturnType<typeof createMockStorage>;
+    let loginUserUseCase: { execute: ReturnType<typeof vi.fn> };
+    let registerUseCases: { execute: ReturnType<typeof vi.fn> };
+    let refreshTokenUseCases: { execute: ReturnType<typeof vi.fn> };
+    let logoutUseCase: { execute: ReturnType<typeof vi.fn> };
+    let checkAuthSessionUseCase: { execute: ReturnType<typeof vi.fn> };
+    let authSessionRepository: IAuthSessionRepository;
 
-    const mockToken = { accessToken: 'access-token', refreshToken: 'refresh-token' };
     const mockUser = { id: 'u1', name: 'Test User', email: 'test@test.com' };
 
     beforeEach(() => {
-        loginUseCase = { execute: vi.fn() };
-        registerUseCase = { execute: vi.fn() };
-        refreshTokenUseCase = { execute: vi.fn() };
-        getSessionUserUseCase = { execute: vi.fn() };
-        storage = createMockStorage();
+        loginUserUseCase = { execute: vi.fn() };
+        registerUseCases = { execute: vi.fn() };
+        refreshTokenUseCases = { execute: vi.fn() };
+        logoutUseCase = { execute: vi.fn() };
+        checkAuthSessionUseCase = { execute: vi.fn() };
+
+        // Mock de IAuthSessionRepository
+        authSessionRepository = {
+            getSession: vi.fn().mockResolvedValue(null),
+            saveSession: vi.fn().mockResolvedValue(undefined),
+            clearSession: vi.fn().mockResolvedValue(undefined),
+            updateSession: vi.fn().mockResolvedValue(undefined)
+        };
 
         ploc = new AuthPloc(
-            loginUseCase as unknown as LoginUseCase,
-            registerUseCase as unknown as RegisterUseCase,
-            refreshTokenUseCase as unknown as RefreshTokenUseCase,
-            getSessionUserUseCase as unknown as GetSessionUserUseCase,
-            storage
+            loginUserUseCase as unknown as LoginUserUseCase,
+            registerUseCases as unknown as RegisterUseCases,
+            refreshTokenUseCases as unknown as RefreshTokenUseCases,
+            logoutUseCase as unknown as LogoutUseCase,
+            checkAuthSessionUseCase as unknown as CheckAuthSessionUseCase,
+            authSessionRepository
         );
     });
 
@@ -48,27 +57,52 @@ describe('AuthPloc', () => {
 
     // ── init() ─────────────────────────────────────────────────────
     describe('init()', () => {
-        it('should set UNAUTHENTICATED when no persisted token exists', async () => {
-            vi.mocked(storage.get).mockResolvedValue(null);
+        it('should set UNAUTHENTICATED when no session exists', async () => {
+            checkAuthSessionUseCase.execute.mockResolvedValue({ isAuthenticated: false, session: null });
             await ploc.init();
             expect(ploc.state.status).toBe(AuthStatus.UNAUTHENTICATED);
         });
 
-        it('should refresh token and authenticate if a persisted token exists', async () => {
-            vi.mocked(storage.get).mockResolvedValue(mockToken);
-            refreshTokenUseCase.execute.mockResolvedValue(mockToken);
-            getSessionUserUseCase.execute.mockResolvedValue(mockUser);
+        it('should set AUTHENTICATED when valid session exists without refresh', async () => {
+            const mockSession = {
+                user: mockUser,
+                accessToken: 'token',
+                refreshToken: 'refresh',
+                needsRefresh: () => false
+            };
+            checkAuthSessionUseCase.execute.mockResolvedValue({ isAuthenticated: true, session: mockSession as unknown as CheckAuthSessionOutput['session'] });
 
             await ploc.init();
 
-            expect(refreshTokenUseCase.execute).toHaveBeenCalledWith(mockToken.refreshToken);
             expect(ploc.state.status).toBe(AuthStatus.AUTHENTICATED);
             expect(ploc.state.user).toEqual(mockUser);
         });
 
+        it('should refresh token if session needs refresh', async () => {
+            const mockSession = {
+                user: mockUser,
+                accessToken: 'old-token',
+                refreshToken: 'refresh-token',
+                needsRefresh: () => true
+            };
+            checkAuthSessionUseCase.execute.mockResolvedValue({ isAuthenticated: true, session: mockSession as unknown as CheckAuthSessionOutput['session'] });
+            refreshTokenUseCases.execute.mockResolvedValue(undefined);
+
+            await ploc.init();
+
+            expect(refreshTokenUseCases.execute).toHaveBeenCalledWith({ refreshToken: 'refresh-token' });
+            expect(ploc.state.status).toBe(AuthStatus.AUTHENTICATED);
+        });
+
         it('should logout if token refresh fails', async () => {
-            vi.mocked(storage.get).mockResolvedValue(mockToken);
-            refreshTokenUseCase.execute.mockRejectedValue(new Error('Expired'));
+            const mockSession = {
+                user: mockUser,
+                accessToken: 'old-token',
+                refreshToken: 'refresh-token',
+                needsRefresh: () => true
+            };
+            checkAuthSessionUseCase.execute.mockResolvedValue({ isAuthenticated: true, session: mockSession as unknown as CheckAuthSessionOutput['session'] });
+            refreshTokenUseCases.execute.mockRejectedValue(new Error('Expired'));
 
             await ploc.init();
 
@@ -79,31 +113,22 @@ describe('AuthPloc', () => {
     // ── login() ─────────────────────────────────────────────────────
     describe('login()', () => {
         it('should authenticate the user successfully', async () => {
-            loginUseCase.execute.mockResolvedValue(mockToken);
-            getSessionUserUseCase.execute.mockResolvedValue(mockUser);
+            loginUserUseCase.execute.mockResolvedValue({
+                accessToken: 'access-token',
+                refreshToken: 'refresh-token',
+                user: mockUser
+            });
 
-            await ploc.login({ email: 'test@test.com', password: 'password' });
+            await ploc.login({ email: 'test@test.com', password: 'password', deviceInfo: 'test-device' });
 
             expect(ploc.state.status).toBe(AuthStatus.AUTHENTICATED);
             expect(ploc.state.user).toEqual(mockUser);
-            expect(ploc.state.token).toEqual(mockToken);
-            expect(storage.set).toHaveBeenCalled();
         });
 
         it('should set FAILED status on invalid credentials', async () => {
-            loginUseCase.execute.mockRejectedValue(new Error('Unauthorized'));
+            loginUserUseCase.execute.mockRejectedValue(new Error('Unauthorized'));
 
-            await ploc.login({ email: 'x@x.com', password: 'wrong' });
-
-            expect(ploc.state.status).toBe(AuthStatus.FAILED);
-            expect(ploc.state.error).toBeDefined();
-        });
-
-        it('should set FAILED if token succeeds but getSessionUser fails', async () => {
-            loginUseCase.execute.mockResolvedValue(mockToken);
-            getSessionUserUseCase.execute.mockRejectedValue(new Error('Profile error'));
-
-            await ploc.login({ email: 'test@test.com', password: 'pass' });
+            await ploc.login({ email: 'x@x.com', password: 'wrong', deviceInfo: 'test-device' });
 
             expect(ploc.state.status).toBe(AuthStatus.FAILED);
             expect(ploc.state.error).toBeDefined();
@@ -113,7 +138,7 @@ describe('AuthPloc', () => {
     // ── register() ─────────────────────────────────────────────────
     describe('register()', () => {
         it('should set UNAUTHENTICATED after successful registration', async () => {
-            registerUseCase.execute.mockResolvedValue(undefined);
+            registerUseCases.execute.mockResolvedValue({ message: 'Registration successful' });
 
             await ploc.register({ name: 'New User', email: 'new@test.com', password: 'pass' });
 
@@ -121,7 +146,7 @@ describe('AuthPloc', () => {
         });
 
         it('should set FAILED status if registration fails', async () => {
-            registerUseCase.execute.mockRejectedValue(new Error('Email taken'));
+            registerUseCases.execute.mockRejectedValue(new Error('Email taken'));
 
             await ploc.register({ name: 'New User', email: 'taken@test.com', password: 'pass' });
 
@@ -132,10 +157,21 @@ describe('AuthPloc', () => {
 
     // ── logout() ───────────────────────────────────────────────────
     describe('logout()', () => {
-        it('should clear storage and set UNAUTHENTICATED status', async () => {
+        it('should call logout use case and set UNAUTHENTICATED status', async () => {
+            logoutUseCase.execute.mockResolvedValue(undefined);
+
             await ploc.logout();
 
-            expect(storage.remove).toHaveBeenCalled();
+            expect(logoutUseCase.execute).toHaveBeenCalledWith({ notifyServer: true });
+            expect(ploc.state.status).toBe(AuthStatus.UNAUTHENTICATED);
+        });
+
+        it('should clear session even if server notification fails', async () => {
+            logoutUseCase.execute.mockRejectedValue(new Error('Network error'));
+
+            await ploc.logout();
+
+            expect(authSessionRepository.clearSession).toHaveBeenCalled();
             expect(ploc.state.status).toBe(AuthStatus.UNAUTHENTICATED);
         });
     });
@@ -146,8 +182,8 @@ describe('AuthPloc', () => {
             const listener = vi.fn();
             ploc.subscribe(listener);
 
-            loginUseCase.execute.mockRejectedValue(new Error('Fail'));
-            await ploc.login({ email: 'x@x.com', password: 'p' });
+            loginUserUseCase.execute.mockRejectedValue(new Error('Fail'));
+            await ploc.login({ email: 'x@x.com', password: 'p', deviceInfo: 'test' });
 
             expect(listener).toHaveBeenCalled();
             ploc.unsubscribe(listener);
@@ -158,8 +194,8 @@ describe('AuthPloc', () => {
             ploc.subscribe(listener);
             ploc.unsubscribe(listener);
 
-            loginUseCase.execute.mockRejectedValue(new Error('Fail'));
-            await ploc.login({ email: 'x@x.com', password: 'p' });
+            loginUserUseCase.execute.mockRejectedValue(new Error('Fail'));
+            await ploc.login({ email: 'x@x.com', password: 'p', deviceInfo: 'test' });
 
             // El listener fue registrado y desregistrado antes del login,
             // pero el Ploc emite durante el login → no debería llamarse después.
