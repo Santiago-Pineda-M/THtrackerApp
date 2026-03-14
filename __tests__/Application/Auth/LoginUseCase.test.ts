@@ -17,7 +17,7 @@ describe('LoginUseCase', () => {
     });
 
     it('should call POST /api/v1/auth/login with the provided credentials', async () => {
-        const request = { email: 'test@test.com', password: 'password123' };
+        const request = { email: 'test@test.com', password: 'password123', deviceInfo: 'test-device' };
         const mockResponse = {
             data: {
                 accessToken: 'access-token',
@@ -34,9 +34,10 @@ describe('LoginUseCase', () => {
         expect(httpClient.post).toHaveBeenCalledWith('/api/v1/auth/login', request);
     });
 
-    it('should return a correctly mapped IAuthToken', async () => {
-        const request = { email: 'test@test.com', password: 'password123' };
+    it('should return a correctly mapped IAuthToken with expiry as timestamp', async () => {
+        const request = { email: 'test@test.com', password: 'password123', deviceInfo: 'test-device' };
         const expiryString = '2027-01-01T00:00:00Z';
+        const expectedTimestamp = new Date(expiryString).getTime();
         const mockResponse = {
             data: {
                 accessToken: 'my-access-token',
@@ -52,13 +53,14 @@ describe('LoginUseCase', () => {
 
         expect(result.accessToken).toBe('my-access-token');
         expect(result.refreshToken).toBe('my-refresh-token');
-        expect(result.expiry).toBeInstanceOf(Date);
+        expect(result.expiry).toBe(expectedTimestamp);
+        expect(typeof result.expiry).toBe('number');
     });
 
     it('should propagate errors from the HTTP client', async () => {
         vi.mocked(httpClient.post).mockRejectedValue(new Error('Network Error'));
         await expect(
-            useCase.execute({ email: 'x@x.com', password: 'pass' })
+            useCase.execute({ email: 'x@x.com', password: 'pass', deviceInfo: 'test-device' })
         ).rejects.toThrow('Network Error');
     });
 });

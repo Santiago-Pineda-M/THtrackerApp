@@ -6,7 +6,7 @@
 export interface LoginRequest {
     email: string;
     password: string;
-    deviceInfo?: string;
+    deviceInfo: string;
 }
 
 export interface RegisterUserRequest {
@@ -29,4 +29,16 @@ export interface UserDto {
     id: string;
     name: string;
     email: string;
+}
+
+/**
+ * Estándar RFC 7807 para detalles de errores de la API.
+ */
+export interface ProblemDetails {
+    type?: string;
+    title?: string;
+    status?: number;
+    detail?: string;
+    instance?: string;
+    errors?: Record<string, string[]>;
 }

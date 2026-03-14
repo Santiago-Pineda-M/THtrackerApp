@@ -1,79 +1,129 @@
 import { Ploc } from "../../Domain/Ploc";
-import type { IStorage } from "../../Domain/Interfaces/IStorage";
-import type { IAuthToken } from "../../Domain/Auth/AuthEntities";
 import { AuthStatus } from "../../Domain";
 import type { IAuthState } from "./IAuthState";
 import { initialAuthState } from "./IAuthState";
-import type {
-    LoginUseCase,
-    RegisterUseCase,
-    RefreshTokenUseCase,
-    GetSessionUserUseCase,
-    LoginRequest,
-    RegisterUserRequest
-} from "../../Application/Auth";
+
+// Importar tipos de la nueva arquitectura
+import type { ILoginRequest, IRegisterRequest } from "../../Domain/Request/IAuthRequest";
+import type { IAuthSessionRepository } from "../../Domain/Repositories/IAuthSessionRepository";
+import type { LoginUserUseCase, RegisterUseCases } from "../../Application/AuthUsesCase";
+import type { RefreshTokenUseCases, LogoutUseCase, CheckAuthSessionUseCase } from "../../Application/AuthUsesCase";
+import type { ILoginResponse } from "../../Domain/Responses/IAuthResponses";
+import type { ILoginResponseError } from "../../Domain/Responses/IAuthResponsesError";
+import type { IUserSession } from "../../Domain/Auth/AuthEntities";
+import type { UserData } from "../../Domain/Entities/AuthSession";
 
 /**
  * CONTROLLERS LAYER - Auth Module
  * Máquina de estados para la gestión de autenticación.
+ * Implementa la nueva arquitectura con AuthSessionRepository.
  */
 export class AuthPloc extends Ploc<IAuthState> {
-    private static readonly STORAGE_KEY = 'auth_session';
-    private readonly loginUseCase: LoginUseCase;
-    private readonly registerUseCase: RegisterUseCase;
-    private readonly refreshTokenUseCase: RefreshTokenUseCase;
-    private readonly getSessionUserUseCase: GetSessionUserUseCase;
-    private readonly storage: IStorage;
+    private readonly loginUserUseCase: LoginUserUseCase;
+    private readonly registerUseCases: RegisterUseCases;
+    private readonly refreshTokenUseCases: RefreshTokenUseCases;
+    private readonly logoutUseCase: LogoutUseCase;
+    private readonly checkAuthSessionUseCase: CheckAuthSessionUseCase;
+    private readonly authSessionRepository: IAuthSessionRepository;
 
     constructor(
-        loginUseCase: LoginUseCase,
-        registerUseCase: RegisterUseCase,
-        refreshTokenUseCase: RefreshTokenUseCase,
-        getSessionUserUseCase: GetSessionUserUseCase,
-        storage: IStorage
+        loginUserUseCase: LoginUserUseCase,
+        registerUseCases: RegisterUseCases,
+        refreshTokenUseCases: RefreshTokenUseCases,
+        logoutUseCase: LogoutUseCase,
+        checkAuthSessionUseCase: CheckAuthSessionUseCase,
+        authSessionRepository: IAuthSessionRepository
     ) {
         super(initialAuthState);
-        this.loginUseCase = loginUseCase;
-        this.registerUseCase = registerUseCase;
-        this.refreshTokenUseCase = refreshTokenUseCase;
-        this.getSessionUserUseCase = getSessionUserUseCase;
-        this.storage = storage;
+        this.loginUserUseCase = loginUserUseCase;
+        this.registerUseCases = registerUseCases;
+        this.refreshTokenUseCases = refreshTokenUseCases;
+        this.logoutUseCase = logoutUseCase;
+        this.checkAuthSessionUseCase = checkAuthSessionUseCase;
+        this.authSessionRepository = authSessionRepository;
     }
 
     /**
-     * Inicializa la sesión si existe información persistida.
+     * Inicializa la sesión verificando la sesión persistida.
      */
     async init(): Promise<void> {
-        const persistedToken = await this.storage.get<IAuthToken>(AuthPloc.STORAGE_KEY);
-
-        if (!persistedToken) {
-            this.changeState({ ...this.state, status: AuthStatus.UNAUTHENTICATED });
-            return;
-        }
+        this.changeState({ ...this.state, status: AuthStatus.LOADING });
 
         try {
-            this.changeState({ ...this.state, status: AuthStatus.REFRESHING_TOKEN, token: persistedToken });
-            const newToken = await this.refreshTokenUseCase.execute(persistedToken.refreshToken);
-            await this.handleAuthenticationSuccess(newToken);
+            const { isAuthenticated, session } = await this.checkAuthSessionUseCase.execute();
+
+            if (!isAuthenticated || !session) {
+                this.changeState({ ...this.state, status: AuthStatus.UNAUTHENTICATED });
+                return;
+            }
+
+            // Verificar si necesita refresh
+            if (session.needsRefresh()) {
+                this.changeState({ 
+                    ...this.state, 
+                    status: AuthStatus.REFRESHING_TOKEN,
+                    user: this.mapUserDataToUserSession(session.user)
+                });
+
+                try {
+                    await this.refreshTokenUseCases.execute({ refreshToken: session.refreshToken });
+                    // El use case ya actualiza la sesión persistida
+                } catch {
+                    // Si falla el refresh, cerrar sesión
+                    await this.logout();
+                    return;
+                }
+            }
+
+            // Sesión válida
+            this.changeState({
+                status: AuthStatus.AUTHENTICATED,
+                user: {
+                    id: session.user.id,
+                    name: session.user.name || '',
+                    email: session.user.email
+                },
+                error: undefined
+            });
         } catch {
-            this.logout();
+            this.changeState({ ...this.state, status: AuthStatus.UNAUTHENTICATED });
         }
     }
 
     /**
-     * Proceso de Login.
+     * Proceso de Login usando la nueva arquitectura.
      */
-    async login(request: LoginRequest): Promise<void> {
+    async login(request: ILoginRequest): Promise<void> {
         this.changeState({ ...this.state, status: AuthStatus.AUTHENTICATING, error: undefined });
 
         try {
-            const token = await this.loginUseCase.execute(request);
-            await this.handleAuthenticationSuccess(token);
-        } catch {
+            const result = await this.loginUserUseCase.execute(request);
+
+            // Verificar si el login fue exitoso
+            if (this.isLoginSuccess(result)) {
+                // La sesión ya está persistida por el use case
+                this.changeState({
+                    status: AuthStatus.AUTHENTICATED,
+                    user: result.user ? {
+                        id: result.user.id,
+                        name: result.user.name || '',
+                        email: result.user.email
+                    } : undefined,
+                    error: undefined
+                });
+            } else {
+                // Login fallido
+                const errorMessage = this.formatLoginError(result);
+                this.changeState({
+                    status: AuthStatus.FAILED,
+                    error: errorMessage
+                });
+            }
+        } catch (error) {
             this.changeState({
                 ...this.state,
                 status: AuthStatus.FAILED,
-                error: 'Credenciales inválidas o error de conexión'
+                error: error instanceof Error ? error.message : 'Error de conexión'
             });
         }
     }
@@ -81,52 +131,90 @@ export class AuthPloc extends Ploc<IAuthState> {
     /**
      * Proceso de Registro.
      */
-    async register(request: RegisterUserRequest): Promise<void> {
+    async register(request: IRegisterRequest): Promise<void> {
         this.changeState({ ...this.state, status: AuthStatus.AUTHENTICATING, error: undefined });
 
         try {
-            await this.registerUseCase.execute(request);
-            // Tras registrarse, el flujo habitual es ir a login o login automático
-            this.changeState({ ...this.state, status: AuthStatus.UNAUTHENTICATED });
-        } catch {
+            const result = await this.registerUseCases.execute(request);
+
+            // Verificar si el registro fue exitoso
+            if ('message' in result) {
+                // Registro exitoso - típicamente requiere confirmación de email
+                this.changeState({ 
+                    ...this.state, 
+                    status: AuthStatus.UNAUTHENTICATED,
+                    error: undefined
+                });
+            } else {
+                // Error en registro
+                this.changeState({
+                    status: AuthStatus.FAILED,
+                    error: result.detail || result.title || 'Error al crear la cuenta'
+                });
+            }
+        } catch (error) {
             this.changeState({
                 ...this.state,
                 status: AuthStatus.FAILED,
-                error: 'Error al crear la cuenta'
+                error: error instanceof Error ? error.message : 'Error al crear la cuenta'
             });
         }
     }
 
     /**
-     * Cierre de sesión.
+     * Cierre de sesión usando LogoutUseCase.
      */
     async logout(): Promise<void> {
         this.changeState({ ...this.state, status: AuthStatus.LOGGING_OUT });
-        this.storage.remove(AuthPloc.STORAGE_KEY);
+
+        try {
+            await this.logoutUseCase.execute({ notifyServer: true });
+        } catch {
+            // Limpiar sesión local aunque el servidor falle
+            await this.authSessionRepository.clearSession();
+        }
+
         this.changeState(initialAuthState);
         this.changeState({ ...this.state, status: AuthStatus.UNAUTHENTICATED });
     }
 
     /**
-     * Lógica común tras obtener un token válido.
+     * Verifica si el resultado de login es exitoso.
      */
-    private async handleAuthenticationSuccess(token: IAuthToken): Promise<void> {
-        await this.storage.set(AuthPloc.STORAGE_KEY, token);
+    private isLoginSuccess(result: unknown): result is ILoginResponse {
+        return (
+            typeof result === 'object' &&
+            result !== null &&
+            'accessToken' in result &&
+            'refreshToken' in result
+        );
+    }
 
-        try {
-            const user = await this.getSessionUserUseCase.execute();
-            this.changeState({
-                status: AuthStatus.AUTHENTICATED,
-                token,
-                user,
-                error: undefined
-            });
-        } catch {
-            this.changeState({
-                ...this.state,
-                status: AuthStatus.FAILED,
-                error: 'Sesión iniciada pero no se pudo obtener el perfil'
-            });
+    /**
+     * Convierte UserData a IUserSession.
+     */
+    private mapUserDataToUserSession(userData: UserData): IUserSession {
+        return {
+            id: userData.id,
+            name: userData.name || '',
+            email: userData.email
+        };
+    }
+
+    /**
+     * Formatea los errores de login según RFC 7807.
+     * Muestra errores de campo específicos cuando están disponibles.
+     */
+    private formatLoginError(result: ILoginResponseError): string {
+        // Si hay errores de campo específicos (RFC 7807), mostrarlos
+        if (result.errors && Object.keys(result.errors).length > 0) {
+            const fieldErrors = Object.entries(result.errors)
+                .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+                .join('\n');
+            return fieldErrors;
         }
+        
+        // otherwise show the general error
+        return result.detail || result.title || 'Credenciales inválidas';
     }
 }

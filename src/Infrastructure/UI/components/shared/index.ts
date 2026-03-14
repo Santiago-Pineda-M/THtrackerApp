@@ -12,6 +12,8 @@
  *   - Modal.tsx          → Diálogo modal reutilizable
  */
 
-// export { Button } from './Button';
-// export { Input } from './Input';
-// export { Spinner } from './Spinner';
+export { Button } from './Button';
+export { Input } from './Input';
+export { Card } from './Card';
+export { Alert } from './Alert';
+export { Spinner } from './Spinner';

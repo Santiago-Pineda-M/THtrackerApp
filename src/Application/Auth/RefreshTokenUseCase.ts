@@ -2,6 +2,7 @@ import type { IUseCase } from "../../Domain/Interfaces/IUseCase";
 import type { IHttpClient } from "../../Domain/Interfaces/IHttpClient";
 import type { IAuthToken } from "../../Domain/Auth/AuthEntities";
 import type { RefreshTokenRequest, TokenResponse } from "./AuthDTOs";
+import { validateRefreshTokenResponse } from "./HttpResponseValidator";
 
 /**
  * APPLICATION LAYER - RefreshTokenUseCase
@@ -20,10 +21,12 @@ export class RefreshTokenUseCase implements IUseCase<string, IAuthToken> {
             { refreshToken } as RefreshTokenRequest
         );
 
+        const data = validateRefreshTokenResponse<TokenResponse>(response);
+
         return {
-            accessToken: response.data.accessToken,
-            refreshToken: response.data.refreshToken,
-            expiry: new Date(response.data.refreshTokenExpiry)
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+            expiry: new Date(data.refreshTokenExpiry)
         };
     }
 }

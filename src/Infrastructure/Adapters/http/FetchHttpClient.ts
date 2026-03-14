@@ -3,10 +3,12 @@ import type { IStorage } from "../../../Domain/Interfaces/IStorage";
 import type { IAuthToken } from "../../../Domain/Auth/AuthEntities";
 import type { TokenResponse } from "../../../Application/Auth/AuthDTOs";
 
+// Key for token storage - separate from AuthSession to avoid conflicts
+const AUTH_STORAGE_KEY = 'auth_token';
+
 export class FetchHttpClient implements IHttpClient {
     private readonly baseUrl: string;
     private readonly storage: IStorage;
-    private static readonly AUTH_STORAGE_KEY = 'auth_session';
 
     // Gestión de refresco concurrente
     private isRefreshing = false;
@@ -19,7 +21,7 @@ export class FetchHttpClient implements IHttpClient {
 
     private async request<T>(url: string, options: RequestInit): Promise<HttpResponse<T>> {
         // 1. Adjuntar Token automáticamente
-        const tokenData = await this.storage.get<IAuthToken>(FetchHttpClient.AUTH_STORAGE_KEY);
+        const tokenData = await this.storage.get<IAuthToken>(AUTH_STORAGE_KEY);
         const headers: Record<string, string> = {
             "Content-Type": "application/json",
             ...(options.headers as Record<string, string>),
@@ -29,10 +31,17 @@ export class FetchHttpClient implements IHttpClient {
             headers["Authorization"] = `Bearer ${tokenData.accessToken}`;
         }
 
-        const response = await fetch(`${this.baseUrl}${url}`, {
-            ...options,
-            headers,
-        });
+        let response: Response;
+        try {
+            response = await fetch(`${this.baseUrl}${url}`, {
+                ...options,
+                headers,
+                credentials: 'include',
+            });
+        } catch (error) {
+            console.error(`[FetchHttpClient] Network Error (${url}):`, error);
+            throw error;
+        }
 
         // 2. Manejo de 401 (Unauthorized)
         if (response.status === 401 && !url.includes('/auth/refresh') && !url.includes('/auth/login')) {
@@ -40,6 +49,10 @@ export class FetchHttpClient implements IHttpClient {
         }
 
         const data = await response.json().catch(() => ({}));
+
+        if (response.status >= 400) {
+            console.error(`[FetchHttpClient] Error ${response.status}:`, data);
+        }
 
         return {
             data,
@@ -52,32 +65,47 @@ export class FetchHttpClient implements IHttpClient {
             this.isRefreshing = true;
 
             try {
-                const tokenData = await this.storage.get<IAuthToken>(FetchHttpClient.AUTH_STORAGE_KEY);
+                const tokenData = await this.storage.get<IAuthToken>(AUTH_STORAGE_KEY);
                 if (!tokenData?.refreshToken) throw new Error("No refresh token");
 
                 // Llamada directa de bajo nivel para evitar loops
                 const refreshResponse = await fetch(`${this.baseUrl}/api/v1/auth/refresh`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ refreshToken: tokenData.refreshToken })
+                    body: JSON.stringify({ refreshToken: tokenData.refreshToken }),
+                    credentials: 'include'
                 });
 
                 if (refreshResponse.status !== 200) throw new Error("Refresh failed");
 
                 const result: TokenResponse = await refreshResponse.json();
+                
+                // Validar que los tokens existen
+                if (!result.accessToken || !result.refreshToken) {
+                    throw new Error('Invalid token response: missing tokens');
+                }
+                
+                // Validar refreshTokenExpiry - usar valor por defecto si no existe
+                const expiryDate = result.refreshTokenExpiry 
+                    ? new Date(result.refreshTokenExpiry) 
+                    : new Date(Date.now() + (7 * 24 * 60 * 60 * 1000)); // Default 7 días
+                
                 const newToken: IAuthToken = {
                     accessToken: result.accessToken,
                     refreshToken: result.refreshToken,
-                    expiry: new Date(result.refreshTokenExpiry)
+                    expiry: isNaN(expiryDate.getTime()) 
+                        ? new Date(Date.now() + (7 * 24 * 60 * 60 * 1000)) 
+                        : expiryDate
                 };
 
-                await this.storage.set(FetchHttpClient.AUTH_STORAGE_KEY, newToken);
+                await this.storage.set(AUTH_STORAGE_KEY, newToken);
 
                 this.onTokenRefreshed(newToken.accessToken);
                 return this.request<T>(url, options);
-            } catch {
+            } catch (error) {
                 // Si el refresco falla, limpiar sesión y propagar error
-                await this.storage.remove(FetchHttpClient.AUTH_STORAGE_KEY);
+                console.error("[FetchHttpClient] Token Refresh Failed:", error);
+                await this.storage.remove(AUTH_STORAGE_KEY);
                 return { data: { error: "Session expired" } as unknown as T, status: 401 };
             } finally {
                 this.isRefreshing = false;
@@ -132,4 +160,3 @@ export class FetchHttpClient implements IHttpClient {
         return this.request<T>(url, { method: "DELETE", ...config });
     }
 }
-

@@ -7,7 +7,7 @@
 import { useEffect, useState } from 'react';
 import { Ploc } from '../../Domain/Ploc';
 
-export function usePlocState<S>(ploc: Ploc<S>): S {
+export const usePlocState = <S>(ploc: Ploc<S>): S => {
     const [state, setState] = useState<S>(ploc.state);
 
     useEffect(() => {

@@ -2,6 +2,7 @@ import type { IUseCase } from "../../Domain/Interfaces/IUseCase";
 import type { IHttpClient } from "../../Domain/Interfaces/IHttpClient";
 import type { IAuthToken } from "../../Domain/Auth/AuthEntities";
 import type { LoginRequest, TokenResponse } from "./AuthDTOs";
+import { validateLoginResponse } from "./HttpResponseValidator";
 
 /**
  * APPLICATION LAYER - LoginUseCase
@@ -20,10 +21,12 @@ export class LoginUseCase implements IUseCase<LoginRequest, IAuthToken> {
             request
         );
 
+        const data = validateLoginResponse<TokenResponse>(response);
+
         return {
-            accessToken: response.data.accessToken,
-            refreshToken: response.data.refreshToken,
-            expiry: new Date(response.data.refreshTokenExpiry)
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+            expiry: new Date(data.refreshTokenExpiry).getTime()
         };
     }
 }

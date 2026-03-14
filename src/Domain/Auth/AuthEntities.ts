@@ -12,7 +12,7 @@ export interface IUserSession {
 export interface IAuthToken {
     accessToken: string;
     refreshToken: string;
-    expiry?: Date;
+    expiry?: number | Date;
 }
 
 export interface IAuthSession {

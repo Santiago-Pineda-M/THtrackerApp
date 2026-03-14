@@ -50,3 +50,6 @@ Thumbs.db
 # Debug
 .eslintcache
 .stylelintcache
+
+
+.local

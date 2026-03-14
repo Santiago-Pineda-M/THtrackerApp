@@ -1,6 +1,7 @@
 import type { IUseCase } from "../../Domain/Interfaces/IUseCase";
 import type { IHttpClient } from "../../Domain/Interfaces/IHttpClient";
 import type { RegisterUserRequest } from "./AuthDTOs";
+import { validateRegisterResponse } from "./HttpResponseValidator";
 
 /**
  * APPLICATION LAYER - RegisterUseCase
@@ -14,9 +15,11 @@ export class RegisterUseCase implements IUseCase<RegisterUserRequest, void> {
     }
 
     async execute(request: RegisterUserRequest): Promise<void> {
-        await this.httpClient.post<void>(
+        const response = await this.httpClient.post<void>(
             '/api/v1/auth/register',
             request
         );
+
+        validateRegisterResponse(response);
     }
 }

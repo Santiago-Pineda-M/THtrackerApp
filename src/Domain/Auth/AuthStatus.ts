@@ -5,6 +5,7 @@
  */
 export const AuthStatus = {
     IDLE: 'IDLE',
+    LOADING: 'LOADING',
     AUTHENTICATING: 'AUTHENTICATING',
     AUTHENTICATED: 'AUTHENTICATED',
     FAILED: 'FAILED',

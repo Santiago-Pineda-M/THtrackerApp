@@ -1,18 +1,26 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    port: 5174,
+    strictPort: true,
+  },
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        globIgnores: ['**/node_modules/**/*', 'dev-dist/**/*']
+      },
       manifest: {
-        name: 'TH Tracker App',
-        short_name: 'THTracker',
-        description: 'Track your treasure hunts and activities',
+        name: 'THtracker',
+        short_name: 'THtracker',
+        description: 'Aplicación para registrar tareas y actividades diarias',
         theme_color: '#ffffff',
         icons: [
           {
@@ -34,16 +42,4 @@ export default defineConfig({
       }
     })
   ],
-  test: {
-    // Configuración de Vitest (centralizada en __tests__/)
-    globals: true,
-    environment: 'node',
-    include: ['__tests__/**/*.test.ts'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'html'],
-      include: ['src/**/*.ts'],
-      exclude: ['src/**/*.d.ts', 'src/main.tsx', 'src/pwa.d.ts'],
-    },
-  },
 })

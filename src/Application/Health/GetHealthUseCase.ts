@@ -14,7 +14,7 @@ export class GetHealthUseCase implements IUseCase<void, boolean> {
 
     async execute(): Promise<boolean> {
         try {
-            const response = await this.httpClient.get("/api/health/status");
+            const response = await this.httpClient.get("/api/v1/health");
             return response.status === 200;
         } catch {
             return false;
