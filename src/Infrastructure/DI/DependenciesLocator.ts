@@ -1,65 +1,99 @@
 /**
  * INFRASTRUCTURE LAYER - Dependency Injection
- * DependenciesLocator: El único lugar en la aplicación donde se instancian
- * y conectan las clases de todas las capas. Actúa como Service Locator.
+ * ─────────────────────────────────────────────────────────────────────────────
+ * El único lugar donde se instancian y conectan las clases de todas las capas.
+ *
+ * Flujo de construcción (dependecias primero):
+ *   Storage Adapters → Repositories → HTTP Client (con callbacks del repo)
+ *   → Services → Use Cases → Controllers (Plocs)
+ *
+ * ⚠ REGLA: el storage (localStorage) solo se toca en los Repositories.
+ *   FetchHttpClient y TokenRefreshStrategy reciben callbacks que
+ *   internamente delegan a AuthSessionRepository.
  */
-import { FetchHttpClient } from "../Adapters/http/FetchHttpClient";
-import { LocalStorageAdapter, SecureStorageAdapter } from "../Adapters/storage";
 
-// Repositories
-import { AuthSessionRepository } from "../Repositories/AuthSessionRepository";
+import { TokenRefreshStrategy } from '../Adapters/http/TokenRefreshStrategy';
+import { FetchHttpClient } from '../Adapters/http/FetchHttpClient';
+import { SecureStorageAdapter } from '../Adapters/storage';
+import { AuthSessionRepository } from '../Repositories/AuthSessionRepository';
+import { AuthService } from '../Services/AuthService';
 
-// Services
-import { AuthService } from "../Services/AuthService";
-
-// Health
-import { GetHealthUseCase } from "../../Application/Health/GetHealthUseCase";
-import { HealthPloc } from "../../Controllers/Health/HealthPloc";
-
-// Auth - Nueva Arquitectura
+import { GetHealthUseCase } from '../../Application/UseCases/Health/GetHealthUseCase';
 import {
     LoginUserUseCase,
     RefreshTokenUseCases,
     RegisterUseCases,
     LogoutUseCase,
-    CheckAuthSessionUseCase
-} from "../../Application/AuthUsesCase";
+    CheckAuthSessionUseCase,
+} from '../../Application/UseCases/Auth';
 
-import { AuthPloc } from "../../Controllers/Auth/AuthPloc";
+import { AuthPloc } from '../../Controllers/Auth/AuthPloc';
+import { HealthPloc } from '../../Controllers/Health/HealthPloc';
+import { DebugPloc } from '../../Controllers/Debug/DebugPloc';
 
+const API_URL = import.meta.env.VITE_API_URL || 'https://thtracker-api.onrender.com';
 
-const API_URL = import.meta.env.VITE_API_URL || "https://thtracker-api.onrender.com";
+// ── 1. Storage (solo SecureStorageAdapter — única capa de acceso a localStorage) ───────
 
-// ── 1. Adaptadores ──────────────────────────────────────────────────────────
-
-const localStorageAdapter = new LocalStorageAdapter('thtracker');
 const secureStorageAdapter = new SecureStorageAdapter();
-const httpClient = new FetchHttpClient(API_URL, localStorageAdapter);
 
-// ── 2. Repositorios ───────────────────────────────────────────────────────────
+// ── 2. Repositorios (únicos que leen/escriben en storage) ───────────────────────────
 
 const authSessionRepository = new AuthSessionRepository(secureStorageAdapter);
 
-// El HTTP Client obtiene tokens directamente del repositorio (sin duplicación)
+// ── 3. Callbacks que conectan el HTTP Client con el repositorio ──────────────────────
+//    Ni FetchHttpClient ni TokenRefreshStrategy acceden al storage directamente.
 
-// ── 3. Servicios ─────────────────────────────────────────────────────────────
+const getAccessToken = () =>
+    authSessionRepository.getSession().then((s) => s?.accessToken ?? null);
+
+const getRefreshToken = () =>
+    authSessionRepository.getSession().then((s) => s?.refreshToken ?? null);
+
+const onSessionRefreshed = async (
+    newAccessToken: string,
+    response: import('../../Domain').IRefreshTokenResponse
+) => {
+    const currentSession = await authSessionRepository.getSession();
+    if (!currentSession) return;
+
+    const { isoToExpiresInSeconds } = (() => {
+        const calc = (iso: string) => {
+            const ms = new Date(iso).getTime() - Date.now();
+            return Math.max(0, Math.floor(ms / 1000));
+        };
+        return { isoToExpiresInSeconds: calc };
+    })();
+
+    const updatedSession = currentSession.updateTokens(
+        newAccessToken,
+        response.refreshToken,
+        isoToExpiresInSeconds(response.refreshTokenExpiry)
+    );
+
+    await authSessionRepository.saveSession(updatedSession);
+};
+
+// ── 4. HTTP Client (transportista puro, sin acceso al storage) ──────────────────────
+
+const refreshStrategy = new TokenRefreshStrategy(API_URL, getRefreshToken, onSessionRefreshed);
+const httpClient = new FetchHttpClient(API_URL, getAccessToken, refreshStrategy);
+
+// ── 5. Servicios ────────────────────────────────────────────────────────────────────
 
 const authService = new AuthService(httpClient);
 
-// ── 4. Casos de Uso ─────────────────────────────────────────────────────────
-// Health
-const getHealthUseCase = new GetHealthUseCase(httpClient);
+// ── 6. Casos de Uso ─────────────────────────────────────────────────────────────────
 
-// Auth - Nueva Arquitectura
+const getHealthUseCase = new GetHealthUseCase(httpClient);
 const loginUserUseCase = new LoginUserUseCase(authService, authSessionRepository);
 const registerUseCases = new RegisterUseCases(authService);
 const refreshTokenUseCases = new RefreshTokenUseCases(authService, authSessionRepository);
-const logoutUseCase = new LogoutUseCase(authSessionRepository, authService);
+const logoutUseCase = new LogoutUseCase(authSessionRepository);
 const checkAuthSessionUseCase = new CheckAuthSessionUseCase(authSessionRepository);
 
-// ── 5. Controllers/Plocs ───────────────────────────────────────────────────
+// ── 7. Controllers / Plocs ──────────────────────────────────────────────────────────
 
-// AuthPloc con nueva arquitectura (usando AuthSessionRepository via SecureStorage)
 const authPloc = new AuthPloc(
     loginUserUseCase,
     registerUseCases,
@@ -69,31 +103,13 @@ const authPloc = new AuthPloc(
     authSessionRepository
 );
 
-// ── 6. Proveedores de Plocs ─────────────────────────────────────────────────
+const debugPloc = new DebugPloc(authSessionRepository);
+
+// ── 8. Locator público ──────────────────────────────────────────────────────────────
+
 export const dependenciesLocator = {
-    // Health
-    provideHealthPloc: () => new HealthPloc(getHealthUseCase),
-
-    // Auth - Nueva arquitectura
     provideAuthPloc: () => authPloc,
-
-    // HTTP Client
-    provideHttpClient: () => httpClient,
-
-    // Storage
-    provideLocalStorageAdapter: () => localStorageAdapter,
-    provideSecureStorageAdapter: () => secureStorageAdapter,
-
-    // Repositories
+    provideHealthPloc: () => new HealthPloc(getHealthUseCase),
+    provideDebugPloc: () => debugPloc,
     provideAuthSessionRepository: () => authSessionRepository,
-
-    // Services
-    provideAuthService: () => authService,
-
-    // Use Cases - Nueva arquitectura
-    provideLoginUserUseCase: () => loginUserUseCase,
-    provideRegisterUseCases: () => registerUseCases,
-    provideRefreshTokenUseCases: () => refreshTokenUseCases,
-    provideLogoutUseCase: () => logoutUseCase,
-    provideCheckAuthSessionUseCase: () => checkAuthSessionUseCase,
 };

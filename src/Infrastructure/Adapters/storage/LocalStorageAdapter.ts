@@ -12,7 +12,7 @@
  *
  * Uso recomendado: preferencias de usuario, tema, idioma, caché offline.
  */
-import type { IStorage } from '../../../Domain/Interfaces/IStorage';
+import type { IStorage } from '../../../Domain';
 
 export class LocalStorageAdapter implements IStorage {
     private readonly prefix: string;
@@ -58,9 +58,7 @@ export class LocalStorageAdapter implements IStorage {
         try {
             const fullKey = this.buildKey(key);
             const stringValue = JSON.stringify(value);
-            console.log(`[LocalStorageAdapter] SET: ${fullKey} =`, stringValue.substring(0, 100) + '...');
             localStorage.setItem(fullKey, stringValue);
-            console.log(`[LocalStorageAdapter] SET SUCCESS: ${fullKey}`);
         } catch (error) {
             // Puede fallar si se llena el cupo (QuotaExceededError)
             console.error(`[LocalStorageAdapter] Error al escribir la clave "${key}":`, error);

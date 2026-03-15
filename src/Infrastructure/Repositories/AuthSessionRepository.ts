@@ -43,7 +43,4 @@ export class AuthSessionRepository implements IAuthSessionRepository {
         }
     }
 
-    async updateSession(session: AuthSession): Promise<void> {
-        await this.saveSession(session);
-    }
 }

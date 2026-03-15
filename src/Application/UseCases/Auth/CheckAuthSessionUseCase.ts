@@ -4,9 +4,9 @@
  * Recupera la sesión persistida y valida su vigencia.
  */
 
-import type { IUseCase } from '../../Domain';
-import type { IAuthSessionRepository } from '../../Domain';
-import { AuthSession } from '../../Domain/Entities/AuthSession';
+import type { IUseCase } from '../../../Domain';
+import type { IAuthSessionRepository } from '../../../Domain';
+import { AuthSession } from '../../../Domain/Entities/AuthSession';
 
 /**
  * Output del caso de uso.
@@ -33,7 +33,7 @@ export class CheckAuthSessionUseCase implements IUseCase<void, CheckAuthSessionO
             return { isAuthenticated: false, session: null };
         }
 
-        if (session.isExpired()) {
+        if (session.isAccessTokenExpired()) {
             await this.authSessionRepo.clearSession();
             return { isAuthenticated: false, session: null };
         }

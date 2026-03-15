@@ -1,17 +1,12 @@
 import { Ploc } from "../../Domain/Ploc";
 import { AuthStatus } from "../../Domain";
-import type { IAuthState } from "./IAuthState";
-import { initialAuthState } from "./IAuthState";
+import type { IAuthState } from "../../Domain";
+import { initialAuthState } from "../../Domain";
 
 // Importar tipos de la nueva arquitectura
-import type { ILoginRequest, IRegisterRequest } from "../../Domain/Request/IAuthRequest";
 import type { IAuthSessionRepository } from "../../Domain/Repositories/IAuthSessionRepository";
-import type { LoginUserUseCase, RegisterUseCases } from "../../Application/AuthUsesCase";
-import type { RefreshTokenUseCases, LogoutUseCase, CheckAuthSessionUseCase } from "../../Application/AuthUsesCase";
-import type { ILoginResponse } from "../../Domain/Responses/IAuthResponses";
-import type { ILoginResponseError } from "../../Domain/Responses/IAuthResponsesError";
-import type { IUserSession } from "../../Domain/Auth/AuthEntities";
-import type { UserData } from "../../Domain/Entities/AuthSession";
+import type { LoginUserUseCase, RegisterUseCases, RefreshTokenUseCases, LogoutUseCase, CheckAuthSessionUseCase } from "../../Application/UseCases/Auth";
+import type { ILoginRequest, IRegisterRequest, ILoginResponse, ILoginResponseError, IUserSession, UserData } from "../../Domain";
 
 /**
  * CONTROLLERS LAYER - Auth Module
@@ -58,7 +53,7 @@ export class AuthPloc extends Ploc<IAuthState> {
             }
 
             // Verificar si necesita refresh
-            if (session.needsRefresh()) {
+            if (session.accessTokenNeedsRefresh()) {
                 this.changeState({ 
                     ...this.state, 
                     status: AuthStatus.REFRESHING_TOKEN,
@@ -66,9 +61,15 @@ export class AuthPloc extends Ploc<IAuthState> {
                 });
 
                 try {
-                    await this.refreshTokenUseCases.execute({ refreshToken: session.refreshToken });
-                    // El use case ya actualiza la sesión persistida
-                } catch {
+                    const result = await this.refreshTokenUseCases.execute({ refreshToken: session.refreshToken });
+                    
+                    if (!('accessToken' in result)) {
+                        console.error('[AuthPloc] Refresh automático fallido durante init:', result);
+                        await this.logout();
+                        return;
+                    }
+                } catch (error) {
+                    console.error('[AuthPloc] Excepción durante refresh automático en init:', error);
                     // Si falla el refresh, cerrar sesión
                     await this.logout();
                     return;
@@ -101,13 +102,16 @@ export class AuthPloc extends Ploc<IAuthState> {
 
             // Verificar si el login fue exitoso
             if (this.isLoginSuccess(result)) {
-                // La sesión ya está persistida por el use case
+                // La sesión ya está persistida y los tokens guardados.
+                // Obtenemos los datos del usuario de la sesión actual
+                const session = await this.authSessionRepository.getSession();
+                
                 this.changeState({
                     status: AuthStatus.AUTHENTICATED,
-                    user: result.user ? {
-                        id: result.user.id,
-                        name: result.user.name || '',
-                        email: result.user.email
+                    user: session ? {
+                        id: session.userId,
+                        name: session.name || '',
+                        email: session.email
                     } : undefined,
                     error: undefined
                 });
@@ -139,17 +143,18 @@ export class AuthPloc extends Ploc<IAuthState> {
 
             // Verificar si el registro fue exitoso
             if ('message' in result) {
-                // Registro exitoso - típicamente requiere confirmación de email
+                // Registro exitoso - típicamente requiere confirmación de email (aunque la API actual regrese 200 vacío)
                 this.changeState({ 
                     ...this.state, 
                     status: AuthStatus.UNAUTHENTICATED,
                     error: undefined
                 });
             } else {
-                // Error en registro
+                // Error en registro (result es ILoginResponseError)
+                const error = result as ILoginResponseError;
                 this.changeState({
                     status: AuthStatus.FAILED,
-                    error: result.detail || result.title || 'Error al crear la cuenta'
+                    error: error.detail || error.title || 'Error al crear la cuenta'
                 });
             }
         } catch (error) {
@@ -168,14 +173,54 @@ export class AuthPloc extends Ploc<IAuthState> {
         this.changeState({ ...this.state, status: AuthStatus.LOGGING_OUT });
 
         try {
-            await this.logoutUseCase.execute({ notifyServer: true });
+            await this.logoutUseCase.execute();
         } catch {
             // Limpiar sesión local aunque el servidor falle
             await this.authSessionRepository.clearSession();
         }
 
-        this.changeState(initialAuthState);
+    this.changeState(initialAuthState);
         this.changeState({ ...this.state, status: AuthStatus.UNAUTHENTICATED });
+    }
+
+    /**
+     * Fuerza el refresco del token manualmente (para pruebas).
+     */
+    async forceRefreshToken(): Promise<void> {
+        console.log('[AuthPloc] ⚡ Forzando refresco de token manualmente...');
+        const session = await this.authSessionRepository.getSession();
+        if (!session) {
+            console.error('[AuthPloc] No hay sesión activa para refrescar');
+            return;
+        }
+
+        this.changeState({ ...this.state, status: AuthStatus.REFRESHING_TOKEN });
+
+        try {
+            const result = await this.refreshTokenUseCases.execute({
+                refreshToken: session.refreshToken
+            });
+
+            if ('accessToken' in result) {
+                console.log('[AuthPloc] ✅ Refresh manual completado con éxito');
+                // Recargar estado después del refresh exitoso
+                await this.init();
+            } else {
+                console.error('[AuthPloc] ❌ Error en refresh manual:', result);
+                this.changeState({
+                    ...this.state,
+                    status: AuthStatus.FAILED,
+                    error: result.detail || result.title || 'Error al forzar refresh'
+                });
+            }
+        } catch (error) {
+            console.error('[AuthPloc] 🚨 Excepción en refresh manual:', error);
+            this.changeState({
+                ...this.state,
+                status: AuthStatus.FAILED,
+                error: error instanceof Error ? error.message : 'Error al forzar refresh'
+            });
+        }
     }
 
     /**

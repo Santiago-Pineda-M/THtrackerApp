@@ -1,162 +1,93 @@
-import type { IHttpClient, HttpResponse } from "../../../Domain/Interfaces/IHttpClient";
-import type { IStorage } from "../../../Domain/Interfaces/IStorage";
-import type { IAuthToken } from "../../../Domain/Auth/AuthEntities";
-import type { TokenResponse } from "../../../Application/Auth/AuthDTOs";
+/**
+ * INFRASTRUCTURE LAYER - HTTP Client
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Implementación de IHttpClient usando la Fetch API.
+ *
+ * Responsabilidades:
+ *  - Adjuntar el access token en cada petición (via callback inyectado).
+ *  - Delegar el manejo de 401 al TokenRefreshStrategy inyectado.
+ *  - Transporte HTTP puro: GET, POST, PUT, DELETE.
+ *
+ * SRP: no accede al storage, no persiste tokens, no refresca directamente.
+ * El access token se obtiene a través de un callback que lo lee del AuthSessionRepository.
+ */
 
-// Key for token storage - separate from AuthSession to avoid conflicts
-const AUTH_STORAGE_KEY = 'auth_token';
+import type { IHttpClient, HttpResponse } from '../../../Domain';
+import type { TokenRefreshStrategy } from './TokenRefreshStrategy';
+
+export type GetAccessTokenFn = () => Promise<string | null>;
 
 export class FetchHttpClient implements IHttpClient {
     private readonly baseUrl: string;
-    private readonly storage: IStorage;
+    private readonly getAccessToken: GetAccessTokenFn;
+    private readonly refreshStrategy: TokenRefreshStrategy;
 
-    // Gestión de refresco concurrente
-    private isRefreshing = false;
-    private refreshSubscribers: ((token: string) => void)[] = [];
-
-    constructor(baseUrl: string, storage: IStorage) {
+    constructor(
+        baseUrl: string,
+        getAccessToken: GetAccessTokenFn,
+        refreshStrategy: TokenRefreshStrategy
+    ) {
         this.baseUrl = baseUrl;
-        this.storage = storage;
+        this.getAccessToken = getAccessToken;
+        this.refreshStrategy = refreshStrategy;
     }
 
     private async request<T>(url: string, options: RequestInit): Promise<HttpResponse<T>> {
-        // 1. Adjuntar Token automáticamente
-        const tokenData = await this.storage.get<IAuthToken>(AUTH_STORAGE_KEY);
+        const accessToken = await this.getAccessToken();
         const headers: Record<string, string> = {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             ...(options.headers as Record<string, string>),
         };
 
-        if (tokenData?.accessToken) {
-            headers["Authorization"] = `Bearer ${tokenData.accessToken}`;
+        if (accessToken) {
+            headers['Authorization'] = `Bearer ${accessToken}`;
         }
 
         let response: Response;
         try {
-            response = await fetch(`${this.baseUrl}${url}`, {
-                ...options,
-                headers,
-                credentials: 'include',
-            });
+            response = await fetch(`${this.baseUrl}${url}`, { ...options, headers, credentials: 'include' });
         } catch (error) {
-            console.error(`[FetchHttpClient] Network Error (${url}):`, error);
+            console.error(`[FetchHttpClient] Network error on ${url}:`, error);
             throw error;
         }
 
-        // 2. Manejo de 401 (Unauthorized)
-        if (response.status === 401 && !url.includes('/auth/refresh') && !url.includes('/auth/login')) {
-            return this.handleUnauthorized<T>(url, options);
+        // Delegar refresco al strategy cuando el servidor responde 401
+        const isAuthEndpoint = url.includes('/auth/refresh') || url.includes('/auth/login');
+        if (response.status === 401 && !isAuthEndpoint) {
+            console.warn(`[AuthHttpClient] 🔑 401 Detectado en ${url}. Disparando estrategia de refresco...`);
+            return this.refreshStrategy.attemptRefresh((newToken) =>
+                this.executeWithToken<T>(url, options, newToken)
+            );
         }
 
+        return this.parseResponse<T>(response);
+    }
+
+    /** Ejecuta una petición con un token ya conocido (usado por el retry). */
+    private async executeWithToken<T>(url: string, options: RequestInit, token: string): Promise<HttpResponse<T>> {
+        const headers = { ...options.headers as Record<string, string>, Authorization: `Bearer ${token}` };
+        const response = await fetch(`${this.baseUrl}${url}`, { ...options, headers, credentials: 'include' });
+        return this.parseResponse<T>(response);
+    }
+
+    private async parseResponse<T>(response: Response): Promise<HttpResponse<T>> {
         const data = await response.json().catch(() => ({}));
-
-        if (response.status >= 400) {
-            console.error(`[FetchHttpClient] Error ${response.status}:`, data);
-        }
-
-        return {
-            data,
-            status: response.status,
-        };
-    }
-
-    private async handleUnauthorized<T>(url: string, options: RequestInit): Promise<HttpResponse<T>> {
-        if (!this.isRefreshing) {
-            this.isRefreshing = true;
-
-            try {
-                const tokenData = await this.storage.get<IAuthToken>(AUTH_STORAGE_KEY);
-                if (!tokenData?.refreshToken) throw new Error("No refresh token");
-
-                // Llamada directa de bajo nivel para evitar loops
-                const refreshResponse = await fetch(`${this.baseUrl}/api/v1/auth/refresh`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ refreshToken: tokenData.refreshToken }),
-                    credentials: 'include'
-                });
-
-                if (refreshResponse.status !== 200) throw new Error("Refresh failed");
-
-                const result: TokenResponse = await refreshResponse.json();
-                
-                // Validar que los tokens existen
-                if (!result.accessToken || !result.refreshToken) {
-                    throw new Error('Invalid token response: missing tokens');
-                }
-                
-                // Validar refreshTokenExpiry - usar valor por defecto si no existe
-                const expiryDate = result.refreshTokenExpiry 
-                    ? new Date(result.refreshTokenExpiry) 
-                    : new Date(Date.now() + (7 * 24 * 60 * 60 * 1000)); // Default 7 días
-                
-                const newToken: IAuthToken = {
-                    accessToken: result.accessToken,
-                    refreshToken: result.refreshToken,
-                    expiry: isNaN(expiryDate.getTime()) 
-                        ? new Date(Date.now() + (7 * 24 * 60 * 60 * 1000)) 
-                        : expiryDate
-                };
-
-                await this.storage.set(AUTH_STORAGE_KEY, newToken);
-
-                this.onTokenRefreshed(newToken.accessToken);
-                return this.request<T>(url, options);
-            } catch (error) {
-                // Si el refresco falla, limpiar sesión y propagar error
-                console.error("[FetchHttpClient] Token Refresh Failed:", error);
-                await this.storage.remove(AUTH_STORAGE_KEY);
-                return { data: { error: "Session expired" } as unknown as T, status: 401 };
-            } finally {
-                this.isRefreshing = false;
-            }
-        }
-
-        // Si ya hay un refresco en curso, encolar esta petición
-        return new Promise((resolve) => {
-            this.subscribeTokenRefresh((newToken: string) => {
-                const newOptions = {
-                    ...options,
-                    headers: {
-                        ...options.headers,
-                        "Authorization": `Bearer ${newToken}`
-                    }
-                };
-                resolve(this.request<T>(url, newOptions));
-            });
-        });
-    }
-
-    private subscribeTokenRefresh(cb: (token: string) => void) {
-        this.refreshSubscribers.push(cb);
-    }
-
-    private onTokenRefreshed(token: string) {
-        this.refreshSubscribers.map((cb) => cb(token));
-        this.refreshSubscribers = [];
+        return { data, status: response.status };
     }
 
     async get<T>(url: string, config?: RequestInit): Promise<HttpResponse<T>> {
-        return this.request<T>(url, { method: "GET", ...config });
+        return this.request<T>(url, { method: 'GET', ...config });
     }
 
     async post<T>(url: string, data?: unknown, config?: RequestInit): Promise<HttpResponse<T>> {
-        return this.request<T>(url, {
-            method: "POST",
-            body: data ? JSON.stringify(data) : undefined,
-            ...config,
-        });
+        return this.request<T>(url, { method: 'POST', body: data ? JSON.stringify(data) : undefined, ...config });
     }
 
     async put<T>(url: string, data?: unknown, config?: RequestInit): Promise<HttpResponse<T>> {
-        return this.request<T>(url, {
-            method: "PUT",
-            body: data ? JSON.stringify(data) : undefined,
-            ...config,
-        });
+        return this.request<T>(url, { method: 'PUT', body: data ? JSON.stringify(data) : undefined, ...config });
     }
 
     async delete<T>(url: string, config?: RequestInit): Promise<HttpResponse<T>> {
-        return this.request<T>(url, { method: "DELETE", ...config });
+        return this.request<T>(url, { method: 'DELETE', ...config });
     }
 }

@@ -1,24 +1,44 @@
 /**
  * DOMAIN LAYER - Value Objects
  * AuthTokens: Value Object que encapsula los tokens de autenticación.
- * Maneja la lógica de expiración internamente.
+ * Maneja la lógica de expiración de access token y refresh token internamente.
  */
+
+// Función pura para decodificar JWT expiración (exp está en segundos, retorna milisegundos)
+const decodeJwtExp = (token: string): number | null => {
+    if (!token) return null;
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        const padding = base64.length % 4;
+        if (padding) base64 += '='.repeat(4 - padding);
+        const decoded = atob(base64);
+        const payload = JSON.parse(decoded);
+        return payload.exp ? payload.exp * 1000 : null;
+    } catch {
+        return null;
+    }
+};
 
 export interface AuthTokensProps {
     accessToken: string;
     refreshToken: string;
-    expiresAt: number; // Unix timestamp en milisegundos
+    accessTokenExpiresAt: number; // Unix timestamp en milisegundos
+    refreshTokenExpiresAt: number | null; // Unix timestamp en milisegundos
 }
 
 export class AuthTokens {
     private readonly accessToken: string;
     private readonly refreshToken: string;
-    private readonly expiresAt: number;
+    private readonly accessTokenExpiresAt: number;
+    private readonly refreshTokenExpiresAt: number | null;
 
     private constructor(props: AuthTokensProps) {
         this.accessToken = props.accessToken;
         this.refreshToken = props.refreshToken;
-        this.expiresAt = props.expiresAt;
+        this.accessTokenExpiresAt = props.accessTokenExpiresAt;
+        this.refreshTokenExpiresAt = props.refreshTokenExpiresAt;
     }
 
     /**
@@ -32,38 +52,52 @@ export class AuthTokens {
         if (!props.refreshToken || props.refreshToken.trim() === '') {
             throw new Error('Refresh token es requerido');
         }
-        if (typeof props.expiresAt !== 'number' || props.expiresAt <= 0) {
-            throw new Error('ExpiresAt debe ser un número positivo');
+        if (typeof props.accessTokenExpiresAt !== 'number' || props.accessTokenExpiresAt <= 0) {
+            throw new Error('accessTokenExpiresAt debe ser un número positivo');
         }
 
         return new AuthTokens({
             accessToken: props.accessToken.trim(),
             refreshToken: props.refreshToken.trim(),
-            expiresAt: props.expiresAt
+            accessTokenExpiresAt: props.accessTokenExpiresAt,
+            refreshTokenExpiresAt: props.refreshTokenExpiresAt
         });
     }
 
     /**
-     * Crea AuthTokens desde tokens nuevos + duración en segundos.
+     * Crea AuthTokens desde tokens nuevos + duración en segundos calculada desde el backend.
+     * Decodifica los tokens JWT para obtener fechas más exactas si el backend solo envía el default del AuthType.
      */
     static createWithExpiry(
         accessToken: string,
         refreshToken: string,
         expiresInSeconds: number
     ): AuthTokens {
-        const expiresAt = Date.now() + (expiresInSeconds * 1000);
+        // Usa la informacion del token decodificado como primera fuente, cae en fallback del servidor si no es JWT
+        const decodedAccess = decodeJwtExp(accessToken);
+        const accessExp = decodedAccess || Date.now() + (expiresInSeconds * 1000);
+
+        const decodedRefresh = decodeJwtExp(refreshToken);
+        
         return AuthTokens.create({
             accessToken,
             refreshToken,
-            expiresAt
+            accessTokenExpiresAt: accessExp,
+            refreshTokenExpiresAt: decodedRefresh
         });
     }
 
     /**
      * Crea desde JSON persistido (sin validación extra).
      */
-    static fromJSON(data: { accessToken: string; refreshToken: string; expiresAt: number }): AuthTokens {
-        return AuthTokens.create(data);
+    static fromJSON(data: { accessToken: string; refreshToken: string; accessTokenExpiresAt: number; refreshTokenExpiresAt?: number | null }): AuthTokens {
+        return AuthTokens.create({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+            accessTokenExpiresAt: data.accessTokenExpiresAt,
+            // Fallback backward compatible o para tokens estaticos pre-update
+            refreshTokenExpiresAt: data.refreshTokenExpiresAt !== undefined ? data.refreshTokenExpiresAt : decodeJwtExp(data.refreshToken)
+        });
     }
 
     // Getters
@@ -75,23 +109,35 @@ export class AuthTokens {
         return this.refreshToken;
     }
 
-    getExpiresAt(): number {
-        return this.expiresAt;
+    getAccessTokenExpiresAt(): number {
+        return this.accessTokenExpiresAt;
+    }
+
+    getRefreshTokenExpiresAt(): number | null {
+        return this.refreshTokenExpiresAt;
     }
 
     /**
-     * Verifica si los tokens han expirado.
+     * Verifica si el access token ha expirado.
      */
-    isExpired(): boolean {
-        return Date.now() >= this.expiresAt;
+    isAccessTokenExpired(): boolean {
+        return Date.now() >= this.accessTokenExpiresAt;
     }
 
     /**
-     * Verifica si los tokens necesitan refresh (expiran en menos de 5 minutos).
+     * Verifica si el refresh token ha expirado.
      */
-    needsRefresh(): boolean {
+    isRefreshTokenExpired(): boolean {
+        if (!this.refreshTokenExpiresAt) return false; // si no hay meta, asumimos vivo y fallará en HTTP 401
+        return Date.now() >= this.refreshTokenExpiresAt;
+    }
+
+    /**
+     * Verifica si los tokens necesitan refresh (el access token expira en menos de 5 minutos).
+     */
+    accessTokenNeedsRefresh(): boolean {
         const fiveMinutes = 5 * 60 * 1000;
-        return Date.now() >= (this.expiresAt - fiveMinutes);
+        return Date.now() >= (this.accessTokenExpiresAt - fiveMinutes);
     }
 
     /**
@@ -104,11 +150,12 @@ export class AuthTokens {
     /**
      * Serializa a objeto plano para persistencia.
      */
-    toJSON(): { accessToken: string; refreshToken: string; expiresAt: number } {
+    toJSON(): { accessToken: string; refreshToken: string; accessTokenExpiresAt: number; refreshTokenExpiresAt: number | null } {
         return {
             accessToken: this.accessToken,
             refreshToken: this.refreshToken,
-            expiresAt: this.expiresAt
+            accessTokenExpiresAt: this.accessTokenExpiresAt,
+            refreshTokenExpiresAt: this.refreshTokenExpiresAt
         };
     }
 }

@@ -43,11 +43,3 @@ export const useAuthPloc = () => {
 export const useHealthPloc = () => {
     return useDependencies().provideHealthPloc();
 };
-
-export const useHttpClient = () => {
-    return useDependencies().provideHttpClient();
-};
-
-export const useLocalStorageAdapter = () => {
-    return useDependencies().provideLocalStorageAdapter();
-};

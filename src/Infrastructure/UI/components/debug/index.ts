@@ -4,5 +4,4 @@
  */
 
 export { DebugPanel } from './DebugPanel';
-export { useDebugInfo } from './useDebugInfo';
-export type { DebugInfo } from './useDebugInfo';
+export type { IDebugState } from '../../../../Domain';

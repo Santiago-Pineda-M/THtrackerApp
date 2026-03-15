@@ -5,7 +5,7 @@
 
 // Entities
 export { AuthSession, type AuthSessionProps, type UserData } from './Entities/AuthSession';
-export { type IUserSession, type IAuthToken, type IAuthSession } from './Auth/AuthEntities';
+export { type IUserSession } from './Auth/AuthEntities';
 
 // Value Objects
 export { Email, AuthTokens, UserId } from './ValueObjects';
@@ -13,38 +13,28 @@ export { Email, AuthTokens, UserId } from './ValueObjects';
 // Repositories
 export type { IAuthSessionRepository } from './Repositories/IAuthSessionRepository';
 
-// Request Interfaces
+// Request Interfaces (3 endpoints que realmente existen en la API)
 export type {
     ILoginRequest,
     IRegisterRequest,
     IRefreshTokenRequest,
-    IConfirmEmailRequest,
-    IResendEmailConfirmationRequest,
-    IForgotPasswordRequest,
-    IResetPasswordRequest,
-    ILogoutRequest,
-} from './Request/IAuthRequest';
+} from './Auth/IAuthRequest';
 
-// Response Interfaces
+// Response Interfaces (3 endpoints que realmente existen en la API)
 export type {
     ILoginResponse,
     IRegisterResponse,
     IRefreshTokenResponse,
-    ICheckSessionResponse,
-    IConfirmEmailResponse,
-    IResendEmailConfirmationResponse,
-    IForgotPasswordResponse,
-    IResetPasswordResponse,
-    ILogoutResponse,
-} from './Responses/IAuthResponses';
+} from './Auth/IAuthResponses';
 
+// Error Response Interfaces
 export type {
     ILoginResponseError,
     IRefreshTokenResponseError,
     IAuthResponseError,
     INetworkError,
     IValidationError,
-} from './Responses/IAuthResponsesError';
+} from './Auth/IAuthResponsesError';
 
 // Pattern Interfaces
 export { 
@@ -52,25 +42,14 @@ export {
     type IHttpClient, 
     type ISecureStorage, 
     type IStorage,
+    type HttpResponse,
     type UseCaseResult,
     successResult,
     errorResult,
 } from './IPatterns';
 
-// State Interfaces
-export {
-    type ILoginState,
-    type IRegisterState,
-    type ICheckSessionState,
-    type IRefreshTokenState,
-    initialLoginState,
-    initialRegisterState,
-    initialCheckSessionState,
-    initialRefreshTokenState,
-} from './IStates';
-
-// Auth Status (from Auth module)
-export { AuthStatus } from './Auth/AuthStatus';
+// States & Enums
+export * from './IStates';
 
 // Domain Services
 export { AuthValidationService, type ValidationError, type ValidationResult, type LoginRequestData, type RegisterRequestData } from './Services';

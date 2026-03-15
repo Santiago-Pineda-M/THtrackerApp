@@ -6,4 +6,4 @@ export { HealthPloc } from './Health/HealthPloc';
 export type { IHealthState } from './Health/HealthPloc';
 
 export { AuthPloc } from './Auth/AuthPloc';
-export * from './Auth/IAuthState';
+export * from '../Domain/IStates';

@@ -1,99 +1,123 @@
 /**
- * DOMAIN LAYER - State Interfaces (IStates)
- * Define los tipos de estado para los PLOCs de autenticación.
- * 
- * @note Las definiciones de estado de autenticación principal están en 
- * Controllers/Auth/IAuthState.ts para mantener separación de capas.
- * @deprecated Estas interfaces ya no se usan activamente en la nueva arquitectura.
+ * DOMAIN LAYER - State Interfaces
+ * Contiene los estados globales para los PLOCs en la aplicación.
+ * Centralizado siguiendo principios de Clean Architecture para evitar acoplamiento ciclico.
  */
 
-// Las interfaces ILoginState, IRegisterState, etc. estánmarked as deprecated
-// porque el nuevo patrón usa AuthSession entity en su lugar.
+import type { IUserSession, IAuthToken } from './Auth/AuthEntities';
 
 /**
- * Estado del formulario de login.
- * @deprecated Este estado ya no se usa activamente en la nueva arquitectura.
+ * ==========================================
+ * AUTHENTICATION STATES
+ * ==========================================
  */
-export interface ILoginState {
-    email: string;
-    password: string;
-    errors: Record<string, string[]>;
-    isValid: boolean;
-    isLoading: boolean;
-    success: boolean;
-    message: string;
+
+/**
+ * Definición de los estados para la máquina de estados de autenticación.
+ */
+export const AuthStatus = {
+    IDLE: 'IDLE',
+    LOADING: 'LOADING',
+    AUTHENTICATING: 'AUTHENTICATING',
+    AUTHENTICATED: 'AUTHENTICATED',
+    FAILED: 'FAILED',
+    UNAUTHENTICATED: 'UNAUTHENTICATED',
+    LOGGING_OUT: 'LOGGING_OUT',
+    REFRESHING_TOKEN: 'REFRESHING_TOKEN',
+} as const;
+
+export type AuthStatus = typeof AuthStatus[keyof typeof AuthStatus];
+
+/**
+ * Interfaz del estado de autenticación usado por AuthPloc.
+ */
+export interface IAuthState {
+    status: AuthStatus;
+    user?: IUserSession;
+    token?: IAuthToken;
+    error?: string;
 }
 
-/**
- * Estado del formulario de registro.
- * @deprecated Este estado ya no se usa activamente en la nueva arquitectura.
- */
-export interface IRegisterState {
-    name: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    errors: Record<string, string[]>;
-    isValid: boolean;
-    isLoading: boolean;
-    success: boolean;
-    message: string;
-}
-
-/**
- * Estado de verificación de sesión.
- * @deprecated Este estado ya no se usa activamente en la nueva arquitectura.
- */
-export interface ICheckSessionState {
-    isLoading: boolean;
-    isAuthenticated: boolean;
-    session: unknown;
-    error: string | null;
-}
-
-/**
- * Estado de refresh de token.
- * @deprecated Este estado ya no se usa activamente en la nueva arquitectura.
- */
-export interface IRefreshTokenState {
-    isRefreshing: boolean;
-    error: string | null;
-}
-
-/**
- * Valores iniciales para los estados.
- * @deprecated Estos estados ya no se usan activamente.
- */
-export const initialLoginState: ILoginState = {
-    email: '',
-    password: '',
-    errors: {},
-    isValid: false,
-    isLoading: false,
-    success: false,
-    message: '',
+export const initialAuthState: IAuthState = {
+    status: AuthStatus.IDLE
 };
 
-export const initialRegisterState: IRegisterState = {
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    errors: {},
-    isValid: false,
-    isLoading: false,
-    success: false,
-    message: '',
-};
+/**
+ * ==========================================
+ * DEBUG STATES
+ * ==========================================
+ */
 
-export const initialCheckSessionState: ICheckSessionState = {
-    isLoading: false,
-    isAuthenticated: false,
-    session: null,
-    error: null,
-};
+export interface DebugTokenExpiryInfo {
+    accessTokenExpiry: Date | null;
+    refreshTokenExpiry: Date | null;
+    isExpired: boolean;
+    needsRefresh: boolean;
+}
 
-export const initialRefreshTokenState: IRefreshTokenState = {
-    isRefreshing: false,
-    error: null,
+export interface DebugApiCallInfo {
+    timestamp: Date | null;
+    endpoint: string | null;
+    status: number | null;
+    method: string | null;
+}
+
+export interface DebugStorageInfo {
+    size: number;
+    keys: string[];
+    contents: Record<string, string>;
+}
+
+export interface DebugAppInfo {
+    appVersion: string;
+    environment: string;
+    buildTimestamp: string;
+}
+
+export interface DebugNavigatorInfo {
+    online: boolean;
+    connectionType: string;
+    userAgent: string;
+}
+
+export interface IDebugState {
+    tokenExpiry: DebugTokenExpiryInfo;
+    lastApiCall: DebugApiCallInfo;
+    storageInfo: DebugStorageInfo;
+    appInfo: DebugAppInfo;
+    navigatorInfo: DebugNavigatorInfo;
+    renderCount: number;
+    lastUpdate: Date;
+}
+
+export const initialDebugState: IDebugState = {
+    tokenExpiry: {
+        accessTokenExpiry: null,
+        refreshTokenExpiry: null,
+        isExpired: true,
+        needsRefresh: true
+    },
+    lastApiCall: {
+        timestamp: null,
+        endpoint: null,
+        status: null,
+        method: null
+    },
+    storageInfo: {
+        size: 0,
+        keys: [],
+        contents: {}
+    },
+    appInfo: {
+        appVersion: '1.0.0',
+        environment: 'development',
+        buildTimestamp: new Date().toISOString()
+    },
+    navigatorInfo: {
+        online: true,
+        connectionType: 'unknown',
+        userAgent: ''
+    },
+    renderCount: 0,
+    lastUpdate: new Date()
 };

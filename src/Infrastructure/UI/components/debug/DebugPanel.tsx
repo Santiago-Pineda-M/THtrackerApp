@@ -5,10 +5,19 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { useDebugInfo } from './useDebugInfo';
+import { useDebugInfo } from '../../../Hooks/useDebugInfo';
 
 // Verificar si estamos en desarrollo
 const isDevelopment = import.meta.env.MODE === 'development';
+
+const formatJsonString = (str: string): string => {
+    try {
+        const parsed = JSON.parse(str);
+        return JSON.stringify(parsed, null, 2);
+    } catch {
+        return str;
+    }
+};
 
 interface DebugPanelProps {
     className?: string;
@@ -18,30 +27,70 @@ interface SectionProps {
     title: string;
     children: React.ReactNode;
     defaultOpen?: boolean;
+    copyData?: string;
 }
 
-const Section: React.FC<SectionProps> = ({ title, children, defaultOpen = true }) => {
+const Section: React.FC<SectionProps> = ({ title, children, defaultOpen = true, copyData }) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (copyData) {
+            try {
+                await navigator.clipboard.writeText(copyData);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+        }
+    };
 
     return (
         <div style={{ marginBottom: '8px' }}>
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                style={{
-                    width: '100%',
-                    textAlign: 'left',
-                    padding: '6px 10px',
-                    background: '#2d3748',
-                    border: 'none',
-                    borderRadius: '4px',
-                    color: '#e2e8f0',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                }}
-            >
-                {isOpen ? '▼' : '▶'} {title}
-            </button>
+            <div style={{
+                display: 'flex',
+                background: '#2d3748',
+                borderRadius: '4px',
+                color: '#e2e8f0',
+            }}>
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    style={{
+                        flex: 1,
+                        textAlign: 'left',
+                        padding: '6px 10px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'inherit',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                    }}
+                >
+                    {isOpen ? '▼' : '▶'} {title}
+                </button>
+                {copyData && (
+                    <button
+                        onClick={handleCopy}
+                        title="Copy to clipboard"
+                        style={{
+                            padding: '6px 10px',
+                            background: 'transparent',
+                            border: 'none',
+                            color: copied ? '#68d391' : '#a0aec0',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        {copied ? '✓' : '📋'}
+                    </button>
+                )}
+            </div>
             {isOpen && (
                 <div style={{
                     padding: '8px',
@@ -73,12 +122,13 @@ const StorageItem: React.FC<{ label: string; value: string }> = ({ label, value 
             padding: '4px', 
             background: '#0d1117', 
             borderRadius: '2px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            maxHeight: '60px',
-            fontSize: '9px'
+            overflowY: 'auto',
+            maxHeight: '150px',
+            fontSize: '9px',
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-all'
         }}>
-            {value.length > 100 ? value.substring(0, 100) + '...' : value}
+            {formatJsonString(value)}
         </pre>
     </div>
 );
@@ -91,7 +141,7 @@ export const DebugPanel: React.FC<DebugPanelProps> = () => {
     const [isDragging, setIsDragging] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-    const debugInfo = useDebugInfo();
+    const { debugState: debugInfo, authState, forceRefreshToken } = useDebugInfo();
 
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
         setIsDragging(true);
@@ -242,8 +292,18 @@ export const DebugPanel: React.FC<DebugPanelProps> = () => {
                     <div style={{ padding: '8px', maxHeight: 'calc(80vh - 120px)', overflowY: 'auto' }}>
                         
                         {/* Authentication Section */}
-                        <Section title="Authentication">
-                            <KeyValue label="Status" value={debugInfo.authState?.status || '-'} />
+                        <Section 
+                            title="Authentication"
+                            copyData={JSON.stringify({ 
+                                status: authState.status, 
+                                userId: authState.user?.id, 
+                                userName: authState.user?.name, 
+                                userEmail: authState.user?.email,
+                                accessTokenExp: debugInfo.tokenExpiry.accessTokenExpiry,
+                                refreshTokenExp: debugInfo.tokenExpiry.refreshTokenExpiry
+                            }, null, 2)}
+                        >
+                            <KeyValue label="Status" value={authState.status} />
                             <KeyValue 
                                 label="Status Color" 
                                 value="" 
@@ -253,65 +313,96 @@ export const DebugPanel: React.FC<DebugPanelProps> = () => {
                                 width: '10px', 
                                 height: '10px', 
                                 borderRadius: '50%',
-                                background: getStatusColor(debugInfo.authState?.status),
+                                background: getStatusColor(authState.status),
                                 marginRight: '5px',
                                 verticalAlign: 'middle'
                             }} />
-                            <KeyValue label="User ID" value={debugInfo.userInfo?.id} />
-                            <KeyValue label="User Name" value={debugInfo.userInfo?.name} />
-                            <KeyValue label="User Email" value={debugInfo.userInfo?.email} />
-                            <KeyValue label="Access Expires" value={debugInfo.accessTokenExpiry ? debugInfo.accessTokenExpiry.toLocaleString() : '-'} />
-                            <KeyValue label="Refresh Expires" value={debugInfo.refreshTokenExpiry ? debugInfo.refreshTokenExpiry.toLocaleString() : '-'} />
-                            <KeyValue label="Token Expired" value={debugInfo.isTokenExpired ? 'Yes' : 'No'} />
-                            <KeyValue label="Needs Refresh" value={debugInfo.needsTokenRefresh ? 'Yes' : 'No'} />
+                            <KeyValue label="User ID" value={authState.user?.id} />
+                            <KeyValue label="User Name" value={authState.user?.name} />
+                            <KeyValue label="User Email" value={authState.user?.email} />
+                            <KeyValue label="Access Token Exp" value={debugInfo.tokenExpiry.accessTokenExpiry ? debugInfo.tokenExpiry.accessTokenExpiry.toLocaleString() : '-'} />
+                            <KeyValue label="Refresh Token Exp" value={debugInfo.tokenExpiry.refreshTokenExpiry ? debugInfo.tokenExpiry.refreshTokenExpiry.toLocaleString() : '-'} />
+                            
+                            <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
+                                <button
+                                    onClick={() => forceRefreshToken()}
+                                    style={{ 
+                                        padding: '6px 10px',
+                                        background: '#4299e1',
+                                        border: 'none',
+                                        borderRadius: '4px',
+                                        color: 'white',
+                                        fontSize: '11px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Force Refresh
+                                </button>
+                            </div>
                         </Section>
 
                         {/* API Info Section */}
-                        <Section title="API Response" defaultOpen={false}>
+                        <Section 
+                            title="API Response" 
+                            defaultOpen={false}
+                            copyData={JSON.stringify(debugInfo.lastApiCall, null, 2)}
+                        >
                             <KeyValue 
                                 label="Last Call" 
-                                value={formatDate(debugInfo.lastApiResponse.timestamp)} 
+                                value={formatDate(debugInfo.lastApiCall.timestamp)} 
                             />
                             <KeyValue 
                                 label="Endpoint" 
-                                value={debugInfo.lastApiResponse.endpoint ? 
-                                    debugInfo.lastApiResponse.endpoint.split('/').pop() : '-'} 
+                                value={debugInfo.lastApiCall.endpoint ? 
+                                    debugInfo.lastApiCall.endpoint.split('/').pop() : '-'} 
                             />
                             <KeyValue 
                                 label="Status" 
-                                value={debugInfo.lastApiResponse.status || '-'} 
+                                value={debugInfo.lastApiCall.status || '-'} 
                             />
                         </Section>
 
                         {/* Storage Section */}
-                        <Section title="Local Storage" defaultOpen={false}>
-                            <KeyValue label="Size" value={`${debugInfo.localStorage.size} KB`} />
-                            <KeyValue label="Keys" value={debugInfo.localStorage.keys.length} />
+                        <Section 
+                            title="Local Storage" 
+                            defaultOpen={false}
+                            copyData={JSON.stringify(debugInfo.storageInfo, null, 2)}
+                        >
+                            <KeyValue label="Size" value={`${debugInfo.storageInfo.size} KB`} />
+                            <KeyValue label="Keys" value={debugInfo.storageInfo.keys.length} />
                             <div style={{ marginTop: '8px' }}>
-                                {debugInfo.localStorage.keys.slice(0, 5).map((key) => (
+                                {debugInfo.storageInfo.keys.slice(0, 5).map((key: string) => (
                                     <StorageItem 
                                         key={key} 
                                         label={key} 
-                                        value={debugInfo.localStorage.contents[key]} 
+                                        value={debugInfo.storageInfo.contents[key]} 
                                     />
                                 ))}
-                                {debugInfo.localStorage.keys.length > 5 && (
+                                {debugInfo.storageInfo.keys.length > 5 && (
                                     <div style={{ fontSize: '10px', color: '#718096', marginTop: '4px' }}>
-                                        ...and {debugInfo.localStorage.keys.length - 5} more
+                                        ...and {debugInfo.storageInfo.keys.length - 5} more
                                     </div>
                                 )}
                             </div>
                         </Section>
 
                         {/* App Info Section */}
-                        <Section title="App Info" defaultOpen={false}>
-                            <KeyValue label="Version" value={debugInfo.appVersion} />
-                            <KeyValue label="Environment" value={debugInfo.environment} />
-                            <KeyValue label="Build" value={debugInfo.buildTimestamp.split('T')[0]} />
+                        <Section 
+                            title="App Info" 
+                            defaultOpen={false}
+                            copyData={JSON.stringify(debugInfo.appInfo, null, 2)}
+                        >
+                            <KeyValue label="Version" value={debugInfo.appInfo.appVersion} />
+                            <KeyValue label="Environment" value={debugInfo.appInfo.environment} />
+                            <KeyValue label="Build" value={debugInfo.appInfo.buildTimestamp.split('T')[0]} />
                         </Section>
 
                         {/* Connection Section */}
-                        <Section title="Connection" defaultOpen={false}>
+                        <Section 
+                            title="Connection" 
+                            defaultOpen={false}
+                            copyData={JSON.stringify(debugInfo.navigatorInfo, null, 2)}
+                        >
                             <KeyValue 
                                 label="Online" 
                                 value={debugInfo.navigatorInfo.online ? 'Yes' : 'No'} 
@@ -328,6 +419,21 @@ export const DebugPanel: React.FC<DebugPanelProps> = () => {
                             }}>
                                 {debugInfo.navigatorInfo.userAgent.substring(0, 50)}...
                             </div>
+                        </Section>
+
+                        {/* Debug Info Section */}
+                        <Section 
+                            title="Debug Info" 
+                            defaultOpen={false}
+                            copyData={JSON.stringify({
+                                updateCount: debugInfo.renderCount,
+                                lastUpdate: debugInfo.lastUpdate,
+                                authStatus: authState.status
+                            }, null, 2)}
+                        >
+                            <KeyValue label="Update Count" value={debugInfo.renderCount} />
+                            <KeyValue label="Last Update" value={debugInfo.lastUpdate.toLocaleTimeString()} />
+                            <KeyValue label="Auth Status" value={authState.status} />
                         </Section>
                     </div>
                 </>

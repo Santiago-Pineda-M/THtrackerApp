@@ -1,21 +1,13 @@
 /**
  * DOMAIN LAYER - Auth Module
- * Entidades puras de dominio relacionadas con la autenticación.
+ * Tipos de dominio de autenticación que no son entidades completas.
  */
 
+/**
+ * Representación del usuario autenticado tal como se expone al estado de la UI.
+ */
 export interface IUserSession {
     id: string;
     name: string;
     email: string;
-}
-
-export interface IAuthToken {
-    accessToken: string;
-    refreshToken: string;
-    expiry?: number | Date;
-}
-
-export interface IAuthSession {
-    user: IUserSession;
-    token: IAuthToken;
 }

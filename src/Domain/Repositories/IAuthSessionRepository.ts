@@ -24,9 +24,4 @@ export interface IAuthSessionRepository {
      */
     clearSession(): Promise<void>;
     
-    /**
-     * Actualiza solo los tokens de la sesión existente.
-     * @param session La sesión con los nuevos tokens.
-     */
-    updateSession(session: AuthSession): Promise<void>;
 }

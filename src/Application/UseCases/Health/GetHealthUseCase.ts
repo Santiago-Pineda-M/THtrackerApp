@@ -3,8 +3,7 @@
  * Caso de Uso: Verificar si el API está disponible (health check).
  * Depende de IHttpClient (contrato del dominio), no de la implementación concreta.
  */
-import type { IUseCase } from "../../Domain/Interfaces/IUseCase";
-import type { IHttpClient } from "../../Domain/Interfaces/IHttpClient";
+import type { IUseCase, IHttpClient } from "../../Domain";
 
 export class GetHealthUseCase implements IUseCase<void, boolean> {
     private readonly httpClient: IHttpClient;

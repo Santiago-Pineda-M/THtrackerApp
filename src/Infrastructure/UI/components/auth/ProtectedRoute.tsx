@@ -10,9 +10,7 @@ export const ProtectedRoute = () => {
     const state = usePlocState(authPloc);
 
     useEffect(() => {
-        console.log('[ProtectedRoute] Status:', state.status);
         if (state.status === AuthStatus.IDLE) {
-            console.log('[ProtectedRoute] Calling init()...');
             authPloc.init();
         }
     }, [state.status, authPloc]);

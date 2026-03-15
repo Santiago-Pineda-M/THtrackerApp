@@ -4,7 +4,7 @@
  * Es TypeScript puro, sin dependencias de React.
  */
 import { Ploc } from "../../Domain/Ploc";
-import { GetHealthUseCase } from "../../Application/Health/GetHealthUseCase";
+import { GetHealthUseCase } from "../../Application/UseCases/Health/GetHealthUseCase";
 
 export interface IHealthState {
     isAlive: boolean;

@@ -4,13 +4,13 @@
  */
 
 // Health UseCases
-export { GetHealthUseCase } from './Health/GetHealthUseCase';
+export { GetHealthUseCase } from './UseCases/Health/GetHealthUseCase';
 
 // Auth UseCases (estructura nueva según documentación)
-export * from './AuthUsesCase';
+export * from './UseCases/Auth';
 
-// Auth UseCases (estructura original - manteniendo compatibilidad)
-export * from './Auth';
+// Auth DTOs
+export * from './DTOs/Auth/AuthDTOs';
 
 // Interfaces de Servicios
-export * from './Interfaces/IServices/IAuthService';
+export * from './Services/Auth/IAuthService';

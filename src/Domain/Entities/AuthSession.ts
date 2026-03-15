@@ -1,7 +1,7 @@
 /**
  * DOMAIN LAYER - Entities
  * AuthSession: Entidad de dominio inmutable que representa una sesión de autenticación.
- * Ahora usa Value Objects para mayor validación y tipo seguridad.
+ * Ahora usa Value Objects para mayor validación, tipo seguridad y nombramiento estricto.
  */
 
 import { Email, AuthTokens, UserId } from '../ValueObjects';
@@ -52,7 +52,6 @@ export class AuthSession {
 
     /**
      * Crea desde JSON persistido (para recuperar sesión guardada).
-     * Soporta formato nuevo (tokens object) y formato legacy (flat).
      */
     static fromJSON(json: string): AuthSession {
         try {
@@ -62,18 +61,20 @@ export class AuthSession {
             let tokens: AuthTokens;
             
             if (data.tokens && data.tokens.accessToken) {
-                // Nuevo formato: { tokens: { accessToken, refreshToken, expiresAt } }
+                // Nuevo formato
                 tokens = AuthTokens.fromJSON({
                     accessToken: data.tokens.accessToken,
                     refreshToken: data.tokens.refreshToken,
-                    expiresAt: data.tokens.expiresAt
+                    accessTokenExpiresAt: data.tokens.accessTokenExpiresAt !== undefined ? data.tokens.accessTokenExpiresAt : data.tokens.expiresAt,
+                    refreshTokenExpiresAt: data.tokens.refreshTokenExpiresAt
                 });
             } else {
-                // Formato legacy: { accessToken, refreshToken, expiresAt }
+                // Formato legacy
                 tokens = AuthTokens.fromJSON({
                     accessToken: data.accessToken,
                     refreshToken: data.refreshToken,
-                    expiresAt: data.expiresAt
+                    accessTokenExpiresAt: data.expiresAt,
+                    refreshTokenExpiresAt: null // se decodificará en fromJSON si es un JWT válido
                 });
             }
 
@@ -90,7 +91,7 @@ export class AuthSession {
         }
     }
 
-    // Getters - exponer valores primitivos para compatibilidad
+    // Getters - exponer valores primitivos
     get accessToken(): string {
         return this._tokens.getAccessToken();
     }
@@ -99,8 +100,12 @@ export class AuthSession {
         return this._tokens.getRefreshToken();
     }
 
-    get expiresAt(): number {
-        return this._tokens.getExpiresAt();
+    get accessTokenExpiresAt(): number {
+        return this._tokens.getAccessTokenExpiresAt();
+    }
+
+    get refreshTokenExpiresAt(): number | null {
+        return this._tokens.getRefreshTokenExpiresAt();
     }
 
     get userId(): string {
@@ -124,16 +129,21 @@ export class AuthSession {
     }
 
     // Delegate methods to AuthTokens
-    isExpired(): boolean {
-        return this._tokens.isExpired();
+
+    isAccessTokenExpired(): boolean {
+        return this._tokens.isAccessTokenExpired();
     }
 
-    needsRefresh(): boolean {
-        return this._tokens.needsRefresh();
+    isRefreshTokenExpired(): boolean {
+        return this._tokens.isRefreshTokenExpired();
+    }
+
+    accessTokenNeedsRefresh(): boolean {
+        return this._tokens.accessTokenNeedsRefresh();
     }
 
     isValid(): boolean {
-        return !this.isExpired() && !!this.accessToken && !!this.refreshToken;
+        return !this.isAccessTokenExpired() && !!this.accessToken && !!this.refreshToken;
     }
 
     /**

@@ -4,10 +4,8 @@
  * Estas interfaces definen la estructura fundamental para UseCases, HttpClient y Storage.
  */
 
-import type { HttpResponse } from './Interfaces/IHttpClient';
-
 /**
- * Interfaz base para todos los Casos de Uso (UseCases).
+ * Contrato base para todos los Casos de Uso.
  * I = tipo del input, O = tipo del output.
  */
 export interface IUseCase<I, O> {
@@ -15,29 +13,30 @@ export interface IUseCase<I, O> {
 }
 
 /**
- * Interfaz para el cliente HTTP.
- * Define los métodos base para realizar peticiones REST.
+ * Contrato base para el cliente HTTP. Los adaptadores (FetchHttpClient, etc.)
+ * implementan esta interfaz para desacoplar el dominio de librerías externas.
  */
+export interface HttpResponse<T = unknown> {
+    data: T;
+    status: number;
+}
+
 export interface IHttpClient {
-    /**
-     * Realiza una petición GET.
-     */
     get<T>(url: string, config?: RequestInit): Promise<HttpResponse<T>>;
-    
-    /**
-     * Realiza una petición POST.
-     */
     post<T>(url: string, data?: unknown, config?: RequestInit): Promise<HttpResponse<T>>;
-    
-    /**
-     * Realiza una petición PUT.
-     */
     put<T>(url: string, data?: unknown, config?: RequestInit): Promise<HttpResponse<T>>;
-    
-    /**
-     * Realiza una petición DELETE.
-     */
     delete<T>(url: string, config?: RequestInit): Promise<HttpResponse<T>>;
+}
+
+/**
+ * Contrato base para el almacenamiento local.
+ * Soporta implementaciones síncronas y asíncronas.
+ */
+export interface IStorage {
+    get<T>(key: string): T | null | Promise<T | null>;
+    set<T>(key: string, value: T): void | Promise<void>;
+    remove(key: string): void | Promise<void>;
+    clear(): void | Promise<void>;
 }
 
 /**
@@ -65,17 +64,6 @@ export interface ISecureStorage {
      * Limpia todo el almacenamiento.
      */
     clear(): Promise<void>;
-}
-
-/**
- * Interfaz para almacenamiento local genérico.
- * Puede ser síncrono o asíncrono.
- */
-export interface IStorage {
-    get<T>(key: string): T | null | Promise<T | null>;
-    set<T>(key: string, value: T): void | Promise<void>;
-    remove(key: string): void | Promise<void>;
-    clear(): void | Promise<void>;
 }
 
 /**
