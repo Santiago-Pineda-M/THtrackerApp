@@ -1,0 +1,51 @@
+/* THtracker Design Tokens */
+:root {
+  /* Fonts */
+  --font-main: 'Inter', 'Outfit', system-ui, sans-serif;
+  --font-tech: 'Space Grotesk', system-ui, sans-serif;
+
+  /* Colors from Bento Neon Reference */
+  --bg-deep: #0a1931;
+  --surface-primary: #1a3d63;
+  --surface-secondary: #4a7fa7;
+
+  --text-primary: #f6fafd;
+  --text-secondary: #b3cfe5;
+
+  --neon-purple: #9d6cff;
+  --neon-blue: #7be0ff;
+  --neon-pink: #d16fff;
+
+  /* Semantic Aliases */
+  --bg-main: var(--bg-deep);
+  --bg-card: rgba(26, 61, 99, 0.6);
+  --bg-input: rgba(10, 25, 49, 0.6);
+
+  --primary: var(--neon-purple);
+  --primary-hover: #b388ff;
+  --primary-light: rgba(157, 108, 255, 0.15);
+
+  --text-main: var(--text-primary);
+  --text-muted: var(--text-secondary);
+  --text-on-primary: #ffffff;
+
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-focus: var(--neon-blue);
+
+  --error: #ff4d4d;
+  --error-bg: rgba(255, 77, 77, 0.1);
+  --success: #00e676;
+  --success-bg: rgba(0, 230, 118, 0.1);
+
+  /* Effects */
+  --shadow-neon: 0 0 20px rgba(157, 108, 255, 0.2);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-bento: 24px;
+
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --glass: blur(10px);
+}
