@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HealthStatus } from "../pages/health/HealthStatus";
 import { LoginPage, RegisterPage } from "../pages/auth";
 import { DashboardPage } from "../pages/dashboard";
+import { ProfilePage } from "../pages/user";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 
 export const AppRouter = () => {
@@ -23,6 +24,7 @@ export const AppRouter = () => {
                 {/* Rutas Privadas (Protegidas) */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
                     {/* Otras rutas privadas irán aquí */}
                 </Route>
 

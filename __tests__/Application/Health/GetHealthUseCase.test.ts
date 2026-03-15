@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GetHealthUseCase } from '../../../src/Application/Health/GetHealthUseCase';
+import { GetHealthUseCase } from '../../../src/Application/UseCases/Health/GetHealthUseCase';
 import { createMockHttpClient } from '../../__mocks__/mockHttpClient';
 
 /**

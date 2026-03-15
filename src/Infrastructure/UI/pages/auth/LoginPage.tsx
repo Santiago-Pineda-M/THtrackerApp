@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { usePlocState } from '../../../Hooks/usePlocState';
 import { dependenciesLocator } from '../../../DI/DependenciesLocator';
 import { AuthStatus } from '../../../../Domain';
-import { Button, Input, Card, Alert } from '../../components/shared';
+import { Button, Input, Alert } from '../../components/shared';
+import { AuthLayout } from '../../components/layout';
 
 // Utilidad para obtener información del dispositivo
 const getDeviceInfo = (): string => {
@@ -32,60 +33,56 @@ export const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4">
-            <Card className="max-w-md w-full">
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-extrabold mb-2">
-                        Bienvenido de nuevo
-                    </h2>
-                    <p className="text-sm text-muted">
-                        O{' '}
-                        <Link to="/register" className="link">
-                            crea una cuenta nueva
-                        </Link>
-                    </p>
-                </div>
-
-                {state.error && (
+        <AuthLayout 
+            title="Bienvenido de nuevo" 
+            subtitle="Ingresa a tu cuenta para continuar con el seguimiento"
+        >
+            {state.error && (
+                <div className="mb-6">
                     <Alert message={state.error} type="error" />
-                )}
+                </div>
+            )}
 
-                <form className="mt-6" onSubmit={handleSubmit}>
-                    <Input
-                        label="Correo electrónico"
-                        id="email-address"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="usuario@ejemplo.com"
-                    />
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <Input
+                    label="Correo electrónico"
+                    id="email-address"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="usuario@ejemplo.com"
+                />
 
-                    <Input
-                        label="Contraseña"
-                        id="password"
-                        name="password"
-                        type="password"
-                        autoComplete="current-password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                    />
+                <Input
+                    label="Contraseña"
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                />
 
-                    <div className="mt-8">
-                        <Button
-                            type="submit"
-                            isLoading={state.status === AuthStatus.AUTHENTICATING}
-                            className="w-full"
-                        >
-                            Iniciar Sesión
-                        </Button>
-                    </div>
-                </form>
-            </Card>
-        </div>
+                <Button
+                    type="submit"
+                    isLoading={state.status === AuthStatus.AUTHENTICATING}
+                    className="w-full bg-neon-blue shadow-neon border-none h-12 mt-4"
+                >
+                    Iniciar Sesión
+                </Button>
+
+                <p className="text-center text-sm text-text-muted font-medium mt-6">
+                    ¿No tienes una cuenta?{' '}
+                    <Link to="/register" className="text-neon-cyan hover:underline">
+                        Créala ahora
+                    </Link>
+                </p>
+            </form>
+        </AuthLayout>
     );
 };

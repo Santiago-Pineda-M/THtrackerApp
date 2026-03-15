@@ -15,17 +15,17 @@ export const Input: React.FC<InputProps> = ({
     return (
         <div className="input-group">
             {label && (
-                <label htmlFor={id} className="label">
+                <label htmlFor={id} className="label mb-2 block text-text-muted font-bold uppercase tracking-wider text-xs">
                     {label}
                 </label>
             )}
             <input
                 id={id}
-                className={`input ${error ? 'border-error' : ''} ${className}`}
+                className={`input glass focus:border-neon-cyan focus:shadow-neon ${error ? 'border-error' : ''} ${className}`}
                 {...props}
             />
             {error && (
-                <span className="text-xs text-error mt-1 text-left">
+                <span className="text-xs text-error mt-2 block font-medium">
                     {error}
                 </span>
             )}

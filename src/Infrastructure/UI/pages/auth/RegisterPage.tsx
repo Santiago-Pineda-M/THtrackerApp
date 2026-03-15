@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { usePlocState } from '../../../Hooks/usePlocState';
 import { dependenciesLocator } from '../../../DI/DependenciesLocator';
 import { AuthStatus } from '../../../../Domain';
-import { Button, Input, Card, Alert } from '../../components/shared';
+import { Button, Input, Alert } from '../../components/shared';
+import { AuthLayout } from '../../components/layout';
 
 export const RegisterPage: React.FC = () => {
     const navigate = useNavigate();
@@ -39,81 +40,77 @@ export const RegisterPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4">
-            <Card className="max-w-md w-full">
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-extrabold mb-2">
-                        Crea tu cuenta
-                    </h2>
-                    <p className="text-sm text-muted">
-                        O{' '}
-                        <Link to="/login" className="link">
-                            inicia sesión si ya tienes cuenta
-                        </Link>
-                    </p>
-                </div>
-
-                {(state.error || localError) && (
+        <AuthLayout 
+            title="Crea tu cuenta" 
+            subtitle="Únete a la nueva generación de seguimiento inteligente"
+        >
+            {(state.error || localError) && (
+                <div className="mb-6">
                     <Alert message={state.error || localError || ''} type="error" />
-                )}
+                </div>
+            )}
 
-                <form className="mt-6" onSubmit={handleSubmit}>
-                    <Input
-                        label="Nombre Completo"
-                        id="name"
-                        name="name"
-                        type="text"
-                        required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Tu Nombre Completo"
-                    />
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <Input
+                    label="Nombre Completo"
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Tu Nombre Completo"
+                />
 
-                    <Input
-                        label="Correo electrónico"
-                        id="email-address"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="usuario@ejemplo.com"
-                    />
+                <Input
+                    label="Correo electrónico"
+                    id="email-address"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="usuario@ejemplo.com"
+                />
 
-                    <Input
-                        label="Contraseña"
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                    />
+                <Input
+                    label="Contraseña"
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                />
 
-                    <Input
-                        label="Confirmar Contraseña"
-                        id="confirm-password"
-                        name="confirmPassword"
-                        type="password"
-                        required
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="••••••••"
-                    />
+                <Input
+                    label="Confirmar Contraseña"
+                    id="confirm-password"
+                    name="confirmPassword"
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                />
 
-                    <div className="mt-8">
-                        <Button
-                            type="submit"
-                            isLoading={state.status === AuthStatus.AUTHENTICATING}
-                            className="w-full"
-                        >
-                            Registrarse
-                        </Button>
-                    </div>
-                </form>
-            </Card>
-        </div>
+                <Button
+                    type="submit"
+                    isLoading={state.status === AuthStatus.AUTHENTICATING}
+                    className="w-full bg-neon-blue shadow-neon border-none h-12 mt-4"
+                >
+                    Registrarse
+                </Button>
+
+                <p className="text-center text-sm text-text-muted font-medium mt-6">
+                    ¿Ya tienes una cuenta?{' '}
+                    <Link to="/login" className="text-neon-cyan hover:underline">
+                        Inicia sesión
+                    </Link>
+                </p>
+            </form>
+        </AuthLayout>
     );
 };

@@ -10,5 +10,6 @@
  *   - Sidebar.tsx        → Menú lateral de navegación
  */
 
-// export { AppShell } from './AppShell';
-// export { AuthLayout } from './AuthLayout';
+export { AppShell } from './AppShell';
+export { Sidebar } from './Sidebar';
+export { AuthLayout } from './AuthLayout';

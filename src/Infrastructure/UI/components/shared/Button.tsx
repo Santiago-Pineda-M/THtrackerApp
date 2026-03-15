@@ -18,7 +18,7 @@ export const Button: React.FC<ButtonProps> = ({
 
     return (
         <button
-            className={`btn ${variantClass} ${className}`}
+            className={`btn ${variantClass} ${className} active:scale-95`}
             disabled={isLoading || disabled}
             {...props}
         >

@@ -2,6 +2,7 @@ import React from 'react';
 import { usePlocState } from '../../../Hooks/usePlocState';
 import { dependenciesLocator } from '../../../DI/DependenciesLocator';
 import { Button, Card } from '../../components/shared';
+import { AppShell } from '../../components/layout';
 
 export const DashboardPage: React.FC = () => {
     const authPloc = dependenciesLocator.provideAuthPloc();
@@ -13,65 +14,58 @@ export const DashboardPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-main">
-            {/* Header / Navbar */}
-            <nav className="navbar">
-                <div className="container flex justify-between">
-                    <div className="flex items-center">
-                        <span className="text-2xl font-bold text-primary">THtracker</span>
-                    </div>
-                    <div className="flex items-center gap-6">
-                        <div className="text-right flex-col flex hide-mobile">
-                            <span className="text-sm font-medium">
-                                {user?.name}
-                            </span>
-                            <span className="text-xs text-muted">
-                                {user?.email}
-                            </span>
-                        </div>
-                        <Button
-                            onClick={handleLogout}
-                            className="btn-outline"
-                        >
-                            Cerrar Sesión
-                        </Button>
-                    </div>
-                </div>
-            </nav>
-
-            {/* Main Content */}
-            <main className="container py-12">
-                <Card className="mb-6">
-                    <h1 className="text-3xl font-extrabold mb-6">
-                        Bienvenido a tu Dashboard
+        <AppShell>
+            {/* Header Card */}
+            <Card className="wide flex justify-between items-center p-8 bg-surface-primary/20">
+                <div>
+                    <h1 className="text-4xl font-extrabold bg-gradient-to-r from-text-primary to-text-secondary bg-clip-text text-transparent">
+                        Bienvenido, {user?.name.split(' ')[0]}
                     </h1>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {/* Stats Card */}
-                        <div className="stats-card bg-blue-light">
-                            <h3 className="text-primary text-sm font-bold mb-2">Estado de la cuenta</h3>
-                            <p className="text-2xl font-bold">Activa</p>
-                        </div>
+                    <p className="text-text-secondary mt-2 font-medium">Panel de control y estadísticas</p>
+                </div>
+                <Button onClick={handleLogout} variant="outline" className="border-white/10 hover:bg-white/5">
+                    Cerrar Sesión
+                </Button>
+            </Card>
 
-                        {/* Info Card */}
-                        <div className="stats-card bg-green-light">
-                            <h3 className="text-success text-sm font-bold mb-2">Perfil completado</h3>
-                            <p className="text-2xl font-bold">100%</p>
-                        </div>
+            {/* Hero / Main Stats */}
+            <Card className="large flex flex-col justify-between p-8 bg-gradient-to-br from-primary/10 to-transparent border-primary/20">
+                <div>
+                    <h3 className="text-neon-blue text-sm font-bold uppercase tracking-widest mb-4">Estado General</h3>
+                    <p className="text-5xl font-black mt-2">Activa</p>
+                </div>
+                <div className="mt-8">
+                    <p className="text-text-secondary italic">"Tu cuenta está configurada y lista para operar con el motor de IA."</p>
+                </div>
+            </Card>
 
-                        {/* Activity Card */}
-                        <div className="stats-card glass">
-                            <h3 className="text-muted text-sm font-bold mb-2">Última conexión</h3>
-                            <p className="text-2xl font-bold">Hoy</p>
-                        </div>
-                    </div>
+            {/* Profile Completion */}
+            <Card className="flex flex-col justify-center items-center text-center p-8">
+                <div className="relative w-32 h-32 flex items-center justify-center">
+                    <svg className="w-full h-full transform -rotate-90">
+                        <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-white/5" />
+                        <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray={2 * Math.PI * 58} strokeDashoffset={2 * Math.PI * 58 * 0} className="text-neon-pink shadow-neon" />
+                    </svg>
+                    <span className="absolute text-2xl font-black">100%</span>
+                </div>
+                <h3 className="text-text-primary font-bold mt-6">Perfil Completo</h3>
+            </Card>
 
-                    <div className="mt-8 text-center">
-                        <p className="text-muted italic">
-                            "Esta es una vista preliminar de tu panel de control."
-                        </p>
-                    </div>
-                </Card>
-            </main>
-        </div>
+            {/* Last Connection */}
+            <Card className="flex flex-col justify-between p-8 border-white/5">
+                <h3 className="text-text-secondary text-sm font-bold uppercase tracking-widest">Última Conexión</h3>
+                <div>
+                    <p className="text-3xl font-black text-neon-purple">Hoy</p>
+                    <p className="text-text-secondary text-sm mt-1">Hace 2 horas</p>
+                </div>
+            </Card>
+
+            {/* Activity Placeholder */}
+            <Card className="wide p-8 border-white/5 flex items-center justify-center">
+                <p className="text-text-secondary italic font-medium">
+                    Próximamente: Visualización de transacciones y análisis de datos en tiempo real.
+                </p>
+            </Card>
+        </AppShell>
     );
 };

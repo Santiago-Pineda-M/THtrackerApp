@@ -183,45 +183,6 @@ export class AuthPloc extends Ploc<IAuthState> {
         this.changeState({ ...this.state, status: AuthStatus.UNAUTHENTICATED });
     }
 
-    /**
-     * Fuerza el refresco del token manualmente (para pruebas).
-     */
-    async forceRefreshToken(): Promise<void> {
-        console.log('[AuthPloc] ⚡ Forzando refresco de token manualmente...');
-        const session = await this.authSessionRepository.getSession();
-        if (!session) {
-            console.error('[AuthPloc] No hay sesión activa para refrescar');
-            return;
-        }
-
-        this.changeState({ ...this.state, status: AuthStatus.REFRESHING_TOKEN });
-
-        try {
-            const result = await this.refreshTokenUseCases.execute({
-                refreshToken: session.refreshToken
-            });
-
-            if ('accessToken' in result) {
-                console.log('[AuthPloc] ✅ Refresh manual completado con éxito');
-                // Recargar estado después del refresh exitoso
-                await this.init();
-            } else {
-                console.error('[AuthPloc] ❌ Error en refresh manual:', result);
-                this.changeState({
-                    ...this.state,
-                    status: AuthStatus.FAILED,
-                    error: result.detail || result.title || 'Error al forzar refresh'
-                });
-            }
-        } catch (error) {
-            console.error('[AuthPloc] 🚨 Excepción en refresh manual:', error);
-            this.changeState({
-                ...this.state,
-                status: AuthStatus.FAILED,
-                error: error instanceof Error ? error.message : 'Error al forzar refresh'
-            });
-        }
-    }
 
     /**
      * Verifica si el resultado de login es exitoso.

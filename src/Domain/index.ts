@@ -6,6 +6,9 @@
 // Entities
 export { AuthSession, type AuthSessionProps, type UserData } from './Entities/AuthSession';
 export { type IUserSession } from './Auth/AuthEntities';
+export { User, type IUser } from './User/UserEntities';
+export type { IUpdateUserRequest } from './User/IUserSelfRequest';
+export type { IUserDto } from './User/IUserSelfResponse';
 
 // Value Objects
 export { Email, AuthTokens, UserId } from './ValueObjects';

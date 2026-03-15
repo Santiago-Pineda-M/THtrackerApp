@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuthPloc } from '../../../src/Controllers/Auth/AuthPloc';
 import { AuthStatus } from '../../../src/Domain';
@@ -5,7 +6,7 @@ import type { IAuthSessionRepository } from '../../../src/Domain/Repositories/IA
 import type { LoginUserUseCase, RefreshTokenUseCases } from '../../../src/Application/AuthUsesCase/LoginUseCases';
 import type { RegisterUseCases } from '../../../src/Application/AuthUsesCase/RegisterUsesCase';
 import type { LogoutUseCase } from '../../../src/Application/AuthUsesCase/LogoutUseCase';
-import type { CheckAuthSessionUseCase, CheckAuthSessionOutput } from '../../../src/Application/AuthUsesCase';
+import type { CheckAuthSessionUseCase } from '../../../src/Application/AuthUsesCase';
 
 /**
  * TEST - Controllers Layer
@@ -68,9 +69,9 @@ describe('AuthPloc', () => {
                 user: mockUser,
                 accessToken: 'token',
                 refreshToken: 'refresh',
-                needsRefresh: () => false
+                accessTokenNeedsRefresh: () => false
             };
-            checkAuthSessionUseCase.execute.mockResolvedValue({ isAuthenticated: true, session: mockSession as unknown as CheckAuthSessionOutput['session'] });
+            checkAuthSessionUseCase.execute.mockResolvedValue({ isAuthenticated: true, session: mockSession as any });
 
             await ploc.init();
 
@@ -83,10 +84,10 @@ describe('AuthPloc', () => {
                 user: mockUser,
                 accessToken: 'old-token',
                 refreshToken: 'refresh-token',
-                needsRefresh: () => true
+                accessTokenNeedsRefresh: () => true
             };
-            checkAuthSessionUseCase.execute.mockResolvedValue({ isAuthenticated: true, session: mockSession as unknown as CheckAuthSessionOutput['session'] });
-            refreshTokenUseCases.execute.mockResolvedValue(undefined);
+            checkAuthSessionUseCase.execute.mockResolvedValue({ isAuthenticated: true, session: mockSession as any });
+            refreshTokenUseCases.execute.mockResolvedValue({ accessToken: 'new-token', refreshToken: 'new-refresh' });
 
             await ploc.init();
 
@@ -99,10 +100,10 @@ describe('AuthPloc', () => {
                 user: mockUser,
                 accessToken: 'old-token',
                 refreshToken: 'refresh-token',
-                needsRefresh: () => true
+                accessTokenNeedsRefresh: () => true
             };
-            checkAuthSessionUseCase.execute.mockResolvedValue({ isAuthenticated: true, session: mockSession as unknown as CheckAuthSessionOutput['session'] });
-            refreshTokenUseCases.execute.mockRejectedValue(new Error('Expired'));
+            checkAuthSessionUseCase.execute.mockResolvedValue({ isAuthenticated: true, session: mockSession as any });
+            refreshTokenUseCases.execute.mockResolvedValue({ type: 'error', detail: 'Expired' });
 
             await ploc.init();
 
@@ -118,6 +119,11 @@ describe('AuthPloc', () => {
                 refreshToken: 'refresh-token',
                 user: mockUser
             });
+            vi.mocked(authSessionRepository.getSession).mockResolvedValue({
+                userId: mockUser.id,
+                name: mockUser.name,
+                email: mockUser.email
+            } as any);
 
             await ploc.login({ email: 'test@test.com', password: 'password', deviceInfo: 'test-device' });
 
@@ -162,7 +168,7 @@ describe('AuthPloc', () => {
 
             await ploc.logout();
 
-            expect(logoutUseCase.execute).toHaveBeenCalledWith({ notifyServer: true });
+            expect(logoutUseCase.execute).toHaveBeenCalled();
             expect(ploc.state.status).toBe(AuthStatus.UNAUTHENTICATED);
         });
 

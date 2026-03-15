@@ -17,6 +17,7 @@ import { FetchHttpClient } from '../Adapters/http/FetchHttpClient';
 import { SecureStorageAdapter } from '../Adapters/storage';
 import { AuthSessionRepository } from '../Repositories/AuthSessionRepository';
 import { AuthService } from '../Services/AuthService';
+import { UserSelfService } from '../Services/User/UserSelfService';
 
 import { GetHealthUseCase } from '../../Application/UseCases/Health/GetHealthUseCase';
 import {
@@ -26,8 +27,13 @@ import {
     LogoutUseCase,
     CheckAuthSessionUseCase,
 } from '../../Application/UseCases/Auth';
+import {
+    GetUserProfileUseCase,
+    UpdateUserProfileUseCase,
+} from '../../Application/UseCases/User';
 
 import { AuthPloc } from '../../Controllers/Auth/AuthPloc';
+import { UserPloc } from '../../Controllers/User/UserPloc';
 import { HealthPloc } from '../../Controllers/Health/HealthPloc';
 import { DebugPloc } from '../../Controllers/Debug/DebugPloc';
 
@@ -82,6 +88,7 @@ const httpClient = new FetchHttpClient(API_URL, getAccessToken, refreshStrategy)
 // ── 5. Servicios ────────────────────────────────────────────────────────────────────
 
 const authService = new AuthService(httpClient);
+const userSelfService = new UserSelfService(httpClient);
 
 // ── 6. Casos de Uso ─────────────────────────────────────────────────────────────────
 
@@ -91,6 +98,9 @@ const registerUseCases = new RegisterUseCases(authService);
 const refreshTokenUseCases = new RefreshTokenUseCases(authService, authSessionRepository);
 const logoutUseCase = new LogoutUseCase(authSessionRepository);
 const checkAuthSessionUseCase = new CheckAuthSessionUseCase(authSessionRepository);
+
+const getUserProfileUseCase = new GetUserProfileUseCase(userSelfService);
+const updateUserProfileUseCase = new UpdateUserProfileUseCase(userSelfService);
 
 // ── 7. Controllers / Plocs ──────────────────────────────────────────────────────────
 
@@ -103,12 +113,18 @@ const authPloc = new AuthPloc(
     authSessionRepository
 );
 
+const userPloc = new UserPloc(
+    getUserProfileUseCase,
+    updateUserProfileUseCase
+);
+
 const debugPloc = new DebugPloc(authSessionRepository);
 
 // ── 8. Locator público ──────────────────────────────────────────────────────────────
 
 export const dependenciesLocator = {
     provideAuthPloc: () => authPloc,
+    provideUserPloc: () => userPloc,
     provideHealthPloc: () => new HealthPloc(getHealthUseCase),
     provideDebugPloc: () => debugPloc,
     provideAuthSessionRepository: () => authSessionRepository,
