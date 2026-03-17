@@ -11,3 +11,11 @@ export interface IUserSession {
     name: string;
     email: string;
 }
+
+/**
+ * Tokens de autenticación expuestos a la UI.
+ */
+export interface IAuthToken {
+    accessToken: string;
+    refreshToken: string;
+}

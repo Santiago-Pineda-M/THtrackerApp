@@ -10,7 +10,10 @@ import type { IAuthService } from '../../Services/Auth/IAuthService';
 export type RegisterOutput = IRegisterResponse | ILoginResponseError;
 
 export class RegisterUseCases implements IUseCase<IRegisterRequest, RegisterOutput> {
-    constructor(private readonly authService: IAuthService) {}
+    private readonly authService: IAuthService;
+    constructor(authService: IAuthService) {
+        this.authService = authService;
+    }
 
     async execute(input: IRegisterRequest): Promise<RegisterOutput> {
         return this.authService.register(input);

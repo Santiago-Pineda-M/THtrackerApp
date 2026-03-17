@@ -1,0 +1,50 @@
+.text {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base);
+}
+
+/* Sizes */
+.text[data-size='xl'] {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+.text[data-size='lg'] {
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+.text[data-size='md'] {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.text[data-size='sm'] {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.text[data-size='xs'] {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+/* Weights */
+.text[data-weight='normal'] {
+  font-weight: 400;
+}
+.text[data-weight='medium'] {
+  font-weight: 500;
+}
+.text[data-weight='bold'] {
+  font-weight: 700;
+}
+
+/* Muted */
+.text[data-muted] {
+  color: var(--color-text-secondary);
+}
+
+/* Truncate */
+.text[data-truncate] {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

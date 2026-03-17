@@ -1,0 +1,61 @@
+/* =========================
+   CARD BASE (RIGID BENTO)
+   ========================= */
+
+.card {
+  /* GRID SIZE (controlado por --w y --h) */
+  grid-column: span var(--w, 1);
+  grid-row: span var(--h, 1);
+
+  /* PREVENT OVERFLOW BREAK */
+  min-width: 0;
+  min-height: 0;
+
+  /* LAYOUT */
+  display: flex;
+  flex-direction: column;
+
+  /* HARD CONSTRAINT */
+  overflow: hidden; /* 👈 clave: nunca crece */
+
+  position: relative;
+
+  /* VISUAL */
+  background: var(--color-bg-card);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-card-padding);
+  border: 1px solid var(--color-border-soft);
+}
+
+/* HIJOS NO ROMPEN */
+.card > * {
+  min-width: 0;
+  max-width: 100%;
+  flex-shrink: 1;
+}
+
+/* =========================
+   TOP RIGHT REAL (GRID-BASED)
+   ========================= */
+
+.grid-top-right {
+  /* Colocación: primera fila, última columna, respetando tamaño */
+  grid-column: span var(--w, 1) / -1; /* ocupa --w columnas terminando en el borde derecho */
+  grid-row: 1 / span var(--h, 1); /* empieza en fila 1 y ocupa --h filas */
+}
+
+/* =========================
+   MOBILE (SIN !important)
+   ========================= */
+
+@media (max-width: 640px) {
+  .card {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+
+  .grid-top-right {
+    grid-column: span 1;
+    grid-row: auto; /* flujo normal en móvil */
+  }
+}

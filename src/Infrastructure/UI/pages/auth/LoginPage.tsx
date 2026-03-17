@@ -3,13 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { usePlocState } from '../../../Hooks/usePlocState';
 import { dependenciesLocator } from '../../../DI/DependenciesLocator';
 import { AuthStatus } from '../../../../Domain';
-import { Button, Input, Alert } from '../../components/shared';
-import { AuthLayout } from '../../components/layout';
+import { Card, Input, Button, Text, type InputElement } from '../../components';
 
-// Utilidad para obtener información del dispositivo
 const getDeviceInfo = (): string => {
-    const platform = navigator.platform;
-    return `THtracker-Web-${platform || 'Unknown'}-${new Date().getFullYear()}`;
+    return `THtracker-Web-${navigator.userAgent}-${new Date().getFullYear()}`;
 };
 
 export const LoginPage: React.FC = () => {
@@ -33,56 +30,49 @@ export const LoginPage: React.FC = () => {
     };
 
     return (
-        <AuthLayout 
-            title="Bienvenido de nuevo" 
-            subtitle="Ingresa a tu cuenta para continuar con el seguimiento"
-        >
-            {state.error && (
-                <div className="mb-6">
-                    <Alert message={state.error} type="error" />
-                </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <Input
-                    label="Correo electrónico"
-                    id="email-address"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="usuario@ejemplo.com"
-                />
-
-                <Input
-                    label="Contraseña"
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                />
-
-                <Button
-                    type="submit"
-                    isLoading={state.status === AuthStatus.AUTHENTICATING}
-                    className="w-full bg-neon-blue shadow-neon border-none h-12 mt-4"
-                >
-                    Iniciar Sesión
-                </Button>
-
-                <p className="text-center text-sm text-text-muted font-medium mt-6">
-                    ¿No tienes una cuenta?{' '}
-                    <Link to="/register" className="text-neon-cyan hover:underline">
-                        Créala ahora
-                    </Link>
-                </p>
-            </form>
-        </AuthLayout>
+        <Card w={3} h={4} title="Iniciar Sesión">
+                {state.error && (
+                    <Text variant="body" className="text-error" style={{ marginBottom: 'var(--space-md)' }}>
+                        {state.error}
+                    </Text>
+                )}
+                
+                <form onSubmit={handleSubmit}>
+                    <div>
+                        <Input 
+                            label="Correo Electrónico"
+                            name="email"
+                            type="email" 
+                            value={email} 
+                            onChange={(e: React.ChangeEvent<InputElement>) => setEmail(e.target.value)} 
+                            required 
+                            placeholder="tu@correo.com"
+                        />
+                        <Input 
+                            label="Contraseña"
+                            name="password"
+                            type="password" 
+                            value={password} 
+                            onChange={(e: React.ChangeEvent<InputElement>) => setPassword(e.target.value)} 
+                            required 
+                            placeholder="••••••••"
+                        />
+                    </div>
+                    
+                    <div>
+                        <Button type="submit" variant="primary" disabled={state.status === AuthStatus.LOADING}>
+                            {state.status === AuthStatus.LOADING ? 'Cargando...' : 'Iniciar Sesión'}
+                        </Button>
+                        
+                        <div>
+                            <Text variant="caption">
+                                ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
+                            </Text>
+                        </div>
+                    </div>
+                </form>
+            </Card>
     );
 };
+
+export default LoginPage;

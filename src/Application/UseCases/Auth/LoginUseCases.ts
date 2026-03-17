@@ -23,10 +23,16 @@ export type LoginOutput = ILoginResponse | ILoginResponseError;
  * Inicia sesión, crea la AuthSession desde JWT claims, y la persiste.
  */
 export class LoginUserUseCase implements IUseCase<ILoginRequest, LoginOutput> {
+    private readonly authService: IAuthService;
+    private readonly authSessionRepo: IAuthSessionRepository;
+
     constructor(
-        private readonly authService: IAuthService,
-        private readonly authSessionRepo: IAuthSessionRepository
-    ) {}
+        authService: IAuthService,
+        authSessionRepo: IAuthSessionRepository
+    ) {
+        this.authService = authService;
+        this.authSessionRepo = authSessionRepo;
+    }
 
     async execute(input: ILoginRequest): Promise<LoginOutput> {
         const result = await this.authService.login(input);
@@ -84,10 +90,16 @@ export class LoginUserUseCase implements IUseCase<ILoginRequest, LoginOutput> {
  * Renueva tokens y actualiza la AuthSession persistida.
  */
 export class RefreshTokenUseCases implements IUseCase<IRefreshTokenRequest, IRefreshTokenResponse | IRefreshTokenResponseError> {
+    private readonly authService: IAuthService;
+    private readonly authSessionRepo: IAuthSessionRepository;
+
     constructor(
-        private readonly authService: IAuthService,
-        private readonly authSessionRepo: IAuthSessionRepository
-    ) {}
+        authService: IAuthService,
+        authSessionRepo: IAuthSessionRepository
+    ) {
+        this.authService = authService;
+        this.authSessionRepo = authSessionRepo;
+    }
 
     async execute(input: IRefreshTokenRequest): Promise<IRefreshTokenResponse | IRefreshTokenResponseError> {
         const result = await this.authService.refreshToken(input);

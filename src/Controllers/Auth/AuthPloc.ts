@@ -167,6 +167,29 @@ export class AuthPloc extends Ploc<IAuthState> {
     }
 
     /**
+     * Fuerza la renovación del token manualmente.
+     */
+    async forceRefreshToken(): Promise<void> {
+        const session = await this.authSessionRepository.getSession();
+        if (!session) return;
+
+        this.changeState({ ...this.state, status: AuthStatus.REFRESHING_TOKEN });
+        try {
+            await this.refreshTokenUseCases.execute({ refreshToken: session.refreshToken });
+            // Al ser exitoso, el UseCase ya persistió y actualizó la sesión.
+            // Re-inicializar para leer la nueva sesión y actualizar estado local
+            await this.init();
+        } catch (error) {
+            console.error('[AuthPloc] Force refresh failed:', error);
+            this.changeState({ 
+                ...this.state, 
+                status: AuthStatus.FAILED, 
+                error: 'Manual refresh failed' 
+            });
+        }
+    }
+
+    /**
      * Cierre de sesión usando LogoutUseCase.
      */
     async logout(): Promise<void> {
