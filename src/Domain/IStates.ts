@@ -1,10 +1,10 @@
 /**
  * DOMAIN LAYER - State Interfaces
- * Contiene los estados globales para los PLOCs en la aplicación.
+ * Contiene los estados globales para los PLOCs de autenticación.
  * Centralizado siguiendo principios de Clean Architecture para evitar acoplamiento ciclico.
  */
 
-import type { IUserSession, IAuthToken } from './Auth/AuthEntities';
+import type { IUserSession } from './Auth/AuthEntities';
 
 /**
  * ==========================================
@@ -32,92 +32,107 @@ export type AuthStatus = typeof AuthStatus[keyof typeof AuthStatus];
  * Interfaz del estado de autenticación usado por AuthPloc.
  */
 export interface IAuthState {
-    status: AuthStatus;
-    user?: IUserSession;
-    token?: IAuthToken;
-    error?: string;
+    status: AuthStatus,
+    user?: IUserSession
 }
 
 export const initialAuthState: IAuthState = {
-    status: AuthStatus.IDLE
+    status: AuthStatus.IDLE,
+    user: undefined,
 };
 
 /**
  * ==========================================
- * DEBUG STATES
+ * LOGIN STATES
  * ==========================================
  */
 
-export interface DebugTokenExpiryInfo {
-    accessTokenExpiry: Date | null;
-    refreshTokenExpiry: Date | null;
-    isExpired: boolean;
-    needsRefresh: boolean;
+/**
+ * Interfaz del estado del formulario de login.
+ * Usada por LoginPloc para gestionar el flujo de login.
+ */
+export interface ILoginState {
+    email: string;
+    password: string;
+    errors: Record<string, string[]>;
+    success: boolean;
+    message: string;
+    isLoading: boolean;
 }
 
-export interface DebugApiCallInfo {
-    timestamp: Date | null;
-    endpoint: string | null;
-    status: number | null;
-    method: string | null;
+export const initialLoginState: ILoginState = {
+    email: '',
+    password: '',
+    errors: {},
+    success: false,
+    message: '',
+    isLoading: false,
+};
+
+/**
+ * ==========================================
+ * REGISTER STATES
+ * ==========================================
+ */
+
+/**
+ * Interfaz del estado del formulario de registro.
+ * Usada por RegisterPloc para gestionar el flujo de registro.
+ */
+export interface IRegisterState {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    errors: Record<string, string[]>;
+    success: boolean;
+    message: string;
+    isLoading: boolean;
 }
 
-export interface DebugStorageInfo {
-    size: number;
-    keys: string[];
-    contents: Record<string, string>;
+export const initialRegisterState: IRegisterState = {
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    errors: {},
+    success: false,
+    message: '',
+    isLoading: false,
+};
+
+/**
+ * ==========================================
+ * REFRESH TOKEN STATES
+ * ==========================================
+ */
+
+export interface IRefreshTokenState {
+    isRefreshing: boolean;
+    success: boolean;
+    error?: string;
 }
 
-export interface DebugAppInfo {
-    appVersion: string;
-    environment: string;
-    buildTimestamp: string;
+export const initialRefreshTokenState: IRefreshTokenState = {
+    isRefreshing: false,
+    success: false,
+    error: undefined,
+};
+
+/**
+ * ==========================================
+ * LOGOUT STATES
+ * ==========================================
+ */
+
+export interface ILogoutState {
+    isLoggingOut: boolean;
+    success: boolean;
+    error?: string;
 }
 
-export interface DebugNavigatorInfo {
-    online: boolean;
-    connectionType: string;
-    userAgent: string;
-}
-
-export interface IDebugState {
-    tokenExpiry: DebugTokenExpiryInfo;
-    lastApiCall: DebugApiCallInfo;
-    storageInfo: DebugStorageInfo;
-    appInfo: DebugAppInfo;
-    navigatorInfo: DebugNavigatorInfo;
-    renderCount: number;
-    lastUpdate: Date;
-}
-
-export const initialDebugState: IDebugState = {
-    tokenExpiry: {
-        accessTokenExpiry: null,
-        refreshTokenExpiry: null,
-        isExpired: true,
-        needsRefresh: true
-    },
-    lastApiCall: {
-        timestamp: null,
-        endpoint: null,
-        status: null,
-        method: null
-    },
-    storageInfo: {
-        size: 0,
-        keys: [],
-        contents: {}
-    },
-    appInfo: {
-        appVersion: '1.0.0',
-        environment: 'development',
-        buildTimestamp: new Date().toISOString()
-    },
-    navigatorInfo: {
-        online: true,
-        connectionType: 'unknown',
-        userAgent: ''
-    },
-    renderCount: 0,
-    lastUpdate: new Date()
+export const initialLogoutState: ILogoutState = {
+    isLoggingOut: false,
+    success: false,
+    error: undefined,
 };

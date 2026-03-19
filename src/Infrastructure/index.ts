@@ -16,7 +16,7 @@ export { AuthSessionRepository } from './Repositories/AuthSessionRepository';
 export { dependenciesLocator } from './DI/DependenciesLocator';
 
 // Context
-export { DependenciesProvider, useDependencies } from './Context/useDependencies';
+export { DependenciesProvider, useDependencies } from './Context/DependenciesProvider';
 
 // Hooks
 export { usePlocState } from './Hooks/usePlocState';

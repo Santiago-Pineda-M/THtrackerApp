@@ -3,10 +3,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuthPloc } from '../../../src/Controllers/Auth/AuthPloc';
 import { AuthStatus } from '../../../src/Domain';
 import type { IAuthSessionRepository } from '../../../src/Domain/Repositories/IAuthSessionRepository';
-import type { LoginUserUseCase, RefreshTokenUseCases } from '../../../src/Application/AuthUsesCase/LoginUseCases';
-import type { RegisterUseCases } from '../../../src/Application/AuthUsesCase/RegisterUsesCase';
-import type { LogoutUseCase } from '../../../src/Application/AuthUsesCase/LogoutUseCase';
-import type { CheckAuthSessionUseCase } from '../../../src/Application/AuthUsesCase';
+import type { LoginUserUseCase, RefreshTokenUseCases } from '../../../src/Application/UseCases/Auth/LoginUseCases';
+import type { RegisterUseCases } from '../../../src/Application/UseCases/Auth/RegisterUsesCase';
+import type { LogoutUseCase } from '../../../src/Application/UseCases/Auth/LogoutUseCase';
+import type { CheckAuthSessionUseCase } from '../../../src/Application/UseCases/Auth';
 
 /**
  * TEST - Controllers Layer
@@ -35,8 +35,7 @@ describe('AuthPloc', () => {
         authSessionRepository = {
             getSession: vi.fn().mockResolvedValue(null),
             saveSession: vi.fn().mockResolvedValue(undefined),
-            clearSession: vi.fn().mockResolvedValue(undefined),
-            updateSession: vi.fn().mockResolvedValue(undefined)
+            clearSession: vi.fn().mockResolvedValue(undefined)
         };
 
         ploc = new AuthPloc(
@@ -146,7 +145,8 @@ describe('AuthPloc', () => {
         it('should set UNAUTHENTICATED after successful registration', async () => {
             registerUseCases.execute.mockResolvedValue({ message: 'Registration successful' });
 
-            await ploc.register({ name: 'New User', email: 'new@test.com', password: 'pass' });
+            // Password debe tener al menos 8 caracteres, una mayúscula y un número
+            await ploc.register({ name: 'New User', email: 'new@test.com', password: 'Password1', confirmPassword: 'Password1' });
 
             expect(ploc.state.status).toBe(AuthStatus.UNAUTHENTICATED);
         });

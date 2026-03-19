@@ -5,14 +5,6 @@
  */
 
 /**
- * Errores de validación del formulario.
- */
-export interface IValidationError {
-    field: string;
-    messages: string[];
-}
-
-/**
  * Respuesta de error de login.
  */
 export interface ILoginResponseError {
@@ -34,21 +26,14 @@ export interface IRefreshTokenResponseError {
 }
 
 /**
- * Respuesta de error genérica de autenticación.
+ * Estándar RFC 7807 para errores de la API.
+ * Tipo genérico para parsear respuestas de error HTTP.
  */
-export interface IAuthResponseError {
-    title: string;
-    status: number;
-    detail?: string;
-    errors?: Record<string, string[]>;
+export interface IProblemDetails {
     type?: string;
-}
-
-/**
- * Error de red o conexión.
- */
-export interface INetworkError {
-    code: string;
-    message: string;
+    title?: string;
     status?: number;
+    detail?: string;
+    instance?: string;
+    errors?: Record<string, string[]>;
 }

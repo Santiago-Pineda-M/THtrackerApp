@@ -65,24 +65,3 @@ export interface ISecureStorage {
      */
     clear(): Promise<void>;
 }
-
-/**
- * Resultado genérico para UseCases que pueden fallar.
- */
-export type UseCaseResult<T, E = Error> = 
-    | { success: true; value: T; error: null }
-    | { success: false; value: null; error: E };
-
-/**
- * Helper para crear resultado de éxito.
- */
-export const successResult = <T>(value: T): UseCaseResult<T, never> => {
-    return { success: true, value, error: null };
-}
-
-/**
- * Helper para crear resultado de error.
- */
-export const errorResult = <E>(error: E): UseCaseResult<never, E> => {
-    return { success: false, value: null, error };
-}

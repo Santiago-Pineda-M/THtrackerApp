@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { HealthPloc } from '../../../src/Controllers/Health/HealthPloc';
-import type { GetHealthUseCase } from '../../../src/Application/Health/GetHealthUseCase';
+import type { GetHealthUseCase } from '../../../src/Application/UseCases/Health/GetHealthUseCase';
 
 /**
  * TEST - Controllers Layer

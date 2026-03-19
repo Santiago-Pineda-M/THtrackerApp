@@ -116,6 +116,12 @@ export class AuthValidationService {
             }
         }
         
+        // Validar confirmación de contraseña
+        const confirmPassword = data.confirmPassword;
+        if (password && confirmPassword !== password) {
+            errors.push({ field: 'confirmPassword', message: 'Las contraseñas no coinciden' });
+        }
+        
         if (errors.length > 0) {
             return { valid: false, errors };
         }
@@ -163,4 +169,5 @@ export interface RegisterRequestData {
     name: string;
     email: string;
     password: string;
+    confirmPassword?: string;
 }

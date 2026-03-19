@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import type { IStorage } from '../../src/Domain/Interfaces/IStorage';
+import type { IStorage } from '../../src/Domain/IPatterns';
 
 /**
  * Fábrica de mock para IStorage.

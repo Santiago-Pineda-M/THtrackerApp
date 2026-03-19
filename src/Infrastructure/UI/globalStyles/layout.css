@@ -1,7 +1,7 @@
 main {
   display: grid;
 
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-column-min), 1fr));
+grid-template-columns: repeat(auto-fit, minmax(var(--grid-column-min), var(--grid-column-max)));
 
   grid-auto-rows: var(--grid-row-height);
 
@@ -12,7 +12,7 @@ main {
   margin: 0 auto;
 
   padding: var(--spacing-page-padding);
-  /* Extra bottom pad so the fixed FAB doesn't overlap the last card */
+
   padding-bottom: calc(var(--spacing-page-padding) + 64px);
 
   grid-auto-flow: dense;

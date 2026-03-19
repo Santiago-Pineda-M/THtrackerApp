@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import type { IHttpClient } from '../../src/Domain/Interfaces/IHttpClient';
+import type { IHttpClient } from '../../src/Domain/IPatterns';
 
 /**
  * Fábrica de mock para IHttpClient.

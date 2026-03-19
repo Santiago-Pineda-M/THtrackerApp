@@ -1,29 +1,28 @@
 /**
  * DOMAIN LAYER - Barrel Exports
  * Punto de entrada único para importar desde la capa de Dominio.
+ * Solo exports relacionados con autenticación.
  */
 
 // Entities
 export { AuthSession, type AuthSessionProps, type UserData } from './Entities/AuthSession';
 export { type IUserSession } from './Auth/AuthEntities';
-export { User, type IUser } from './User/UserEntities';
-export type { IUpdateUserRequest } from './User/IUserSelfRequest';
-export type { IUserDto } from './User/IUserSelfResponse';
 
 // Value Objects
-export { Email, AuthTokens, UserId } from './ValueObjects';
+export { Email, AuthTokens, decodeJwtExp, isoToExpiresInSeconds } from './ValueObjects';
+export { UserId } from './ValueObjects/UserId';
 
 // Repositories
 export type { IAuthSessionRepository } from './Repositories/IAuthSessionRepository';
 
-// Request Interfaces (3 endpoints que realmente existen en la API)
+// Request Interfaces (Auth)
 export type {
     ILoginRequest,
     IRegisterRequest,
     IRefreshTokenRequest,
 } from './Auth/IAuthRequest';
 
-// Response Interfaces (3 endpoints que realmente existen en la API)
+// Response Interfaces (Auth)
 export type {
     ILoginResponse,
     IRegisterResponse,
@@ -34,9 +33,7 @@ export type {
 export type {
     ILoginResponseError,
     IRefreshTokenResponseError,
-    IAuthResponseError,
-    INetworkError,
-    IValidationError,
+    IProblemDetails,
 } from './Auth/IAuthResponsesError';
 
 // Pattern Interfaces
@@ -46,9 +43,6 @@ export {
     type ISecureStorage, 
     type IStorage,
     type HttpResponse,
-    type UseCaseResult,
-    successResult,
-    errorResult,
 } from './IPatterns';
 
 // States & Enums

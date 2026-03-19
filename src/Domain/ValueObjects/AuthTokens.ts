@@ -5,7 +5,7 @@
  */
 
 // Función pura para decodificar JWT expiración (exp está en segundos, retorna milisegundos)
-const decodeJwtExp = (token: string): number | null => {
+export const decodeJwtExp = (token: string): number | null => {
     if (!token) return null;
     try {
         const parts = token.split('.');
@@ -18,6 +18,23 @@ const decodeJwtExp = (token: string): number | null => {
         return payload.exp ? payload.exp * 1000 : null;
     } catch {
         return null;
+    }
+};
+
+/**
+ * Convierte una fecha ISO string a segundos hasta la expiración.
+ * @param isoDate - Fecha en formato ISO string
+ * @returns Segundos hasta la expiración, o 0 si la fecha es inválida
+ */
+export const isoToExpiresInSeconds = (isoDate: string | null | undefined): number => {
+    if (!isoDate) return 0;
+    try {
+        const expiryTime = new Date(isoDate).getTime();
+        const now = Date.now();
+        const diff = expiryTime - now;
+        return diff > 0 ? Math.floor(diff / 1000) : 0;
+    } catch {
+        return 0;
     }
 };
 
@@ -66,24 +83,28 @@ export class AuthTokens {
 
     /**
      * Crea AuthTokens desde tokens nuevos + duración en segundos calculada desde el backend.
-     * Decodifica los tokens JWT para obtener fechas más exactas si el backend solo envía el default del AuthType.
+     * - accessTokenExpiresAt: se extrae del JWT
+     * - refreshTokenExpiresAt: viene del refreshTokenExpiry de la API (convertido a timestamp)
      */
     static createWithExpiry(
         accessToken: string,
         refreshToken: string,
-        expiresInSeconds: number
+        refreshTokenExpiresInSeconds: number
     ): AuthTokens {
-        // Usa la informacion del token decodificado como primera fuente, cae en fallback del servidor si no es JWT
+        // Decodifica el JWT para obtener fecha de expiración del access token
         const decodedAccess = decodeJwtExp(accessToken);
-        const accessExp = decodedAccess || Date.now() + (expiresInSeconds * 1000);
-
-        const decodedRefresh = decodeJwtExp(refreshToken);
+        const accessExp = decodedAccess || Date.now() + (7 * 24 * 60 * 60 * 1000); // fallback 7 días
+        
+        // El refresh token expiry viene de la API, convertir a timestamp
+        const refreshExp = refreshTokenExpiresInSeconds > 0 
+            ? Date.now() + (refreshTokenExpiresInSeconds * 1000)
+            : null;
         
         return AuthTokens.create({
             accessToken,
             refreshToken,
             accessTokenExpiresAt: accessExp,
-            refreshTokenExpiresAt: decodedRefresh
+            refreshTokenExpiresAt: refreshExp
         });
     }
 
@@ -142,9 +163,11 @@ export class AuthTokens {
 
     /**
      * Crea nueva instancia con nuevos tokens (manteniendo estructura inmutable).
+     * - accessTokenExpiresAt: se extrae del nuevo JWT
+     * - refreshTokenExpiresAt: viene del refreshTokenExpiry de la API
      */
-    updateTokens(newAccessToken: string, newRefreshToken: string, expiresInSeconds: number): AuthTokens {
-        return AuthTokens.createWithExpiry(newAccessToken, newRefreshToken, expiresInSeconds);
+    updateTokens(newAccessToken: string, newRefreshToken: string, refreshTokenExpiresInSeconds: number): AuthTokens {
+        return AuthTokens.createWithExpiry(newAccessToken, newRefreshToken, refreshTokenExpiresInSeconds);
     }
 
     /**

@@ -1,0 +1,27 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.register {
+  margin-top: var(--space-sm);
+  color: var(--color-text-secondary);
+}
+
+.register a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.register a:hover {
+  color: var(--color-accent-hover);
+  text-decoration: underline;
+}
+
+.error {
+  color: var(--color-error);
+  font-weight: 500;
+  margin-bottom: var(--space-md);
+}

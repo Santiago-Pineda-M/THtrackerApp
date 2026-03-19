@@ -14,9 +14,9 @@ import type {
     IRefreshTokenResponse,
     ILoginResponseError,
     IRefreshTokenResponseError,
+    IProblemDetails,
 } from '../../Domain';
 import type { IAuthService } from '../../Application/Services/Auth/IAuthService';
-import type { ProblemDetails } from '../../Application/DTOs/Auth/AuthDTOs';
 
 export class AuthService implements IAuthService {
     private readonly httpClient: IHttpClient;
@@ -28,7 +28,7 @@ export class AuthService implements IAuthService {
 
     async login(request: ILoginRequest): Promise<ILoginResponse | ILoginResponseError> {
         try {
-            const response = await this.httpClient.post<ILoginResponse | ProblemDetails>(`${this.baseUrl}/login`, request);
+            const response = await this.httpClient.post<ILoginResponse | IProblemDetails>(`${this.baseUrl}/login`, request);
             if (response.status === 200) return response.data as ILoginResponse;
             return this.toLoginError(response.data);
         } catch (error) {
@@ -38,7 +38,7 @@ export class AuthService implements IAuthService {
 
     async register(request: IRegisterRequest): Promise<IRegisterResponse | ILoginResponseError> {
         try {
-            const response = await this.httpClient.post<IRegisterResponse | ProblemDetails>(`${this.baseUrl}/register`, request);
+            const response = await this.httpClient.post<IRegisterResponse | IProblemDetails>(`${this.baseUrl}/register`, request);
             if (response.status === 200 || response.status === 201) return response.data as IRegisterResponse;
             return this.toLoginError(response.data);
         } catch (error) {
@@ -48,7 +48,7 @@ export class AuthService implements IAuthService {
 
     async refreshToken(request: IRefreshTokenRequest): Promise<IRefreshTokenResponse | IRefreshTokenResponseError> {
         try {
-            const response = await this.httpClient.post<IRefreshTokenResponse | ProblemDetails>(`${this.baseUrl}/refresh`, request);
+            const response = await this.httpClient.post<IRefreshTokenResponse | IProblemDetails>(`${this.baseUrl}/refresh`, request);
             if (response.status === 200) return response.data as IRefreshTokenResponse;
             return this.toRefreshError(response.data);
         } catch (error) {
@@ -57,12 +57,12 @@ export class AuthService implements IAuthService {
     }
 
     private toLoginError(data: unknown): ILoginResponseError {
-        const p = data as ProblemDetails;
+        const p = data as IProblemDetails;
         return { title: p?.title ?? 'Error', status: p?.status ?? 401, detail: p?.detail, errors: p?.errors, type: p?.type };
     }
 
     private toRefreshError(data: unknown): IRefreshTokenResponseError {
-        const p = data as ProblemDetails;
+        const p = data as IProblemDetails;
         return { title: p?.title ?? 'Refresh Error', status: p?.status ?? 401, detail: p?.detail, type: p?.type };
     }
 
