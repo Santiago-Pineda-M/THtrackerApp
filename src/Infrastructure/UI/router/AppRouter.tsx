@@ -1,60 +1,113 @@
-/**
- * INFRASTRUCTURE LAYER - Router
- * Configuración de rutas de la aplicación con react-router-dom.
- * 
- * Tipos de rutas:
- * - Rutas públicas (always accessible): /example
- * - Rutas de invitados (solo sin auth): /login, /register
- * - Rutas protegidas (solo con auth): /dashboard
- */
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, useRoutes, Navigate } from "react-router-dom";
+import type { RouteObject } from "react-router-dom";
+import { usePlocState } from '../../Hooks/usePlocState';
+import { useDependencies } from "../../Context/DependenciesProvider";
+import { AuthStatus } from '../../../Domain';
+import type { IAuthState } from '../../../Domain';
+import { Spinner } from '../components/atoms';
 import {
     LoginPage,
     RegisterPage,
     DashboardPage,
     ExamplePage
 } from "../pages";
-import { AuthRoute } from "./AuthRoute";
-import { GuestRoute } from "./GuestRoute";
+import { Guard } from "./Gard";
+
 
 export const AppRouter = () => {
     return (
         <BrowserRouter>
-            <Routes>
-                {/* ═══════════════════════════════════════════════════════════
-                    RUTAS PÚBLICAS (siempre accesibles)
-                    No requieren verificación de autenticación
-                ═══════════════════════════════════════════════════════════ */}
-                <Route path="/example" element={<ExamplePage />} />
-
-                {/* ═══════════════════════════════════════════════════════════
-                    RUTAS DE INVITADOS (solo cuando NO está autenticado)
-                    Si ya está autenticado, redirige al dashboard
-                ═══════════════════════════════════════════════════════════ */}
-                <Route element={<GuestRoute />}>
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                </Route>
-
-                {/* ═══════════════════════════════════════════════════════════
-                    RUTAS PROTEGIDAS (solo cuando SÍ está autenticado)
-                    Si no está autenticado, redirige al login
-                ═══════════════════════════════════════════════════════════ */}
-                <Route element={<AuthRoute />}>
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                    {/* Agregar más rutas protegidas aquí */}
-                </Route>
-
-                {/* ═══════════════════════════════════════════════════════════
-                    REDIRECCIONES Y FALLBACK
-                ═══════════════════════════════════════════════════════════ */}
-
-                {/* Redirigir raíz al dashboard si está autenticado, si no al login */}
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-                {/* Fallback para rutas no encontradas */}
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            </Routes>
+            <AppRoutes />
         </BrowserRouter>
     );
 };
+
+
+const LoadingFallback = () => (
+    <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
+    }}>
+        <Spinner />
+        <span style={{ marginLeft: '8px' }}>Cargando sesión...</span>
+    </div>
+);
+
+
+const AppRoutes = () => {
+    const { providerAuthPloc } = useDependencies();
+    const authState = usePlocState<IAuthState>(providerAuthPloc);
+
+    useEffect(() => {
+        // Si el estado es IDLE, iniciar la verificación de autenticación
+        if (authState.status === AuthStatus.IDLE) {
+            providerAuthPloc.init();
+        }
+    }, [authState.status, providerAuthPloc]);
+
+    const isAuthenticated = authState.status === AuthStatus.AUTHENTICATED;
+    const isTransitioning =
+        authState.status === AuthStatus.IDLE ||
+        authState.status === AuthStatus.LOADING ||
+        authState.status === AuthStatus.AUTHENTICATING ||
+        authState.status === AuthStatus.REFRESHING_TOKEN;
+
+    // Definir las rutas - incluir loading como ruta comodín
+    const routes: RouteObject[] = isTransitioning
+        ? [
+            // Cuando está cargando, mostrar spinner para cualquier ruta
+            {
+                path: "/*",
+                element: <LoadingFallback />
+            }
+        ]
+        : [
+            // Rutas públicas
+            {
+                path: "/example",
+                element: <ExamplePage />
+            },
+            // Rutas de invitados
+            {
+                path: "/login",
+                element: (
+                    <Guard isAccess={!isAuthenticated} fallback={<Navigate to="/dashboard" />}>
+                        <LoginPage />
+                    </Guard>
+                )
+            },
+            {
+                path: "/register",
+                element: (
+                    <Guard isAccess={!isAuthenticated} fallback={<Navigate to="/dashboard" />}>
+                        <RegisterPage />
+                    </Guard>
+                )
+            },
+            // Rutas protegidas
+            {
+                path: "/dashboard",
+                element: (
+                    <Guard isAccess={isAuthenticated} fallback={<Navigate to="/login" />}>
+                        <DashboardPage />
+                    </Guard>
+                )
+            },
+            // Redirecciones
+            {
+                path: "/",
+                element: <Navigate to="/dashboard" replace />
+            },
+            {
+                path: "*",
+                element: <Navigate to="/dashboard" replace />
+            }
+        ];
+
+    // useRoutes siempre se llama - sin retorno early
+    return useRoutes(routes);
+};
+
