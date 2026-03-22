@@ -12,12 +12,19 @@ import {
     GetSessionUseCase,
 } from '../../Application/UseCases/Auth';
 
+// Application - Casos de Uso Sidebar
+import {
+    GetSidebarStateUseCase,
+    SaveSidebarStateUseCase,
+} from '../../Application/UseCases/Sidebar';
+
 // Controllers - Plocs
 import { AuthPloc } from '../../Controllers/Auth/AuthPloc';
 import { LoginPloc } from '../../Controllers/Auth/LoginPloc';
 import { RegisterPloc } from '../../Controllers/Auth/RegisterPloc';
 import { RefreshTokenPloc } from '../../Controllers/Auth/RefreshTokenPloc';
 import { LogoutPloc } from '../../Controllers/Auth/LogoutPloc';
+import { SidebarPloc } from '../../Controllers/Sidebar/SidebarPloc';
 
 // Domain
 import { isoToExpiresInSeconds } from '../../Domain';
@@ -25,8 +32,9 @@ import { isoToExpiresInSeconds } from '../../Domain';
 // Infrastructure - Adaptadores y Servicios
 import { TokenRefreshStrategy } from '../Adapters/http/TokenRefreshStrategy';
 import { FetchHttpClient } from '../Adapters/http/FetchHttpClient';
-import { SecureStorageAdapter } from '../Adapters/storage';
+import { SecureStorageAdapter, LocalStorageAdapter } from '../Adapters/storage';
 import { AuthSessionRepository } from '../Repositories/AuthSessionRepository';
+import { SidebarRepository } from '../Repositories/SidebarRepository';
 import { AuthService } from '../Services/AuthService';
 
 
@@ -42,6 +50,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://thtracker-api.onrender.
 // ============================================
 
 const secureStorageAdapter = new SecureStorageAdapter();
+const localStorageAdapter = new LocalStorageAdapter('sidebar');
 
 
 // ============================================
@@ -49,6 +58,7 @@ const secureStorageAdapter = new SecureStorageAdapter();
 // ============================================
 
 const authSessionRepository = new AuthSessionRepository(secureStorageAdapter);
+const sidebarRepository = new SidebarRepository(localStorageAdapter);
 
 
 // ============================================
@@ -104,6 +114,10 @@ const logoutUseCase = new LogoutUseCase(authSessionRepository);
 const checkAuthSessionUseCase = new CheckAuthSessionUseCase(authSessionRepository, authService);
 const getSessionUseCase = new GetSessionUseCase(authSessionRepository);
 
+// Sidebar Use Cases
+const getSidebarStateUseCase = new GetSidebarStateUseCase(sidebarRepository);
+const saveSidebarStateUseCase = new SaveSidebarStateUseCase(sidebarRepository);
+
 
 // ============================================
 // 9. CONTROLLERS / PLOCS
@@ -127,6 +141,9 @@ const refreshTokenPloc = new RefreshTokenPloc(refreshTokenUseCases, getSessionUs
 // LogoutPloc - maneja el cierre de sesión
 const logoutPloc = new LogoutPloc(logoutUseCase, authPloc);
 
+// SidebarPloc - maneja el estado del Sidebar con persistencia
+const sidebarPloc = new SidebarPloc(getSidebarStateUseCase, saveSidebarStateUseCase);
+
 
 // ============================================
 // 10. INTERFAZ DE DEPENDENCIAS
@@ -139,6 +156,7 @@ export interface Dependencies {
     providerRefreshTokenPloc: RefreshTokenPloc
     providerLogoutPloc: LogoutPloc
     providerAuthSessionRepository: AuthSessionRepository
+    providerSidebarPloc: SidebarPloc
 }
 
 
@@ -170,6 +188,10 @@ function provideAuthSessionRepository(): AuthSessionRepository {
     return authSessionRepository;
 }
 
+function provideSidebarPloc(): SidebarPloc {
+    return sidebarPloc;
+}
+
 
 // ============================================
 // 12. LOCATOR PÚBLICO
@@ -182,4 +204,5 @@ export const dependenciesLocator: Dependencies = {
     providerRefreshTokenPloc: provideRefreshTokenPloc(),
     providerLogoutPloc: provideLogoutPloc(),
     providerAuthSessionRepository: provideAuthSessionRepository(),
+    providerSidebarPloc: provideSidebarPloc(),
 };

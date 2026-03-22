@@ -136,3 +136,21 @@ export const initialLogoutState: ILogoutState = {
     success: false,
     error: undefined,
 };
+
+/**
+ * ==========================================
+ * SIDEBAR STATES
+ * ==========================================
+ */
+
+/**
+ * Interfaz del estado del componente Sidebar.
+ * Usada por SidebarPloc para gestionar el estado del menú.
+ */
+export interface ISidebarState {
+    isMenuOpen: boolean;
+}
+
+export const initialSidebarState: ISidebarState = {
+    isMenuOpen: true,
+};

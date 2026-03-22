@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Card, Button, Icon, Text, Divider } from '../../atoms';
 import { usePlocState } from '../../../../Hooks/usePlocState';
 import { useDependencies } from '../../../../Context/DependenciesProvider';
-import type { IAuthState } from '../../../../../Domain';
+import type { IAuthState, ISidebarState } from '../../../../../Domain';
 import styles from './Sidebar.module.css';
 
 export const Sidebar: React.FC = () => {
-  const { providerLogoutPloc, providerAuthPloc } = useDependencies();
+  const { providerLogoutPloc, providerAuthPloc, providerSidebarPloc } = useDependencies();
   const authState = usePlocState<IAuthState>(providerAuthPloc);
+  const sidebarState = usePlocState<ISidebarState>(providerSidebarPloc);
   const location = useLocation();
   const navigate = useNavigate();
-  // funcion de menu desplegado o contraido
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
+
+  // Inicializar el estado del Sidebar desde localStorage
+  useEffect(() => {
+    providerSidebarPloc.init();
+  }, [providerSidebarPloc]);
 
   const userEmail = authState.user?.email;
 
@@ -25,37 +29,37 @@ export const Sidebar: React.FC = () => {
     <Card className={`${styles.sidebar}`}>
       <div className={styles.header}>
         <Text as="h2" size="lg" weight="bold" className={styles.logo}>
-          {isMenuOpen ? 'THtracke' : 'TH'}
+          {sidebarState.isMenuOpen ? 'THtracke' : 'TH'}
         </Text>
         {/* btn para alternar el menú en pc */}
         <Button
           variant='ghost'
           size="sm"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          onClick={() => providerSidebarPloc.toggleMenu()}
         >
-          <Icon name={isMenuOpen ? "X" : "Menu"} size={18} />
+          <Icon name={sidebarState.isMenuOpen ? "X" : "Menu"} size={18} />
         </Button>
       </div>
       <Divider />
-      <nav className={ `${styles.nav} ${!isMenuOpen ? styles.navMenuClosed : ''}`}>
+      <nav className={ `${styles.nav} ${!sidebarState.isMenuOpen ? styles.navMenuClosed : ''}`}>
         <Link
           to="/dashboard"
           className={`${styles.link} ${location.pathname === '/dashboard' ? styles.active : ''}`}
         >
           <Icon name="TrendingUp" size={20} />
-          {isMenuOpen && <span>Dashboard</span>}
+          {sidebarState.isMenuOpen && <span>Dashboard</span>}
         </Link>
         <Link
           to="/example"
           className={`${styles.link} ${location.pathname === '/example' ? styles.active : ''}`}
         >
           <Icon name="Users" size={20} />
-          {isMenuOpen && <span>Ejemplos</span>}
+          {sidebarState.isMenuOpen && <span>Ejemplos</span>}
         </Link>
       </nav>
       <Divider />
       <div className={styles.footer}>
-        {(userEmail && isMenuOpen) && (
+        {(userEmail && sidebarState.isMenuOpen) && (
           <Text size="xs" className={styles.email} title={userEmail}>
             {userEmail}
           </Text>
@@ -66,7 +70,7 @@ export const Sidebar: React.FC = () => {
           onClick={handleLogout}
         >
           <Icon name="LogOut" size={18} />
-          {isMenuOpen && <span>Cerrar Sesión</span>}
+          {sidebarState.isMenuOpen && <span>Cerrar Sesión</span>}
         </Button>
       </div>
     </Card>

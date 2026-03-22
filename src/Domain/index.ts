@@ -6,6 +6,7 @@
 
 // Entities
 export { AuthSession, type AuthSessionProps, type UserData } from './Entities/AuthSession';
+export { SidebarState, type SidebarStateProps } from './Entities/SidebarState';
 
 // Value Objects
 export { Email, AuthTokens, decodeJwtExp, isoToExpiresInSeconds } from './ValueObjects';
@@ -13,6 +14,7 @@ export { UserId } from './ValueObjects/UserId';
 
 // Repositories
 export type { IAuthSessionRepository } from './Repositories/IAuthSessionRepository';
+export type { ISidebarRepository } from './Repositories/ISidebarRepository';
 
 // Request Interfaces (Auth)
 export type {
