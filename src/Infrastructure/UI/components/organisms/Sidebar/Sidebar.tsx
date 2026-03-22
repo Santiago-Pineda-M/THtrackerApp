@@ -56,6 +56,13 @@ export const Sidebar: React.FC = () => {
           <Icon name="Users" size={20} />
           {sidebarState.isMenuOpen && <span>Ejemplos</span>}
         </Link>
+        <Link
+          to="/user-profile"
+          className={`${styles.link} ${location.pathname === '/user-profile' ? styles.active : ''}`}
+        >
+          <Icon name="Users" size={20} />
+          {sidebarState.isMenuOpen && <span>Perfil</span>}
+        </Link>
       </nav>
       <Divider />
       <div className={styles.footer}>

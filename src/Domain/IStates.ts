@@ -154,3 +154,66 @@ export interface ISidebarState {
 export const initialSidebarState: ISidebarState = {
     isMenuOpen: true,
 };
+
+/**
+ * ==========================================
+ * USER PROFILE DISPLAY STATE
+ * ==========================================
+ */
+
+/**
+ * Estado simple para mostrar el perfil del usuario (consulta)
+ */
+export interface IUserProfileDisplayState {
+    user: {
+        id: string;
+        name: string | null;
+        email: string | null;
+    } | null;
+    error: {
+        title?: string;
+        detail?: string;
+    } | null;
+    isLoading: boolean;
+}
+
+export const initialUserProfileDisplayState: IUserProfileDisplayState = {
+    user: null,
+    error: null,
+    isLoading: false,
+};
+
+/**
+ * ==========================================
+ * USER PROFILE FORM STATE
+ * ==========================================
+ */
+
+/**
+ * Estado simple para el formulario de actualización de perfil
+ */
+export interface IUserProfileFormState {
+    name: string;
+    email: string;
+    errors: Record<string, string[]>;
+    isLoading: boolean;
+    success: boolean;
+    message: string;
+    initialValues: {
+        name: string;
+        email: string;
+    };
+}
+
+export const initialUserProfileFormState: IUserProfileFormState = {
+    name: '',
+    email: '',
+    errors: {},
+    isLoading: false,
+    success: false,
+    message: '',
+    initialValues: {
+        name: '',
+        email: '',
+    },
+};

@@ -12,6 +12,12 @@ import {
     GetSessionUseCase,
 } from '../../Application/UseCases/Auth';
 
+// Application - Casos de Uso User
+import {
+    GetUserProfileUseCase,
+    UpdateUserProfileUseCase,
+} from '../../Application/UseCases/User';
+
 // Application - Casos de Uso Sidebar
 import {
     GetSidebarStateUseCase,
@@ -25,6 +31,8 @@ import { RegisterPloc } from '../../Controllers/Auth/RegisterPloc';
 import { RefreshTokenPloc } from '../../Controllers/Auth/RefreshTokenPloc';
 import { LogoutPloc } from '../../Controllers/Auth/LogoutPloc';
 import { SidebarPloc } from '../../Controllers/Sidebar/SidebarPloc';
+import { UserProfileDisplayPloc } from '../../Controllers/User/UserProfileDisplayPloc';
+import { UserProfileFormPloc } from '../../Controllers/User/UserProfileFormPloc';
 
 // Domain
 import { isoToExpiresInSeconds } from '../../Domain';
@@ -36,6 +44,7 @@ import { SecureStorageAdapter, LocalStorageAdapter } from '../Adapters/storage';
 import { AuthSessionRepository } from '../Repositories/AuthSessionRepository';
 import { SidebarRepository } from '../Repositories/SidebarRepository';
 import { AuthService } from '../Services/AuthService';
+import { UserService } from '../Services/UserService';
 
 
 // ============================================
@@ -101,6 +110,7 @@ const httpClient = new FetchHttpClient(API_URL, getAccessToken, refreshStrategy)
 // ============================================
 
 const authService = new AuthService(httpClient);
+const userService = new UserService(httpClient);
 
 
 // ============================================
@@ -118,6 +128,10 @@ const getSessionUseCase = new GetSessionUseCase(authSessionRepository);
 const getSidebarStateUseCase = new GetSidebarStateUseCase(sidebarRepository);
 const saveSidebarStateUseCase = new SaveSidebarStateUseCase(sidebarRepository);
 
+// User Use Cases
+const getUserProfileUseCase = new GetUserProfileUseCase(userService);
+const updateUserProfileUseCase = new UpdateUserProfileUseCase(userService);
+
 
 // ============================================
 // 9. CONTROLLERS / PLOCS
@@ -126,7 +140,8 @@ const saveSidebarStateUseCase = new SaveSidebarStateUseCase(sidebarRepository);
 // AuthPloc principal - maneja el estado global de autenticación
 const authPloc = new AuthPloc(
     checkAuthSessionUseCase,
-    getSessionUseCase
+    getSessionUseCase,
+    authSessionRepository
 );
 
 // LoginPloc - maneja el flujo de inicio de sesión
@@ -144,6 +159,10 @@ const logoutPloc = new LogoutPloc(logoutUseCase, authPloc);
 // SidebarPloc - maneja el estado del Sidebar con persistencia
 const sidebarPloc = new SidebarPloc(getSidebarStateUseCase, saveSidebarStateUseCase);
 
+// UserProfilePloc - maneja el perfil del usuario
+const userProfileDisplayPloc = new UserProfileDisplayPloc(getUserProfileUseCase, authPloc);
+const userProfileFormPloc = new UserProfileFormPloc(updateUserProfileUseCase, getUserProfileUseCase, authPloc);
+
 
 // ============================================
 // 10. INTERFAZ DE DEPENDENCIAS
@@ -157,6 +176,8 @@ export interface Dependencies {
     providerLogoutPloc: LogoutPloc
     providerAuthSessionRepository: AuthSessionRepository
     providerSidebarPloc: SidebarPloc
+    providerUserProfileDisplayPloc: UserProfileDisplayPloc
+    providerUserProfileFormPloc: UserProfileFormPloc
 }
 
 
@@ -192,6 +213,14 @@ function provideSidebarPloc(): SidebarPloc {
     return sidebarPloc;
 }
 
+function provideUserProfileDisplayPloc(): UserProfileDisplayPloc {
+    return userProfileDisplayPloc;
+}
+
+function provideUserProfileFormPloc(): UserProfileFormPloc {
+    return userProfileFormPloc;
+}
+
 
 // ============================================
 // 12. LOCATOR PÚBLICO
@@ -205,4 +234,6 @@ export const dependenciesLocator: Dependencies = {
     providerLogoutPloc: provideLogoutPloc(),
     providerAuthSessionRepository: provideAuthSessionRepository(),
     providerSidebarPloc: provideSidebarPloc(),
+    providerUserProfileDisplayPloc: provideUserProfileDisplayPloc(),
+    providerUserProfileFormPloc: provideUserProfileFormPloc(),
 };

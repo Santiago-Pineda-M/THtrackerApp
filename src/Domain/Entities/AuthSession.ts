@@ -160,6 +160,23 @@ export class AuthSession {
     }
 
     /**
+     * Actualiza los datos del usuario manteniendo la inmutabilidad.
+     * Retorna una nueva instancia.
+     */
+    updateUser(updatedUser: Partial<UserData>): AuthSession {
+        const newUser: UserData = {
+            id: this.user.id,
+            email: updatedUser.email ?? this.user.email,
+            name: updatedUser.name !== undefined ? updatedUser.name : this.user.name
+        };
+        
+        return AuthSession.create({
+            tokens: this._tokens,
+            user: newUser
+        });
+    }
+
+    /**
      * Serializa a JSON para persistencia.
      */
     toJSON(): string {

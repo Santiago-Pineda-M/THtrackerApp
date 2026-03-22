@@ -54,3 +54,12 @@ export { AuthValidationService, type ValidationError, type ValidationResult, typ
 
 // Base PLOC
 export { Ploc } from './Ploc';
+
+// User Domain Types
+export type {
+    UserProfileResponse,
+    ProblemDetails,
+} from './User/IUserResponses';
+export type {
+    UpdateUserProfileRequest,
+} from './User/IUserRequests';

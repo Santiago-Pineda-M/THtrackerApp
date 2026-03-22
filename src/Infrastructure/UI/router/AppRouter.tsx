@@ -10,7 +10,8 @@ import {
     LoginPage,
     RegisterPage,
     DashboardPage,
-    ExamplePage
+    ExamplePage,
+    UserProfilePage
 } from "../pages";
 import { Guard } from "./Gard";
 
@@ -93,6 +94,14 @@ const AppRoutes = () => {
                 element: (
                     <Guard isAccess={isAuthenticated} fallback={<Navigate to="/login" />}>
                         <DashboardPage />
+                    </Guard>
+                )
+            },
+            {
+                path: "/user-profile",
+                element: (
+                    <Guard isAccess={isAuthenticated} fallback={<Navigate to="/login" />}>
+                        <UserProfilePage />
                     </Guard>
                 )
             },
