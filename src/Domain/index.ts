@@ -6,7 +6,6 @@
 
 // Entities
 export { AuthSession, type AuthSessionProps, type UserData } from './Entities/AuthSession';
-export { type IUserSession } from './Auth/AuthEntities';
 
 // Value Objects
 export { Email, AuthTokens, decodeJwtExp, isoToExpiresInSeconds } from './ValueObjects';

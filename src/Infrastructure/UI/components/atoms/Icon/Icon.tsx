@@ -9,7 +9,9 @@ export type IconName =
   | 'Minus'
   | 'UserCheck'
   | 'Clock'
-  | 'LogOut';
+  | 'LogOut'
+  | 'Menu'
+  | 'X';
 
 export interface IconProps {
   name?: IconName;
@@ -66,7 +68,20 @@ const iconPaths: Record<IconName, React.ReactNode> = {
       <polyline points="16 17 21 12 16 7" />
       <line x1="21" y1="12" x2="9" y2="12" />
     </>
-  )
+  ),
+  Menu: (
+    <>
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </>
+  ),
+  X: (
+    <>
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </>
+  ),
 };
 
 export const Icon: React.FC<IconProps> = ({ name, size = 16, color, className = '', children }) => {

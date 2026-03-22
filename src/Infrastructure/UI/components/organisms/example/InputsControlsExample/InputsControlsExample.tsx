@@ -10,7 +10,7 @@ export const InputsControlsExample: React.FC = () => {
   const [notificationsOn, setNotificationsOn] = useState(true);
 
   return (
-    <Card title="Inputs & Controls" w={1} h={3}>
+    <Card title="Inputs & Controls" w={2} h={2}>
       <div className={s.root}>
         <FormField
           label="Nombre"

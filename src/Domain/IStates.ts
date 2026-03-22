@@ -4,7 +4,7 @@
  * Centralizado siguiendo principios de Clean Architecture para evitar acoplamiento ciclico.
  */
 
-import type { IUserSession } from './Auth/AuthEntities';
+import type { AuthSession } from './Entities/AuthSession';
 
 /**
  * ==========================================
@@ -33,7 +33,7 @@ export type AuthStatus = typeof AuthStatus[keyof typeof AuthStatus];
  */
 export interface IAuthState {
     status: AuthStatus,
-    user?: IUserSession
+    user?: AuthSession | null;
 }
 
 export const initialAuthState: IAuthState = {

@@ -60,7 +60,7 @@
   --space-xxl: 40px;
 
   /* Layout Spacing (mapped to new tokens for consistency) */
-  --spacing-page-padding: clamp(var(--space-md), 3vw, var(--space-xxl));
+  --spacing-page-padding: var(--space-lg);
   --spacing-card-padding: var(--space-lg);
   --spacing-grid-gap: var(--space-lg);
 
@@ -73,6 +73,7 @@
   --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --card-hover-lift: -4px;
+
 }
 
 body {

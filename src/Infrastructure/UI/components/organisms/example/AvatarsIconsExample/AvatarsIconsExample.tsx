@@ -6,7 +6,7 @@ import { Text } from '../../../atoms/Text/Text';
 import s from './AvatarsIconsExample.module.css';
 
 export const AvatarsIconsExample: React.FC = () => (
-  <Card title="Elements & Media" w={1} h={4}>
+  <Card title="Elements & Media" w={1} h={3}>
     <div className={s.container}>
       {/* Avatars Section */}
       <section className={s.section}>

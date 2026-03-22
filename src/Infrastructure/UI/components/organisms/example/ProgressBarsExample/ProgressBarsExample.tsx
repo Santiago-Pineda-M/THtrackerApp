@@ -4,7 +4,7 @@ import { ProgressBar } from '../../../molecules/ProgressBar/ProgressBar';
 import s from './ProgressBarsExample.module.css';
 
 export const ProgressBarsExample: React.FC = () => (
-  <Card title="Progress Bars" w={1} h={2}>
+  <Card title="Progress Bars" w={1} h={1}>
     <div className={s.column}>
       <ProgressBar value={75} variant="success" label="Onboarding" />
       <ProgressBar value={40} variant="warning" label="Backlog" />

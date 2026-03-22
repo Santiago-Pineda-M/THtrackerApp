@@ -101,7 +101,7 @@ const loginUserUseCase = new LoginUserUseCase(authService, authSessionRepository
 const registerUseCases = new RegisterUseCases(authService);
 const refreshTokenUseCases = new RefreshTokenUseCases(authService, authSessionRepository);
 const logoutUseCase = new LogoutUseCase(authSessionRepository);
-const checkAuthSessionUseCase = new CheckAuthSessionUseCase(authSessionRepository);
+const checkAuthSessionUseCase = new CheckAuthSessionUseCase(authSessionRepository, authService);
 const getSessionUseCase = new GetSessionUseCase(authSessionRepository);
 
 

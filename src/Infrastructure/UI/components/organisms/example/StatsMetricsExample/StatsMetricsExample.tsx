@@ -6,7 +6,7 @@ import { MetricBlock } from '../../../molecules/MetricBlock/MetricBlock';
 import s from './StatsMetricsExample.module.css';
 
 export const StatsMetricsExample: React.FC = () => (
-  <Card title="Estadísticas y Métricas" w={2} h={5}>
+  <Card title="Estadísticas y Métricas" w={2} h={4}>
     <div className={s.container}>
       <div className={s.section}>
         <div className={s.sectionHeader}>

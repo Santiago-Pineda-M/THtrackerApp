@@ -6,7 +6,7 @@ import { Divider } from '../../../atoms/Divider/Divider';
 import s from './TypographyBadgesExample.module.css';
 
 export const TypographyBadgesExample: React.FC = () => (
-  <Card title="Typography & Badges" w={2} h={2}>
+  <Card title="Typography & Badges" w={3} h={1}>
     <div className={s.root}>
       <div className={s.header}>
         <Text as="h3" size="lg" weight="bold">

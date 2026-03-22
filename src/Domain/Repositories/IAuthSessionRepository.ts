@@ -1,8 +1,3 @@
-/**
- * DOMAIN LAYER - Repository Interfaces
- * Define el contrato para el almacenamiento de sesiones de autenticación.
- * Abstrae el mecanismo de persistencia (SecureStorage, AsyncStorage, etc.)
- */
 
 import { AuthSession } from '../Entities/AuthSession';
 

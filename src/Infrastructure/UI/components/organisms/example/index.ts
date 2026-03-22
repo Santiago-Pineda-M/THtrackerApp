@@ -6,4 +6,5 @@ export { ProgressBarsExample } from './ProgressBarsExample/ProgressBarsExample';
 export { TableExample } from './TableExample/TableExample';
 export { SpinnersExample } from './SpinnersExample/SpinnersExample';
 export { AvatarsIconsExample } from './AvatarsIconsExample/AvatarsIconsExample';
+export { AuthSessionExample } from './AuthSessionExample/AuthSessionExample';
 

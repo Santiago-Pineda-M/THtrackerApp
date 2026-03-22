@@ -5,7 +5,7 @@ import { Text } from '../../../atoms/Text/Text';
 import s from './SpinnersExample.module.css';
 
 export const SpinnersExample: React.FC = () => (
-  <Card title="Spinners" w={1} h={2}>
+  <Card title="Spinners" w={1} h={1}>
     <div className={s.column}>
       <div className={s.row}>
         <Spinner size="sm" />
