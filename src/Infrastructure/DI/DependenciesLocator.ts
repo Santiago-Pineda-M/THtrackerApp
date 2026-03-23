@@ -18,6 +18,15 @@ import {
     UpdateUserProfileUseCase,
 } from '../../Application/UseCases/User';
 
+// Application - Casos de Uso Category
+import {
+    GetCategoriesUseCase,
+    GetCategoryByIdUseCase,
+    CreateCategoryUseCase,
+    UpdateCategoryUseCase,
+    DeleteCategoryUseCase,
+} from '../../Application/UseCases/Category';
+
 // Application - Casos de Uso Sidebar
 import {
     GetSidebarStateUseCase,
@@ -33,6 +42,11 @@ import { LogoutPloc } from '../../Controllers/Auth/LogoutPloc';
 import { SidebarPloc } from '../../Controllers/Sidebar/SidebarPloc';
 import { UserProfileDisplayPloc } from '../../Controllers/User/UserProfileDisplayPloc';
 import { UserProfileFormPloc } from '../../Controllers/User/UserProfileFormPloc';
+import { CategoriesListPloc } from '../../Controllers/Category/CategoriesListPloc';
+import { CategoryDetailPloc } from '../../Controllers/Category/CategoryDetailPloc';
+import { CategoryCreateFormPloc } from '../../Controllers/Category/CategoryCreateFormPloc';
+import { CategoryEditFormPloc } from '../../Controllers/Category/CategoryEditFormPloc';
+import { CategoryDeletePloc } from '../../Controllers/Category/CategoryDeletePloc';
 
 // Domain
 import { isoToExpiresInSeconds } from '../../Domain';
@@ -45,6 +59,7 @@ import { AuthSessionRepository } from '../Repositories/AuthSessionRepository';
 import { SidebarRepository } from '../Repositories/SidebarRepository';
 import { AuthService } from '../Services/AuthService';
 import { UserService } from '../Services/UserService';
+import { CategoryService } from '../Services/CategoryService';
 
 
 // ============================================
@@ -111,6 +126,7 @@ const httpClient = new FetchHttpClient(API_URL, getAccessToken, refreshStrategy)
 
 const authService = new AuthService(httpClient);
 const userService = new UserService(httpClient);
+const categoryService = new CategoryService(httpClient);
 
 
 // ============================================
@@ -131,6 +147,13 @@ const saveSidebarStateUseCase = new SaveSidebarStateUseCase(sidebarRepository);
 // User Use Cases
 const getUserProfileUseCase = new GetUserProfileUseCase(userService);
 const updateUserProfileUseCase = new UpdateUserProfileUseCase(userService);
+
+// Category Use Cases
+const getCategoriesUseCase = new GetCategoriesUseCase(categoryService);
+const getCategoryByIdUseCase = new GetCategoryByIdUseCase(categoryService);
+const createCategoryUseCase = new CreateCategoryUseCase(categoryService);
+const updateCategoryUseCase = new UpdateCategoryUseCase(categoryService);
+const deleteCategoryUseCase = new DeleteCategoryUseCase(categoryService);
 
 
 // ============================================
@@ -163,6 +186,13 @@ const sidebarPloc = new SidebarPloc(getSidebarStateUseCase, saveSidebarStateUseC
 const userProfileDisplayPloc = new UserProfileDisplayPloc(getUserProfileUseCase, authPloc);
 const userProfileFormPloc = new UserProfileFormPloc(updateUserProfileUseCase, getUserProfileUseCase, authPloc);
 
+// CategoriesPloc - maneja las categorías
+const categoriesListPloc = new CategoriesListPloc(getCategoriesUseCase);
+const categoryDetailPloc = new CategoryDetailPloc(getCategoryByIdUseCase);
+const categoryCreateFormPloc = new CategoryCreateFormPloc(createCategoryUseCase);
+const categoryEditFormPloc = new CategoryEditFormPloc(updateCategoryUseCase, getCategoryByIdUseCase);
+const categoryDeletePloc = new CategoryDeletePloc(deleteCategoryUseCase);
+
 
 // ============================================
 // 10. INTERFAZ DE DEPENDENCIAS
@@ -178,6 +208,11 @@ export interface Dependencies {
     providerSidebarPloc: SidebarPloc
     providerUserProfileDisplayPloc: UserProfileDisplayPloc
     providerUserProfileFormPloc: UserProfileFormPloc
+    providerCategoriesListPloc: CategoriesListPloc
+    providerCategoryDetailPloc: CategoryDetailPloc
+    providerCategoryCreateFormPloc: CategoryCreateFormPloc
+    providerCategoryEditFormPloc: CategoryEditFormPloc
+    providerCategoryDeletePloc: CategoryDeletePloc
 }
 
 
@@ -221,6 +256,26 @@ function provideUserProfileFormPloc(): UserProfileFormPloc {
     return userProfileFormPloc;
 }
 
+function provideCategoriesListPloc(): CategoriesListPloc {
+    return categoriesListPloc;
+}
+
+function provideCategoryDetailPloc(): CategoryDetailPloc {
+    return categoryDetailPloc;
+}
+
+function provideCategoryCreateFormPloc(): CategoryCreateFormPloc {
+    return categoryCreateFormPloc;
+}
+
+function provideCategoryEditFormPloc(): CategoryEditFormPloc {
+    return categoryEditFormPloc;
+}
+
+function provideCategoryDeletePloc(): CategoryDeletePloc {
+    return categoryDeletePloc;
+}
+
 
 // ============================================
 // 12. LOCATOR PÚBLICO
@@ -236,4 +291,9 @@ export const dependenciesLocator: Dependencies = {
     providerSidebarPloc: provideSidebarPloc(),
     providerUserProfileDisplayPloc: provideUserProfileDisplayPloc(),
     providerUserProfileFormPloc: provideUserProfileFormPloc(),
+    providerCategoriesListPloc: provideCategoriesListPloc(),
+    providerCategoryDetailPloc: provideCategoryDetailPloc(),
+    providerCategoryCreateFormPloc: provideCategoryCreateFormPloc(),
+    providerCategoryEditFormPloc: provideCategoryEditFormPloc(),
+    providerCategoryDeletePloc: provideCategoryDeletePloc(),
 };

@@ -1,0 +1,45 @@
+.card {
+    width: 100%;
+}
+
+.header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.error {
+    color: var(--color-error, #dc3545);
+    margin-bottom: 1rem;
+}
+
+.success {
+    color: var(--color-success, #28a745);
+    margin-bottom: 1rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.deleteForm {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.successForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-md) 0;
+    text-align: center;
+}

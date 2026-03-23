@@ -5,6 +5,7 @@
  */
 
 import type { AuthSession } from './Entities/AuthSession';
+import type { ApiErrorResponse } from './Common/IApiErrorResponse';
 
 /**
  * ==========================================
@@ -215,5 +216,119 @@ export const initialUserProfileFormState: IUserProfileFormState = {
     initialValues: {
         name: '',
         email: '',
+    },
+};
+
+/**
+ * ==========================================
+ * CATEGORIES LIST STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para la lista de categorías del usuario autenticado
+ */
+export interface ICategoriesListState {
+    categories: Array<{
+        id: string;
+        userId: string;
+        name: string | null;
+    }>;
+    error: ApiErrorResponse | null;
+    isLoading: boolean;
+}
+
+export const initialCategoriesListState: ICategoriesListState = {
+    categories: [],
+    error: null,
+    isLoading: false,
+};
+
+/**
+ * ==========================================
+ * CATEGORY DETAIL STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para mostrar una categoría individual
+ */
+export interface ICategoryDetailState {
+    category: {
+        id: string;
+        userId: string;
+        name: string | null;
+    } | null;
+    error: ApiErrorResponse | null;
+    isLoading: boolean;
+}
+
+export const initialCategoryDetailState: ICategoryDetailState = {
+    category: null,
+    error: null,
+    isLoading: false,
+};
+
+/**
+ * ==========================================
+ * CATEGORY CREATE FORM STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para el formulario de creación de categoría
+ */
+export interface ICategoryCreateFormState {
+    name: string;
+    errors: Record<string, string[]>;
+    isLoading: boolean;
+    success: boolean;
+    message: string;
+    initialValues: {
+        name: string;
+    };
+}
+
+export const initialCategoryCreateFormState: ICategoryCreateFormState = {
+    name: '',
+    errors: {},
+    isLoading: false,
+    success: false,
+    message: '',
+    initialValues: {
+        name: '',
+    },
+};
+
+/**
+ * ==========================================
+ * CATEGORY EDIT FORM STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para el formulario de edición de categoría
+ */
+export interface ICategoryEditFormState {
+    id: string;
+    name: string;
+    errors: Record<string, string[]>;
+    isLoading: boolean;
+    success: boolean;
+    message: string;
+    initialValues: {
+        name: string;
+    };
+}
+
+export const initialCategoryEditFormState: ICategoryEditFormState = {
+    id: '',
+    name: '',
+    errors: {},
+    isLoading: false,
+    success: false,
+    message: '',
+    initialValues: {
+        name: '',
     },
 };

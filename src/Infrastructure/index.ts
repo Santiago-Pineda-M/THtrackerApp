@@ -18,6 +18,9 @@ export { dependenciesLocator } from './DI/DependenciesLocator';
 // Context
 export { DependenciesProvider, useDependencies } from './Context/DependenciesProvider';
 
+// Services
+export { CategoryService } from './Services/CategoryService';
+
 // Hooks
 export { usePlocState } from './Hooks/usePlocState';
 

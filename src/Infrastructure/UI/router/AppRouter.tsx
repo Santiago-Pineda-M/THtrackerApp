@@ -11,7 +11,8 @@ import {
     RegisterPage,
     DashboardPage,
     ExamplePage,
-    UserProfilePage
+    UserProfilePage,
+    CategoriesPage
 } from "../pages";
 import { Guard } from "./Gard";
 
@@ -102,6 +103,14 @@ const AppRoutes = () => {
                 element: (
                     <Guard isAccess={isAuthenticated} fallback={<Navigate to="/login" />}>
                         <UserProfilePage />
+                    </Guard>
+                )
+            },
+            {
+                path: "/categories",
+                element: (
+                    <Guard isAccess={isAuthenticated} fallback={<Navigate to="/login" />}>
+                        <CategoriesPage />
                     </Guard>
                 )
             },

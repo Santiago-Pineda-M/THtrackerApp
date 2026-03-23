@@ -55,6 +55,9 @@ export { AuthValidationService, type ValidationError, type ValidationResult, typ
 // Base PLOC
 export { Ploc } from './Ploc';
 
+// Common Types
+export type { ApiErrorResponse } from './Common/IApiErrorResponse';
+
 // User Domain Types
 export type {
     UserProfileResponse,
@@ -63,3 +66,12 @@ export type {
 export type {
     UpdateUserProfileRequest,
 } from './User/IUserRequests';
+
+// Category Domain Types
+export type {
+    CategoryResponse,
+} from './Category/ICategoryResponses';
+export type {
+    CreateCategoryRequest,
+    UpdateCategoryRequest,
+} from './Category/ICategoryRequests';

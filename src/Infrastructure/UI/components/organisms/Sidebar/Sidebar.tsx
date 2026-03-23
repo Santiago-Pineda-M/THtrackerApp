@@ -50,17 +50,24 @@ export const Sidebar: React.FC = () => {
           {sidebarState.isMenuOpen && <span>Dashboard</span>}
         </Link>
         <Link
+          to="/categories"
+          className={`${styles.link} ${location.pathname === '/categories' ? styles.active : ''}`}
+        >
+          <Icon name="Folder" size={20} />
+          {sidebarState.isMenuOpen && <span>Categorías</span>}
+        </Link>
+        <Link
           to="/example"
           className={`${styles.link} ${location.pathname === '/example' ? styles.active : ''}`}
         >
-          <Icon name="Users" size={20} />
+          <Icon name="FileText" size={20} />
           {sidebarState.isMenuOpen && <span>Ejemplos</span>}
         </Link>
         <Link
           to="/user-profile"
           className={`${styles.link} ${location.pathname === '/user-profile' ? styles.active : ''}`}
         >
-          <Icon name="Users" size={20} />
+          <Icon name="User" size={20} />
           {sidebarState.isMenuOpen && <span>Perfil</span>}
         </Link>
       </nav>
