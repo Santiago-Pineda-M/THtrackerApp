@@ -33,6 +33,17 @@ import {
     SaveSidebarStateUseCase,
 } from '../../Application/UseCases/Sidebar';
 
+// Application - Casos de Uso Activity
+import {
+    GetActivitiesUseCase,
+    GetActivityByIdUseCase,
+    CreateActivityUseCase,
+    UpdateActivityUseCase,
+    DeleteActivityUseCase,
+    GetValueDefinitionsUseCase,
+    CreateValueDefinitionUseCase,
+} from '../../Application/UseCases/Activity';
+
 // Controllers - Plocs
 import { AuthPloc } from '../../Controllers/Auth/AuthPloc';
 import { LoginPloc } from '../../Controllers/Auth/LoginPloc';
@@ -48,6 +59,17 @@ import { CategoryCreateFormPloc } from '../../Controllers/Category/CategoryCreat
 import { CategoryEditFormPloc } from '../../Controllers/Category/CategoryEditFormPloc';
 import { CategoryDeletePloc } from '../../Controllers/Category/CategoryDeletePloc';
 
+// Controllers - Activity Plocs
+import {
+    ActivitiesListPloc,
+    ActivityCreateFormPloc,
+    ActivityDetailPloc,
+    ActivityEditFormPloc,
+    ActivityDeletePloc,
+    ActivityValueDefinitionsListPloc,
+    ValueDefinitionCreateFormPloc,
+} from '../../Controllers/Activity';
+
 // Domain
 import { isoToExpiresInSeconds } from '../../Domain';
 
@@ -60,6 +82,7 @@ import { SidebarRepository } from '../Repositories/SidebarRepository';
 import { AuthService } from '../Services/AuthService';
 import { UserService } from '../Services/UserService';
 import { CategoryService } from '../Services/CategoryService';
+import { ActivityService } from '../Services/ActivityService';
 
 
 // ============================================
@@ -127,6 +150,8 @@ const httpClient = new FetchHttpClient(API_URL, getAccessToken, refreshStrategy)
 const authService = new AuthService(httpClient);
 const userService = new UserService(httpClient);
 const categoryService = new CategoryService(httpClient);
+const activityService = new ActivityService(httpClient);
+
 
 
 // ============================================
@@ -154,6 +179,15 @@ const getCategoryByIdUseCase = new GetCategoryByIdUseCase(categoryService);
 const createCategoryUseCase = new CreateCategoryUseCase(categoryService);
 const updateCategoryUseCase = new UpdateCategoryUseCase(categoryService);
 const deleteCategoryUseCase = new DeleteCategoryUseCase(categoryService);
+
+// Activity Use Cases
+const getActivitiesUseCase = new GetActivitiesUseCase(activityService);
+const getActivityByIdUseCase = new GetActivityByIdUseCase(activityService);
+const createActivityUseCase = new CreateActivityUseCase(activityService);
+const updateActivityUseCase = new UpdateActivityUseCase(activityService);
+const deleteActivityUseCase = new DeleteActivityUseCase(activityService);
+const getValueDefinitionsUseCase = new GetValueDefinitionsUseCase(activityService);
+const createValueDefinitionUseCase = new CreateValueDefinitionUseCase(activityService);
 
 
 // ============================================
@@ -193,6 +227,15 @@ const categoryCreateFormPloc = new CategoryCreateFormPloc(createCategoryUseCase)
 const categoryEditFormPloc = new CategoryEditFormPloc(updateCategoryUseCase, getCategoryByIdUseCase);
 const categoryDeletePloc = new CategoryDeletePloc(deleteCategoryUseCase);
 
+// Activity Plocs
+const activitiesListPloc = new ActivitiesListPloc(getActivitiesUseCase);
+const activityDetailPloc = new ActivityDetailPloc(getActivityByIdUseCase);
+const activityCreateFormPloc = new ActivityCreateFormPloc(createActivityUseCase);
+const activityEditFormPloc = new ActivityEditFormPloc(updateActivityUseCase, getActivityByIdUseCase);
+const activityDeletePloc = new ActivityDeletePloc(deleteActivityUseCase);
+const activityValueDefinitionsListPloc = new ActivityValueDefinitionsListPloc(getValueDefinitionsUseCase);
+const valueDefinitionCreateFormPloc = new ValueDefinitionCreateFormPloc(createValueDefinitionUseCase);
+
 
 // ============================================
 // 10. INTERFAZ DE DEPENDENCIAS
@@ -213,6 +256,14 @@ export interface Dependencies {
     providerCategoryCreateFormPloc: CategoryCreateFormPloc
     providerCategoryEditFormPloc: CategoryEditFormPloc
     providerCategoryDeletePloc: CategoryDeletePloc
+    // Activity Providers
+    providerActivitiesListPloc: ActivitiesListPloc
+    providerActivityDetailPloc: ActivityDetailPloc
+    providerActivityCreateFormPloc: ActivityCreateFormPloc
+    providerActivityEditFormPloc: ActivityEditFormPloc
+    providerActivityDeletePloc: ActivityDeletePloc
+    providerActivityValueDefinitionsListPloc: ActivityValueDefinitionsListPloc
+    providerValueDefinitionCreateFormPloc: ValueDefinitionCreateFormPloc
 }
 
 
@@ -276,6 +327,35 @@ function provideCategoryDeletePloc(): CategoryDeletePloc {
     return categoryDeletePloc;
 }
 
+// Activity Providers
+function provideActivitiesListPloc(): ActivitiesListPloc {
+    return activitiesListPloc;
+}
+
+function provideActivityDetailPloc(): ActivityDetailPloc {
+    return activityDetailPloc;
+}
+
+function provideActivityCreateFormPloc(): ActivityCreateFormPloc {
+    return activityCreateFormPloc;
+}
+
+function provideActivityEditFormPloc(): ActivityEditFormPloc {
+    return activityEditFormPloc;
+}
+
+function provideActivityDeletePloc(): ActivityDeletePloc {
+    return activityDeletePloc;
+}
+
+function provideActivityValueDefinitionsListPloc(): ActivityValueDefinitionsListPloc {
+    return activityValueDefinitionsListPloc;
+}
+
+function provideValueDefinitionCreateFormPloc(): ValueDefinitionCreateFormPloc {
+    return valueDefinitionCreateFormPloc;
+}
+
 
 // ============================================
 // 12. LOCATOR PÚBLICO
@@ -296,4 +376,11 @@ export const dependenciesLocator: Dependencies = {
     providerCategoryCreateFormPloc: provideCategoryCreateFormPloc(),
     providerCategoryEditFormPloc: provideCategoryEditFormPloc(),
     providerCategoryDeletePloc: provideCategoryDeletePloc(),
+    providerActivitiesListPloc: provideActivitiesListPloc(),
+    providerActivityDetailPloc: provideActivityDetailPloc(),
+    providerActivityCreateFormPloc: provideActivityCreateFormPloc(),
+    providerActivityEditFormPloc: provideActivityEditFormPloc(),
+    providerActivityDeletePloc: provideActivityDeletePloc(),
+    providerActivityValueDefinitionsListPloc: provideActivityValueDefinitionsListPloc(),
+    providerValueDefinitionCreateFormPloc: provideValueDefinitionCreateFormPloc(),
 };

@@ -75,3 +75,25 @@ export type {
     CreateCategoryRequest,
     UpdateCategoryRequest,
 } from './Category/ICategoryRequests';
+
+// Activity Domain Types
+export type {
+    ActivityResponse,
+    ActivityValueDefinitionResponse,
+    ActivityErrorResponse,
+} from './Activity/IActivityResponses';
+export type {
+    CreateActivityRequest,
+    UpdateActivityRequest,
+    CreateValueDefinitionRequest,
+} from './Activity/IActivityRequests';
+
+// Activity Value Definitions States
+export type {
+    IActivityValueDefinitionsState,
+    IValueDefinitionCreateFormState,
+} from './IStates';
+export {
+    initialActivityValueDefinitionsState,
+    initialValueDefinitionCreateFormState,
+} from './IStates';

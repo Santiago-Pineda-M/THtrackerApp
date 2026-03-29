@@ -4,3 +4,4 @@ export { DashboardPage } from './dashboard/DashboardPage';
 export { default as ExamplePage } from './example/ExamplePage';
 export { default as UserProfilePage } from './userProfile/UserProfilePage';
 export { CategoriesPage } from './categories/CategoriesPage';
+export { ActivitiesPage } from './activities/ActivitiesPage';

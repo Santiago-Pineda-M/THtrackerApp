@@ -6,6 +6,7 @@
 
 import type { AuthSession } from './Entities/AuthSession';
 import type { ApiErrorResponse } from './Common/IApiErrorResponse';
+import type { ActivityValueDefinitionResponse } from './Activity/IActivityResponses';
 
 /**
  * ==========================================
@@ -331,4 +332,219 @@ export const initialCategoryEditFormState: ICategoryEditFormState = {
     initialValues: {
         name: '',
     },
+};
+
+/**
+ * ==========================================
+ * ACTIVITIES LIST STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para la lista de actividades del usuario autenticado
+ */
+export interface IActivitiesListState {
+    activities: Array<{
+        id: string;
+        userId: string;
+        categoryId: string;
+        name: string | null;
+        allowOverlap: boolean;
+    }>;
+    error: ApiErrorResponse | null;
+    isLoading: boolean;
+}
+
+export const initialActivitiesListState: IActivitiesListState = {
+    activities: [],
+    error: null,
+    isLoading: false,
+};
+
+/**
+ * ==========================================
+ * ACTIVITY DETAIL STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para mostrar una actividad individual
+ */
+export interface IActivityDetailState {
+    activity: {
+        id: string;
+        userId: string;
+        categoryId: string;
+        name: string | null;
+        allowOverlap: boolean;
+    } | null;
+    error: ApiErrorResponse | null;
+    isLoading: boolean;
+}
+
+export const initialActivityDetailState: IActivityDetailState = {
+    activity: null,
+    error: null,
+    isLoading: false,
+};
+
+/**
+ * ==========================================
+ * ACTIVITY CREATE FORM STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para el formulario de creación de actividad
+ */
+export interface IActivityCreateFormState {
+    categoryId: string;
+    name: string;
+    allowOverlap: boolean;
+    errors: Record<string, string[]>;
+    isLoading: boolean;
+    success: boolean;
+    message: string;
+    initialValues: {
+        categoryId: string;
+        name: string;
+        allowOverlap: boolean;
+    };
+}
+
+export const initialActivityCreateFormState: IActivityCreateFormState = {
+    categoryId: '',
+    name: '',
+    allowOverlap: false,
+    errors: {},
+    isLoading: false,
+    success: false,
+    message: '',
+    initialValues: {
+        categoryId: '',
+        name: '',
+        allowOverlap: false,
+    },
+};
+
+/**
+ * ==========================================
+ * ACTIVITY EDIT FORM STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para el formulario de edición de actividad
+ */
+export interface IActivityEditFormState {
+    id: string;
+    categoryId: string;
+    name: string;
+    allowOverlap: boolean;
+    errors: Record<string, string[]>;
+    isLoading: boolean;
+    success: boolean;
+    message: string;
+    initialValues: {
+        categoryId: string;
+        name: string;
+        allowOverlap: boolean;
+    };
+}
+
+export const initialActivityEditFormState: IActivityEditFormState = {
+    id: '',
+    categoryId: '',
+    name: '',
+    allowOverlap: false,
+    errors: {},
+    isLoading: false,
+    success: false,
+    message: '',
+    initialValues: {
+        categoryId: '',
+        name: '',
+        allowOverlap: false,
+    },
+};
+
+/**
+ * ==========================================
+ * ACTIVITY DELETE STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para la eliminación de una actividad
+ */
+export interface IActivityDeleteState {
+    isLoading: boolean;
+    success: boolean;
+    error: ApiErrorResponse | null;
+}
+
+export const initialActivityDeleteState: IActivityDeleteState = {
+    isLoading: false,
+    success: false,
+    error: null,
+};
+
+/**
+ * ==========================================
+ * ACTIVITY VALUE DEFINITIONS LIST STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para la lista de definiciones de valor de una actividad
+ */
+export interface IActivityValueDefinitionsState {
+    activityId: string | null;
+    definitions: ActivityValueDefinitionResponse[];
+    isLoading: boolean;
+    error: ApiErrorResponse | null;
+}
+
+export const initialActivityValueDefinitionsState: IActivityValueDefinitionsState = {
+    activityId: null,
+    definitions: [],
+    isLoading: false,
+    error: null,
+};
+
+/**
+ * ==========================================
+ * VALUE DEFINITION CREATE FORM STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para el formulario de creación de una definición de valor
+ */
+export interface IValueDefinitionCreateFormState {
+    activityId: string;
+    name: string;
+    valueType: string;
+    isRequired: boolean;
+    unit: string;
+    minValue: string;
+    maxValue: string;
+    errors: Record<string, string[]>;
+    isLoading: boolean;
+    success: boolean;
+    message: string;
+}
+
+export const initialValueDefinitionCreateFormState: IValueDefinitionCreateFormState = {
+    activityId: '',
+    name: '',
+    valueType: 'Number',
+    isRequired: false,
+    unit: '',
+    minValue: '',
+    maxValue: '',
+    errors: {},
+    isLoading: false,
+    success: false,
+    message: '',
 };

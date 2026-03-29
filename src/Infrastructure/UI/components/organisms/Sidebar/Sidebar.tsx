@@ -57,6 +57,13 @@ export const Sidebar: React.FC = () => {
           {sidebarState.isMenuOpen && <span>Categorías</span>}
         </Link>
         <Link
+          to="/activities"
+          className={`${styles.link} ${location.pathname === '/activities' ? styles.active : ''}`}
+        >
+          <Icon name="Activity" size={20} />
+          {sidebarState.isMenuOpen && <span>Actividades</span>}
+        </Link>
+        <Link
           to="/example"
           className={`${styles.link} ${location.pathname === '/example' ? styles.active : ''}`}
         >
