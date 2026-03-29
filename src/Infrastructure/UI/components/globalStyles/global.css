@@ -1,0 +1,41 @@
+
+/*  Custom scrollbar styles for WebKit browsers (e.g., Chrome, Safari)
+  Note: These styles will not work in Firefox or other non-WebKit browsers.
+*/
+
+::-webkit-scrollbar {
+    width: var(--space-xs);
+    height: var(--space-xs);
+    background: transparent;
+    position: fixed;
+    /* hacer que cuando cambie de tamaño este no altere el tamaño ddel resto del html, poniendolo por encima del resto de elementos */ 
+    z-index: 100;
+
+    
+     
+}
+
+::-webkit-scrollbar:hover {
+    width: 12px;
+    height: 12px;
+    transition: var(--transition-default);
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-track:hover {
+    background: transparent;
+    transition: var(--transition-default);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-text-secondary);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-primary);
+    transition: var(--transition-default);
+}

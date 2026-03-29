@@ -7,6 +7,7 @@
 import type { AuthSession } from './Entities/AuthSession';
 import type { ApiErrorResponse } from './Common/IApiErrorResponse';
 import type { ActivityValueDefinitionResponse } from './Activity/IActivityResponses';
+import type { ActivityLogResponse } from './ActivityLog/IActivityLogResponses';
 
 /**
  * ==========================================
@@ -545,6 +546,48 @@ export const initialValueDefinitionCreateFormState: IValueDefinitionCreateFormSt
     maxValue: '',
     errors: {},
     isLoading: false,
+    success: false,
+    message: '',
+};
+
+/**
+ * ==========================================
+ * ACTIVITY LOGS STATES
+ * ==========================================
+ */
+
+/**
+ * Estado para la lista de registros (logs) de una actividad
+ */
+export interface IActivityLogsListState {
+    activityId: string;
+    logs: ActivityLogResponse[];
+    isLoading: boolean;
+    error: ApiErrorResponse | null;
+}
+
+export const initialActivityLogsListState: IActivityLogsListState = {
+    activityId: '',
+    logs: [],
+    isLoading: false,
+    error: null,
+};
+
+/**
+ * Estado para el detalle y edición de valores de un registro de actividad específico
+ */
+export interface IActivityLogDetailState {
+    log: ActivityLogResponse | null;
+    isLoading: boolean;
+    error: ApiErrorResponse | null;
+    success: boolean;
+    message: string;
+}
+
+export const initialActivityLogDetailState: IActivityLogDetailState = {
+    log: null,
+    isLoading: false,
+    error: null,
     success: false,
     message: '',
 };

@@ -44,6 +44,17 @@ import {
     CreateValueDefinitionUseCase,
 } from '../../Application/UseCases/Activity';
 
+// Application - Casos de Uso ActivityLog
+import {
+    GetActivityLogsUseCase,
+    GetActivityLogByIdUseCase,
+    StartActivityLogUseCase,
+    StopActivityLogUseCase,
+    UpdateActivityLogUseCase,
+    SaveActivityLogValuesUseCase,
+    GetActivityLogValuesUseCase,
+} from '../../Application/UseCases/ActivityLog';
+
 // Controllers - Plocs
 import { AuthPloc } from '../../Controllers/Auth/AuthPloc';
 import { LoginPloc } from '../../Controllers/Auth/LoginPloc';
@@ -70,6 +81,12 @@ import {
     ValueDefinitionCreateFormPloc,
 } from '../../Controllers/Activity';
 
+// Controllers - ActivityLog Plocs
+import {
+    ActivityLogsListPloc,
+    ActivityLogDetailPloc,
+} from '../../Controllers/ActivityLog';
+
 // Domain
 import { isoToExpiresInSeconds } from '../../Domain';
 
@@ -83,6 +100,7 @@ import { AuthService } from '../Services/AuthService';
 import { UserService } from '../Services/UserService';
 import { CategoryService } from '../Services/CategoryService';
 import { ActivityService } from '../Services/ActivityService';
+import { ActivityLogService } from '../Services/ActivityLogService';
 
 
 // ============================================
@@ -151,6 +169,7 @@ const authService = new AuthService(httpClient);
 const userService = new UserService(httpClient);
 const categoryService = new CategoryService(httpClient);
 const activityService = new ActivityService(httpClient);
+const activityLogService = new ActivityLogService(httpClient);
 
 
 
@@ -188,6 +207,16 @@ const updateActivityUseCase = new UpdateActivityUseCase(activityService);
 const deleteActivityUseCase = new DeleteActivityUseCase(activityService);
 const getValueDefinitionsUseCase = new GetValueDefinitionsUseCase(activityService);
 const createValueDefinitionUseCase = new CreateValueDefinitionUseCase(activityService);
+
+// ActivityLog Use Cases
+const getActivityLogsUseCase = new GetActivityLogsUseCase(activityLogService);
+const getActivityLogByIdUseCase = new GetActivityLogByIdUseCase(activityLogService);
+const startActivityLogUseCase = new StartActivityLogUseCase(activityLogService);
+const stopActivityLogUseCase = new StopActivityLogUseCase(activityLogService);
+const updateActivityLogUseCase = new UpdateActivityLogUseCase(activityLogService);
+const saveActivityLogValuesUseCase = new SaveActivityLogValuesUseCase(activityLogService);
+const getActivityLogValuesUseCase = new GetActivityLogValuesUseCase(activityLogService);
+
 
 
 // ============================================
@@ -236,6 +265,10 @@ const activityDeletePloc = new ActivityDeletePloc(deleteActivityUseCase);
 const activityValueDefinitionsListPloc = new ActivityValueDefinitionsListPloc(getValueDefinitionsUseCase);
 const valueDefinitionCreateFormPloc = new ValueDefinitionCreateFormPloc(createValueDefinitionUseCase);
 
+// ActivityLog Plocs
+const activityLogsListPloc = new ActivityLogsListPloc(getActivityLogsUseCase, startActivityLogUseCase, stopActivityLogUseCase);
+const activityLogDetailPloc = new ActivityLogDetailPloc(getActivityLogByIdUseCase, updateActivityLogUseCase, saveActivityLogValuesUseCase, getActivityLogValuesUseCase);
+
 
 // ============================================
 // 10. INTERFAZ DE DEPENDENCIAS
@@ -264,6 +297,8 @@ export interface Dependencies {
     providerActivityDeletePloc: ActivityDeletePloc
     providerActivityValueDefinitionsListPloc: ActivityValueDefinitionsListPloc
     providerValueDefinitionCreateFormPloc: ValueDefinitionCreateFormPloc
+    providerActivityLogsListPloc: ActivityLogsListPloc
+    providerActivityLogDetailPloc: ActivityLogDetailPloc
 }
 
 
@@ -356,6 +391,15 @@ function provideValueDefinitionCreateFormPloc(): ValueDefinitionCreateFormPloc {
     return valueDefinitionCreateFormPloc;
 }
 
+// ActivityLog Providers
+function provideActivityLogsListPloc(): ActivityLogsListPloc {
+    return activityLogsListPloc;
+}
+
+function provideActivityLogDetailPloc(): ActivityLogDetailPloc {
+    return activityLogDetailPloc;
+}
+
 
 // ============================================
 // 12. LOCATOR PÚBLICO
@@ -383,4 +427,6 @@ export const dependenciesLocator: Dependencies = {
     providerActivityDeletePloc: provideActivityDeletePloc(),
     providerActivityValueDefinitionsListPloc: provideActivityValueDefinitionsListPloc(),
     providerValueDefinitionCreateFormPloc: provideValueDefinitionCreateFormPloc(),
+    providerActivityLogsListPloc: provideActivityLogsListPloc(),
+    providerActivityLogDetailPloc: provideActivityLogDetailPloc(),
 };

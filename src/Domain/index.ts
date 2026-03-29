@@ -97,3 +97,24 @@ export {
     initialActivityValueDefinitionsState,
     initialValueDefinitionCreateFormState,
 } from './IStates';
+
+// Activity Logs Domain Types
+export type {
+    ActivityLogResponse,
+    LogValueResponse,
+} from './ActivityLog/IActivityLogResponses';
+export type {
+    StartActivityLogRequest,
+    UpdateActivityLogRequest,
+    LogValueRequest,
+} from './ActivityLog/IActivityLogRequests';
+
+// Activity Logs States
+export type {
+    IActivityLogsListState,
+    IActivityLogDetailState,
+} from './IStates';
+export {
+    initialActivityLogsListState,
+    initialActivityLogDetailState,
+} from './IStates';

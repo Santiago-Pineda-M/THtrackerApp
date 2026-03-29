@@ -1,0 +1,42 @@
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bento-spacing-md);
+    background-color: var(--bento-color-surface-subtle);
+    padding: var(--bento-spacing-lg);
+    border-radius: var(--bento-radius-md);
+}
+
+.formTitle {
+    margin-bottom: var(--bento-spacing-xs);
+}
+
+.fieldsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--bento-spacing-md);
+}
+
+.fieldItem {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bento-spacing-xs);
+}
+
+.fieldLabel {
+    display: flex;
+    align-items: center;
+}
+
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--bento-spacing-md);
+    margin-top: var(--bento-spacing-md);
+}
+
+.emptyForm, .loading {
+    padding: var(--bento-spacing-md);
+    text-align: center;
+}

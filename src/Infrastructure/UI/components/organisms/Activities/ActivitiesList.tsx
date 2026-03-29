@@ -14,6 +14,7 @@ import { ActivityCreate } from './ActivityCreate';
 import { ActivityFormEdit } from './ActivityFormEdit';
 import { ActivityDeleteConfirm } from './ActivityDeleteConfirm';
 import { ActivityValueDefinitions } from './ActivityValueDefinitions';
+import { ActivityLogsList } from './ActivityLogsList';
 import styles from './ActivitiesList.module.css';
 
 interface Activity {
@@ -31,7 +32,8 @@ export const ActivitiesList: React.FC = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
     const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
-    const [selectedForDefinitions, setSelectedForDefinitions] = useState<Activity | null>(null);
+    const [selectedActivityDetails, setSelectedActivityDetails] = useState<Activity | null>(null);
+    const [activeTab, setActiveTab] = useState<'properties' | 'history'>('history');
     
     useEffect(() => {
         providerActivitiesListPloc.loadActivities();
@@ -47,11 +49,12 @@ export const ActivitiesList: React.FC = () => {
         setIsDeleteConfirmOpen(true);
     };
 
-    const handleSelectForDefinitions = (activity: Activity) => {
-        if (selectedForDefinitions?.id === activity.id) {
-            setSelectedForDefinitions(null); // Toggle off
+    const handleSelectForDetails = (activity: Activity) => {
+        if (selectedActivityDetails?.id === activity.id) {
+            setSelectedActivityDetails(null); // Toggle off
         } else {
-            setSelectedForDefinitions(activity);
+            setSelectedActivityDetails(activity);
+            setActiveTab('history');
         }
     };
 
@@ -68,8 +71,8 @@ export const ActivitiesList: React.FC = () => {
     const handleDeleteSuccess = () => {
         setIsDeleteConfirmOpen(false);
         setSelectedActivity(null);
-        if (selectedForDefinitions?.id === selectedActivity?.id) {
-            setSelectedForDefinitions(null);
+        if (selectedActivityDetails?.id === selectedActivity?.id) {
+            setSelectedActivityDetails(null);
         }
         providerActivitiesListPloc.loadActivities();
     };
@@ -85,16 +88,16 @@ export const ActivitiesList: React.FC = () => {
         name: (
             <div 
                 style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
-                onClick={() => handleSelectForDefinitions(activity)}
-                title="Ver propiedades de esta actividad"
+                onClick={() => handleSelectForDetails(activity)}
+                title="Ver detalles e historial de esta actividad"
             >
                 <div style={{
                     width: '8px',
                     height: '8px',
                     borderRadius: '50%',
-                    backgroundColor: selectedForDefinitions?.id === activity.id ? 'var(--bento-color-primary)' : 'transparent'
+                    backgroundColor: selectedActivityDetails?.id === activity.id ? 'var(--bento-color-primary)' : 'transparent'
                 }}/>
-                <Text weight={selectedForDefinitions?.id === activity.id ? 'bold' : 'medium'}>
+                <Text weight={selectedActivityDetails?.id === activity.id ? 'bold' : 'medium'}>
                     {activity.name || 'Sin nombre'}
                 </Text>
             </div>
@@ -141,12 +144,42 @@ export const ActivitiesList: React.FC = () => {
                     emptyMessage="No hay actividades. Crea una nueva seleccionando una categoría."
                 />
 
-                {selectedForDefinitions && (
-                    <ActivityValueDefinitions 
-                        key={selectedForDefinitions.id}
-                        activityId={selectedForDefinitions.id}
-                        activityName={selectedForDefinitions.name || 'Sin nombre'}
-                    />
+                {selectedActivityDetails && (
+                    <div className={styles.detailsPanel}>
+                        <div className={styles.tabsHeader}>
+                            <Button 
+                                variant={activeTab === 'history' ? 'primary' : 'ghost'} 
+                                size="sm" 
+                                onClick={() => setActiveTab('history')}
+                            >
+                                <Icon name="Clock" size={16} /> Historial
+                            </Button>
+                            <Button 
+                                variant={activeTab === 'properties' ? 'primary' : 'ghost'} 
+                                size="sm" 
+                                onClick={() => setActiveTab('properties')}
+                            >
+                                <Icon name="Settings" size={16} /> Propiedades
+                            </Button>
+                        </div>
+                        
+                        <div className={styles.tabContent}>
+                            {activeTab === 'history' && (
+                                <ActivityLogsList
+                                    key={`logs-${selectedActivityDetails.id}`}
+                                    activityId={selectedActivityDetails.id}
+                                    activityName={selectedActivityDetails.name || 'Sin nombre'}
+                                />
+                            )}
+                            {activeTab === 'properties' && (
+                                <ActivityValueDefinitions 
+                                    key={`props-${selectedActivityDetails.id}`}
+                                    activityId={selectedActivityDetails.id}
+                                    activityName={selectedActivityDetails.name || 'Sin nombre'}
+                                />
+                            )}
+                        </div>
+                    </div>
                 )}
             </Card>
 
