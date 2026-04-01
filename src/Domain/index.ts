@@ -118,3 +118,22 @@ export {
     initialActivityLogsListState,
     initialActivityLogDetailState,
 } from './IStates';
+
+// UserSession Domain Types
+export type {
+    IUserSessionResponse,
+    IRevokeSessionResponse,
+} from './UserSession/IUserSessionResponses';
+export type {
+    IRevokeSessionRequest,
+} from './UserSession/IUserSessionRequests';
+
+// UserSession States
+export type {
+    IUserSessionsListState,
+    ISessionRevokeState,
+} from './IStates';
+export {
+    initialUserSessionsListState,
+    initialSessionRevokeState,
+} from './IStates';

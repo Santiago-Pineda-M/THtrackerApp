@@ -55,6 +55,12 @@ import {
     GetActivityLogValuesUseCase,
 } from '../../Application/UseCases/ActivityLog';
 
+// Application - Casos de Uso UserSession
+import {
+    GetUserSessionsUseCase,
+    RevokeSessionUseCase,
+} from '../../Application/UseCases/UserSession';
+
 // Controllers - Plocs
 import { AuthPloc } from '../../Controllers/Auth/AuthPloc';
 import { LoginPloc } from '../../Controllers/Auth/LoginPloc';
@@ -87,6 +93,12 @@ import {
     ActivityLogDetailPloc,
 } from '../../Controllers/ActivityLog';
 
+// Controllers - UserSession Plocs
+import {
+    UserSessionsListPloc,
+    SessionRevokePloc,
+} from '../../Controllers/UserSession';
+
 // Domain
 import { isoToExpiresInSeconds } from '../../Domain';
 
@@ -101,6 +113,7 @@ import { UserService } from '../Services/UserService';
 import { CategoryService } from '../Services/CategoryService';
 import { ActivityService } from '../Services/ActivityService';
 import { ActivityLogService } from '../Services/ActivityLogService';
+import { UserSessionService } from '../Services/UserSessionService';
 
 
 // ============================================
@@ -170,6 +183,7 @@ const userService = new UserService(httpClient);
 const categoryService = new CategoryService(httpClient);
 const activityService = new ActivityService(httpClient);
 const activityLogService = new ActivityLogService(httpClient);
+const userSessionService = new UserSessionService(httpClient);
 
 
 
@@ -216,6 +230,10 @@ const stopActivityLogUseCase = new StopActivityLogUseCase(activityLogService);
 const updateActivityLogUseCase = new UpdateActivityLogUseCase(activityLogService);
 const saveActivityLogValuesUseCase = new SaveActivityLogValuesUseCase(activityLogService);
 const getActivityLogValuesUseCase = new GetActivityLogValuesUseCase(activityLogService);
+
+// UserSession Use Cases
+const getUserSessionsUseCase = new GetUserSessionsUseCase(userSessionService);
+const revokeSessionUseCase = new RevokeSessionUseCase(userSessionService);
 
 
 
@@ -269,6 +287,10 @@ const valueDefinitionCreateFormPloc = new ValueDefinitionCreateFormPloc(createVa
 const activityLogsListPloc = new ActivityLogsListPloc(getActivityLogsUseCase, startActivityLogUseCase, stopActivityLogUseCase);
 const activityLogDetailPloc = new ActivityLogDetailPloc(getActivityLogByIdUseCase, updateActivityLogUseCase, saveActivityLogValuesUseCase, getActivityLogValuesUseCase);
 
+// UserSession Plocs
+const userSessionsListPloc = new UserSessionsListPloc(getUserSessionsUseCase);
+const sessionRevokePloc = new SessionRevokePloc(revokeSessionUseCase);
+
 
 // ============================================
 // 10. INTERFAZ DE DEPENDENCIAS
@@ -299,6 +321,9 @@ export interface Dependencies {
     providerValueDefinitionCreateFormPloc: ValueDefinitionCreateFormPloc
     providerActivityLogsListPloc: ActivityLogsListPloc
     providerActivityLogDetailPloc: ActivityLogDetailPloc
+    // UserSession Providers
+    providerUserSessionsListPloc: UserSessionsListPloc
+    providerSessionRevokePloc: SessionRevokePloc
 }
 
 
@@ -400,6 +425,15 @@ function provideActivityLogDetailPloc(): ActivityLogDetailPloc {
     return activityLogDetailPloc;
 }
 
+// UserSession Providers
+function provideUserSessionsListPloc(): UserSessionsListPloc {
+    return userSessionsListPloc;
+}
+
+function provideSessionRevokePloc(): SessionRevokePloc {
+    return sessionRevokePloc;
+}
+
 
 // ============================================
 // 12. LOCATOR PÚBLICO
@@ -429,4 +463,6 @@ export const dependenciesLocator: Dependencies = {
     providerValueDefinitionCreateFormPloc: provideValueDefinitionCreateFormPloc(),
     providerActivityLogsListPloc: provideActivityLogsListPloc(),
     providerActivityLogDetailPloc: provideActivityLogDetailPloc(),
+    providerUserSessionsListPloc: provideUserSessionsListPloc(),
+    providerSessionRevokePloc: provideSessionRevokePloc(),
 };

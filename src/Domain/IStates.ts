@@ -611,3 +611,56 @@ export const initialActivityLogDetailState: IActivityLogDetailState = {
     success: false,
     message: '',
 };
+
+
+/**
+ * ==========================================
+ * USER SESSIONS LIST STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para la lista de sesiones activas del usuario
+ */
+export interface IUserSessionsListState {
+    sessions: Array<{
+        id: string;
+        deviceInfo: string | null;
+        ipAddress: string | null;
+        location: string | null;
+        createdAt: string;
+        expiresAt: string;
+        isActive: boolean;
+    }>;
+    error: ApiErrorResponse | null;
+    isLoading: boolean;
+}
+
+export const initialUserSessionsListState: IUserSessionsListState = {
+    sessions: [],
+    error: null,
+    isLoading: false,
+};
+
+/**
+ * ==========================================
+ * SESSION REVOKE STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para la acción de revocar una sesión
+ */
+export interface ISessionRevokeState {
+    isRevoking: boolean;
+    success: boolean;
+    error: ApiErrorResponse | null;
+    revokedSessionId: string | null;
+}
+
+export const initialSessionRevokeState: ISessionRevokeState = {
+    isRevoking: false,
+    success: false,
+    error: null,
+    revokedSessionId: null,
+};
