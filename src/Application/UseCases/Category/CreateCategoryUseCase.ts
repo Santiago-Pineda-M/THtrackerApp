@@ -12,6 +12,7 @@ import type { CreateCategoryRequest, CategoryResponse, ApiErrorResponse } from '
  */
 export interface CreateCategoryInput {
     name: string | null;
+    color: string | null;
 }
 
 /**
@@ -35,6 +36,7 @@ export class CreateCategoryUseCase implements IUseCase<CreateCategoryInput, Crea
     async execute(input: CreateCategoryInput): Promise<CreateCategoryOutput> {
         const request: CreateCategoryRequest = {
             name: input.name,
+            color: input.color,
         };
 
         const result = await this.categoryService.createCategory(request);

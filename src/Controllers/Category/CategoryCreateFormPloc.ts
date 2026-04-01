@@ -34,6 +34,18 @@ export class CategoryCreateFormPloc extends Ploc<ICategoryCreateFormState> {
     }
 
     /**
+     * Actualiza el color en el estado.
+     */
+    updateColor(color: string): void {
+        this.changeState({ 
+            ...this.state, 
+            color,
+            success: false,
+            message: '',
+        });
+    }
+
+    /**
      * Envía el formulario de creación.
      */
     async submit(): Promise<void> {
@@ -59,6 +71,7 @@ export class CategoryCreateFormPloc extends Ploc<ICategoryCreateFormState> {
         try {
             const request = {
                 name: this.state.name.trim() || null,
+                color: this.state.color.trim() || null,
             };
 
             const result = await this.createCategoryUseCase.execute(request);

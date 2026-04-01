@@ -13,6 +13,7 @@ export interface ActivityResponse {
     userId: string;       // UUID
     categoryId: string;   // UUID
     name: string | null;
+    color: string | null;
     allowOverlap: boolean;
 }
 

@@ -13,6 +13,7 @@ import type { CreateActivityRequest, ActivityResponse, ApiErrorResponse } from '
 export interface CreateActivityInput {
     categoryId: string;
     name: string | null;
+    color: string | null;
     allowOverlap: boolean;
 }
 
@@ -38,6 +39,7 @@ export class CreateActivityUseCase implements IUseCase<CreateActivityInput, Crea
         const request: CreateActivityRequest = {
             categoryId: input.categoryId,
             name: input.name,
+            color: input.color,
             allowOverlap: input.allowOverlap,
         };
 

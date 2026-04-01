@@ -42,8 +42,10 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
                 this.changeState({
                     ...this.state,
                     name: category.name ?? '',
+                    color: category.color ?? '',
                     initialValues: {
                         name: category.name ?? '',
+                        color: category.color ?? '',
                     },
                     isLoading: false,
                     errors: {},
@@ -82,6 +84,18 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
     }
 
     /**
+     * Actualiza el color en el estado.
+     */
+    updateColor(color: string): void {
+        this.changeState({ 
+            ...this.state, 
+            color,
+            success: false,
+            message: '',
+        });
+    }
+
+    /**
      * Envía el formulario de actualización.
      */
     async submit(): Promise<void> {
@@ -98,7 +112,8 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
         }
 
         // Verificar si hay cambios
-        const hasChanges = this.state.name !== this.state.initialValues.name;
+        const hasChanges = this.state.name !== this.state.initialValues.name || 
+                          this.state.color !== this.state.initialValues.color;
 
         if (!hasChanges) {
             this.changeState({
@@ -121,6 +136,7 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
             const request = {
                 id: this.state.id,
                 name: this.state.name.trim() || null,
+                color: this.state.color.trim() || null,
             };
 
             const result = await this.updateCategoryUseCase.execute(request);
@@ -129,8 +145,10 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
                 this.changeState({
                     ...this.state,
                     name: result.category.name ?? '',
+                    color: result.category.color ?? '',
                     initialValues: {
                         name: result.category.name ?? '',
+                        color: result.category.color ?? '',
                     },
                     errors: {},
                     success: true,
@@ -171,6 +189,7 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
         this.changeState({
             ...initialCategoryEditFormState,
             name: this.state.initialValues.name,
+            color: this.state.initialValues.color,
             initialValues: this.state.initialValues,
         });
     }

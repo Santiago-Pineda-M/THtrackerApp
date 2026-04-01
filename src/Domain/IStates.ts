@@ -235,6 +235,7 @@ export interface ICategoriesListState {
         id: string;
         userId: string;
         name: string | null;
+        color: string | null;
     }>;
     error: ApiErrorResponse | null;
     isLoading: boolean;
@@ -260,6 +261,7 @@ export interface ICategoryDetailState {
         id: string;
         userId: string;
         name: string | null;
+        color: string | null;
     } | null;
     error: ApiErrorResponse | null;
     isLoading: boolean;
@@ -282,23 +284,27 @@ export const initialCategoryDetailState: ICategoryDetailState = {
  */
 export interface ICategoryCreateFormState {
     name: string;
+    color: string;
     errors: Record<string, string[]>;
     isLoading: boolean;
     success: boolean;
     message: string;
     initialValues: {
         name: string;
+        color: string;
     };
 }
 
 export const initialCategoryCreateFormState: ICategoryCreateFormState = {
     name: '',
+    color: '',
     errors: {},
     isLoading: false,
     success: false,
     message: '',
     initialValues: {
         name: '',
+        color: '',
     },
 };
 
@@ -314,24 +320,28 @@ export const initialCategoryCreateFormState: ICategoryCreateFormState = {
 export interface ICategoryEditFormState {
     id: string;
     name: string;
+    color: string;
     errors: Record<string, string[]>;
     isLoading: boolean;
     success: boolean;
     message: string;
     initialValues: {
         name: string;
+        color: string;
     };
 }
 
 export const initialCategoryEditFormState: ICategoryEditFormState = {
     id: '',
     name: '',
+    color: '',
     errors: {},
     isLoading: false,
     success: false,
     message: '',
     initialValues: {
         name: '',
+        color: '',
     },
 };
 
@@ -350,6 +360,7 @@ export interface IActivitiesListState {
         userId: string;
         categoryId: string;
         name: string | null;
+        color: string | null;
         allowOverlap: boolean;
     }>;
     error: ApiErrorResponse | null;
@@ -377,6 +388,7 @@ export interface IActivityDetailState {
         userId: string;
         categoryId: string;
         name: string | null;
+        color: string | null;
         allowOverlap: boolean;
     } | null;
     error: ApiErrorResponse | null;
@@ -401,6 +413,7 @@ export const initialActivityDetailState: IActivityDetailState = {
 export interface IActivityCreateFormState {
     categoryId: string;
     name: string;
+    color: string;
     allowOverlap: boolean;
     errors: Record<string, string[]>;
     isLoading: boolean;
@@ -409,6 +422,7 @@ export interface IActivityCreateFormState {
     initialValues: {
         categoryId: string;
         name: string;
+        color: string;
         allowOverlap: boolean;
     };
 }
@@ -416,6 +430,7 @@ export interface IActivityCreateFormState {
 export const initialActivityCreateFormState: IActivityCreateFormState = {
     categoryId: '',
     name: '',
+    color: '',
     allowOverlap: false,
     errors: {},
     isLoading: false,
@@ -424,6 +439,7 @@ export const initialActivityCreateFormState: IActivityCreateFormState = {
     initialValues: {
         categoryId: '',
         name: '',
+        color: '',
         allowOverlap: false,
     },
 };
@@ -441,6 +457,7 @@ export interface IActivityEditFormState {
     id: string;
     categoryId: string;
     name: string;
+    color: string;
     allowOverlap: boolean;
     errors: Record<string, string[]>;
     isLoading: boolean;
@@ -449,6 +466,7 @@ export interface IActivityEditFormState {
     initialValues: {
         categoryId: string;
         name: string;
+        color: string;
         allowOverlap: boolean;
     };
 }
@@ -457,6 +475,7 @@ export const initialActivityEditFormState: IActivityEditFormState = {
     id: '',
     categoryId: '',
     name: '',
+    color: '',
     allowOverlap: false,
     errors: {},
     isLoading: false,
@@ -465,6 +484,7 @@ export const initialActivityEditFormState: IActivityEditFormState = {
     initialValues: {
         categoryId: '',
         name: '',
+        color: '',
         allowOverlap: false,
     },
 };

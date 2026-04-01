@@ -40,15 +40,17 @@ export class ActivityEditFormPloc extends Ploc<IActivityEditFormState> {
             const result = await this.getActivityByIdUseCase.execute({ id });
 
             if (result.success) {
-                const { categoryId, name, allowOverlap } = result.activity;
+                const { categoryId, name, color, allowOverlap } = result.activity;
                 this.changeState({
                     ...this.state,
                     categoryId,
                     name: name || '',
+                    color: color || '',
                     allowOverlap,
                     initialValues: {
                         categoryId,
                         name: name || '',
+                        color: color || '',
                         allowOverlap,
                     },
                     isLoading: false,
@@ -81,6 +83,18 @@ export class ActivityEditFormPloc extends Ploc<IActivityEditFormState> {
             ...this.state, 
             name, 
             errors: newErrors,
+            success: false,
+            message: '',
+        });
+    }
+
+    /**
+     * Actualiza el color en el estado.
+     */
+    updateColor(color: string): void {
+        this.changeState({ 
+            ...this.state, 
+            color,
             success: false,
             message: '',
         });
@@ -125,6 +139,7 @@ export class ActivityEditFormPloc extends Ploc<IActivityEditFormState> {
             const request = {
                 id: this.state.id,
                 name: this.state.name.trim() || null,
+                color: this.state.color.trim() || null,
                 allowOverlap: this.state.allowOverlap,
             };
 
@@ -135,10 +150,12 @@ export class ActivityEditFormPloc extends Ploc<IActivityEditFormState> {
                 this.changeState({
                     ...this.state,
                     name: updatedActivity.name || '',
+                    color: updatedActivity.color || '',
                     allowOverlap: updatedActivity.allowOverlap,
                     initialValues: {
                         categoryId: updatedActivity.categoryId,
                         name: updatedActivity.name || '',
+                        color: updatedActivity.color || '',
                         allowOverlap: updatedActivity.allowOverlap,
                     },
                     success: true,

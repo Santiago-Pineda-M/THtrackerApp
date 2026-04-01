@@ -8,6 +8,7 @@ export interface CategoryResponse {
   id: string;
   userId: string;
   name: string | null;
+  color: string | null;
 }
 
 /**

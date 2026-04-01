@@ -4,6 +4,7 @@
  */
 export interface CreateCategoryRequest {
   name: string | null;
+  color: string | null;
 }
 
 /**
@@ -12,4 +13,5 @@ export interface CreateCategoryRequest {
  */
 export interface UpdateCategoryRequest {
   name: string | null;
+  color: string | null;
 }

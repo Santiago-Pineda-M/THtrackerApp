@@ -49,6 +49,18 @@ export class ActivityCreateFormPloc extends Ploc<IActivityCreateFormState> {
     }
 
     /**
+     * Actualiza el color en el estado.
+     */
+    updateColor(color: string): void {
+        this.changeState({ 
+            ...this.state, 
+            color,
+            success: false,
+            message: '',
+        });
+    }
+
+    /**
      * Actualiza la opción de permitir solapamiento.
      */
     updateAllowOverlap(allowOverlap: boolean): void {
@@ -87,6 +99,7 @@ export class ActivityCreateFormPloc extends Ploc<IActivityCreateFormState> {
             const request = {
                 categoryId: this.state.categoryId,
                 name: this.state.name.trim() || null,
+                color: this.state.color.trim() || null,
                 allowOverlap: this.state.allowOverlap,
             };
 

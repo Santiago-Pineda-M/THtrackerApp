@@ -9,6 +9,7 @@
 export interface CreateActivityRequest {
     categoryId: string;   // UUID
     name: string | null;
+    color: string | null;
     allowOverlap: boolean;
 }
 
@@ -18,6 +19,7 @@ export interface CreateActivityRequest {
  */
 export interface UpdateActivityRequest {
     name: string | null;
+    color: string | null;
     allowOverlap: boolean;
 }
 

@@ -13,6 +13,7 @@ import type { UpdateCategoryRequest, CategoryResponse, ApiErrorResponse } from '
 export interface UpdateCategoryInput {
     id: string;
     name: string | null;
+    color: string | null;
 }
 
 /**
@@ -36,6 +37,7 @@ export class UpdateCategoryUseCase implements IUseCase<UpdateCategoryInput, Upda
     async execute(input: UpdateCategoryInput): Promise<UpdateCategoryOutput> {
         const request: UpdateCategoryRequest = {
             name: input.name,
+            color: input.color,
         };
 
         const result = await this.categoryService.updateCategory(input.id, request);

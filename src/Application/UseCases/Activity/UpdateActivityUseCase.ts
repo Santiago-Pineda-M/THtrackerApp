@@ -13,6 +13,7 @@ import type { UpdateActivityRequest, ActivityResponse, ApiErrorResponse } from '
 export interface UpdateActivityInput {
     id: string; // UUID
     name: string | null;
+    color: string | null;
     allowOverlap: boolean;
 }
 
@@ -37,6 +38,7 @@ export class UpdateActivityUseCase implements IUseCase<UpdateActivityInput, Upda
     async execute(input: UpdateActivityInput): Promise<UpdateActivityOutput> {
         const request: UpdateActivityRequest = {
             name: input.name,
+            color: input.color,
             allowOverlap: input.allowOverlap,
         };
 
