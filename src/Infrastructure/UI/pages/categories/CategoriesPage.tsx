@@ -3,8 +3,12 @@ import { MainLayout } from '../../components/layouts/MainLayout';
 import { CategoriesList } from '../../components';
 
 export const CategoriesPage: React.FC = () => {
+    const breadcrumbs = [
+        { label: 'Categorías' }
+    ];
+
     return (
-        <MainLayout>
+        <MainLayout breadcrumbs={breadcrumbs}>
             <CategoriesList />
         </MainLayout>
     );

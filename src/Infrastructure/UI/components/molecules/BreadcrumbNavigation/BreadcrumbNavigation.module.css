@@ -1,0 +1,21 @@
+.breadcrumb {
+    margin: 0;
+    padding: var(--space-lg) var(--space-md);
+}
+
+.list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+
+}
+

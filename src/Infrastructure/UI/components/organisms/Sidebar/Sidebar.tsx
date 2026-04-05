@@ -6,6 +6,12 @@ import { useDependencies } from '../../../../Context/useDependencies';
 import type { IAuthState, ISidebarState } from '../../../../../Domain';
 import styles from './Sidebar.module.css';
 
+// Función para verificar si la ruta actual coincide con el patrón (incluyendo subrutas)
+const isRouteActive = (currentPath: string, targetRoute: string): boolean => {
+  const pattern = new RegExp(`^${targetRoute}(/.*)?$`);
+  return pattern.test(currentPath);
+};
+
 export const Sidebar: React.FC = () => {
   const { providerLogoutPloc, providerAuthPloc, providerSidebarPloc } = useDependencies();
   const authState = usePlocState<IAuthState>(providerAuthPloc);
@@ -44,28 +50,28 @@ export const Sidebar: React.FC = () => {
       <nav className={`${styles.nav} ${!sidebarState.isMenuOpen ? styles.navMenuClosed : ''}`}>
         <Link
           to="/dashboard"
-          className={`${styles.link} ${location.pathname === '/dashboard' ? styles.active : ''}`}
+          className={`${styles.link} ${isRouteActive(location.pathname, '/dashboard') ? styles.active : ''}`}
         >
           <Icon name="Home" size={20} />
           {sidebarState.isMenuOpen && <span>Inicio</span>}
         </Link>
         <Link
           to="/activities"
-          className={`${styles.link} ${location.pathname === '/activities' ? styles.active : ''}`}
+          className={`${styles.link} ${isRouteActive(location.pathname, '/activities') ? styles.active : ''}`}
         >
           <Icon name="Activity" size={20} />
           {sidebarState.isMenuOpen && <span>Actividades</span>}
         </Link>
         <Link
           to="/example"
-          className={`${styles.link} ${location.pathname === '/example' ? styles.active : ''}`}
+          className={`${styles.link} ${isRouteActive(location.pathname, '/example') ? styles.active : ''}`}
         >
           <Icon name="FileText" size={20} />
           {sidebarState.isMenuOpen && <span>Ejemplos</span>}
         </Link>
         <Link
           to="/user-profile"
-          className={`${styles.link} ${location.pathname === '/user-profile' ? styles.active : ''}`}
+          className={`${styles.link} ${isRouteActive(location.pathname, '/user-profile') ? styles.active : ''}`}
         >
           <Icon name="User" size={20} />
           {sidebarState.isMenuOpen && <span>Perfil</span>}

@@ -10,8 +10,13 @@ import {
 export const ActivityDetailsPage: React.FC = () => {
     const { id = '' } = useParams<{ id: string }>();
 
+    const breadcrumbs = [
+        { label: 'Actividades', path: '/activities' },
+        { label: 'Detalle de Actividad' }
+    ];
+
     return (
-        <MainLayout>
+        <MainLayout breadcrumbs={breadcrumbs}>
             <ActivityGeneralInfo activityId={id} />
             <ActivityProperties activityId={id} />
             <ActivityLogs activityId={id} />

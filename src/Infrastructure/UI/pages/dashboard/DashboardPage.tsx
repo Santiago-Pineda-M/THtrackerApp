@@ -3,8 +3,12 @@ import { Card, Text, Divider } from '../../components';
 import { MainLayout } from '../../components/layouts';
 
 export const DashboardPage: React.FC = () => {
+    const breadcrumbs = [
+        { label: 'Dashboard' }
+    ];
+
     return (
-        <MainLayout>
+        <MainLayout breadcrumbs={breadcrumbs}>
             {/* Bienvenida */}
             <Card title="Bienvenido al Dashboard" w={2} h={1}>
                 <div>

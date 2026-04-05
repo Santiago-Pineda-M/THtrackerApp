@@ -13,8 +13,12 @@ import {
 import { MainLayout } from '../../components/layouts';
 
 const ExamplePage: React.FC = () => {
+  const breadcrumbs = [
+    { label: 'Ejemplos' }
+  ];
+
   return (
-    <MainLayout>
+    <MainLayout breadcrumbs={breadcrumbs}>
       <TypographyBadgesExample />
       <AuthSessionExample />
       <ButtonsExample />

@@ -4,8 +4,12 @@ import { ActivitiesList } from '../../components';
 import { CategoriesList } from '../../components';
 
 export const ActivitiesPage: React.FC = () => {
+    const breadcrumbs = [
+        { label: 'Actividades' }
+    ];
+
     return (
-        <MainLayout>
+        <MainLayout breadcrumbs={breadcrumbs}>
             <ActivitiesList />
             <CategoriesList />
         </MainLayout>
