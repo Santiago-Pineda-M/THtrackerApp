@@ -1,9 +1,6 @@
-/**
- * CategoriesPage - Página de gestión de categorías
- */
-
-import { CategoriesList } from '../../components/organisms/Categories';
+import React from 'react';
 import { MainLayout } from '../../components/layouts/MainLayout';
+import { CategoriesList } from '../../components';
 
 export const CategoriesPage: React.FC = () => {
     return (

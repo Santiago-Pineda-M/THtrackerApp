@@ -5,7 +5,7 @@
 
 import { useEffect } from 'react';
 import { Card, Text, Spinner, Avatar } from '../../../components';
-import { useDependencies } from '../../../../Context/DependenciesProvider';
+import { useDependencies } from '../../../../Context/useDependencies';
 import { usePlocState } from '../../../../Hooks/usePlocState';
 import type { IUserProfileDisplayState } from '../../../../../Domain/IStates';
 

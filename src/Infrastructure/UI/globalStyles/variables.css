@@ -7,8 +7,13 @@
   /* Backgrounds */
   --color-bg-primary: #0f172a; /* Deep slate/navy background */
   --color-bg-card: rgba(30, 41, 59, 0.7); /* Translucent slate for cards */
+  --color-bg-secondary: rgba(135, 135, 135, 0.146); /* Slightly lighter for secondary elements */
   --color-bg-input: rgba(15, 23, 42, 0.5); /* Slightly darker for inputs */
   --color-bg-input-hover: rgba(15, 23, 42, 0.8);
+  --color-bg-input-focus: rgba(15, 23, 42, 0.9);
+  --color-bg-hover: rgba(99, 102, 241, 0.12); /* Indigo hover effect */
+  --color-bg-active: rgba(99, 102, 241, 0.25); /* Stronger indigo for active states */
+
 
   /* Text */
   --color-text-primary: #f8fafc; /* Bright stark white-ish for readability */
@@ -37,6 +42,7 @@
   /* Radii */
   --radius-sm: 8px;
   --radius-md: 12px;
+  --radius-lg: 16px;
   --radius-card: 24px; /* Large rounded corners for bento aesthetic */
   --radius-full: 9999px;
 
@@ -73,7 +79,6 @@
   --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --card-hover-lift: -4px;
-
 }
 
 body {

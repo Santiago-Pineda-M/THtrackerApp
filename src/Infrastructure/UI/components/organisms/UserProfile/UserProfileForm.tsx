@@ -6,7 +6,7 @@
 import { useEffect } from 'react';
 import { Card, Input, Button, Text } from '../../../components';
 import FormField from '../../molecules/Form/FormField';
-import { useDependencies } from '../../../../Context/DependenciesProvider';
+import { useDependencies } from '../../../../Context/useDependencies';
 import { usePlocState } from '../../../../Hooks/usePlocState';
 import type { IUserProfileFormState } from '../../../../../Domain/IStates';
 

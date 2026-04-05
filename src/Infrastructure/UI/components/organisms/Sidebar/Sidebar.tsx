@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Card, Button, Icon, Text, Divider } from '../../atoms';
 import { usePlocState } from '../../../../Hooks/usePlocState';
-import { useDependencies } from '../../../../Context/DependenciesProvider';
+import { useDependencies } from '../../../../Context/useDependencies';
 import type { IAuthState, ISidebarState } from '../../../../../Domain';
 import styles from './Sidebar.module.css';
 
@@ -41,20 +41,13 @@ export const Sidebar: React.FC = () => {
         </Button>
       </div>
       <Divider />
-      <nav className={ `${styles.nav} ${!sidebarState.isMenuOpen ? styles.navMenuClosed : ''}`}>
+      <nav className={`${styles.nav} ${!sidebarState.isMenuOpen ? styles.navMenuClosed : ''}`}>
         <Link
           to="/dashboard"
           className={`${styles.link} ${location.pathname === '/dashboard' ? styles.active : ''}`}
         >
-          <Icon name="TrendingUp" size={20} />
-          {sidebarState.isMenuOpen && <span>Dashboard</span>}
-        </Link>
-        <Link
-          to="/categories"
-          className={`${styles.link} ${location.pathname === '/categories' ? styles.active : ''}`}
-        >
-          <Icon name="Folder" size={20} />
-          {sidebarState.isMenuOpen && <span>Categorías</span>}
+          <Icon name="Home" size={20} />
+          {sidebarState.isMenuOpen && <span>Inicio</span>}
         </Link>
         <Link
           to="/activities"

@@ -1,8 +1,6 @@
-import React, { createContext, useContext } from 'react'
-import type { Dependencies } from '../DI/DependenciesLocator'
+import React from 'react'
 import { dependenciesLocator } from '../DI/DependenciesLocator'
-
-const DependenciesContext = createContext<Dependencies | null>(null)
+import { DependenciesContext } from './useDependencies'
 
 export const DependenciesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -12,12 +10,4 @@ export const DependenciesProvider: React.FC<{ children: React.ReactNode }> = ({
       {children}
     </DependenciesContext.Provider>
   )
-}
-
-export const useDependencies = (): Dependencies => {
-  const context = useContext(DependenciesContext)
-  if (!context) {
-    throw new Error('useDependencies must be used within DependenciesProvider')
-  }
-  return context
 }

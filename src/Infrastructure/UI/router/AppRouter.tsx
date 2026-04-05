@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { BrowserRouter, useRoutes, Navigate } from "react-router-dom";
 import type { RouteObject } from "react-router-dom";
 import { usePlocState } from '../../Hooks/usePlocState';
-import { useDependencies } from "../../Context/DependenciesProvider";
+import { useDependencies } from "../../Context/useDependencies";
 import { AuthStatus } from '../../../Domain';
 import type { IAuthState } from '../../../Domain';
 import { Spinner } from '../components/atoms';
@@ -12,8 +12,8 @@ import {
     DashboardPage,
     ExamplePage,
     UserProfilePage,
-    CategoriesPage,
-    ActivitiesPage
+    ActivitiesPage,
+    ActivityDetailsPage
 } from "../pages";
 import { Guard } from "./Gard";
 
@@ -108,18 +108,18 @@ const AppRoutes = () => {
                 )
             },
             {
-                path: "/categories",
-                element: (
-                    <Guard isAccess={isAuthenticated} fallback={<Navigate to="/login" />}>
-                        <CategoriesPage />
-                    </Guard>
-                )
-            },
-            {
                 path: "/activities",
                 element: (
                     <Guard isAccess={isAuthenticated} fallback={<Navigate to="/login" />}>
                         <ActivitiesPage />
+                    </Guard>
+                )
+            },
+            {
+                path: "/activities/:id",
+                element: (
+                    <Guard isAccess={isAuthenticated} fallback={<Navigate to="/login" />}>
+                        <ActivityDetailsPage />
                     </Guard>
                 )
             },

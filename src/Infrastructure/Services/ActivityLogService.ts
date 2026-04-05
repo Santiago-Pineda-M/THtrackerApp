@@ -24,7 +24,7 @@ export class ActivityLogService implements IActivityLogService {
             // Pasamos activityId como query param
             const response = await this.httpClient.get<ActivityLogResponse[]>(`/api/v1/activity-logs?activityId=${activityId}`);
             return response.data;
-        } catch (error: any) {
+        } catch (error: unknown) {
              return this.handleError(error);
         }
     }
@@ -33,7 +33,7 @@ export class ActivityLogService implements IActivityLogService {
         try {
             const response = await this.httpClient.get<ActivityLogResponse>(`/api/v1/activity-logs/${id}`);
             return response.data;
-        } catch (error: any) {
+        } catch (error: unknown) {
              return this.handleError(error);
         }
     }
@@ -42,7 +42,7 @@ export class ActivityLogService implements IActivityLogService {
          try {
              const response = await this.httpClient.post<ActivityLogResponse>('/api/v1/activity-logs/start', request);
              return response.data;
-         } catch (error: any) {
+         } catch (error: unknown) {
              return this.handleError(error);
          }
     }
@@ -51,7 +51,7 @@ export class ActivityLogService implements IActivityLogService {
          try {
              const response = await this.httpClient.post<ActivityLogResponse>(`/api/v1/activity-logs/${id}/stop`);
              return response.data;
-         } catch (error: any) {
+         } catch (error: unknown) {
              return this.handleError(error);
          }
     }
@@ -60,7 +60,7 @@ export class ActivityLogService implements IActivityLogService {
          try {
              const response = await this.httpClient.put<ActivityLogResponse>(`/api/v1/activity-logs/${id}`, request);
              return response.data;
-         } catch (error: any) {
+         } catch (error: unknown) {
               return this.handleError(error);
          }
     }
@@ -68,7 +68,7 @@ export class ActivityLogService implements IActivityLogService {
     async saveActivityLogValues(id: string, requests: LogValueRequest[]): Promise<void | ApiErrorResponse> {
          try {
              await this.httpClient.post<void>(`/api/v1/activity-logs/${id}/values`, requests);
-         } catch (error: any) {
+         } catch (error: unknown) {
              return this.handleError(error);
          }
     }
@@ -77,19 +77,19 @@ export class ActivityLogService implements IActivityLogService {
          try {
              const response = await this.httpClient.get<LogValueResponse[]>(`/api/v1/activity-logs/${id}/values`);
              return response.data;
-         } catch (error: any) {
+         } catch (error: unknown) {
              return this.handleError(error);
          }
     }
 
-    private handleError(error: any): ApiErrorResponse {
-        if (error.response && error.response.data) {
+    private handleError(error: unknown): ApiErrorResponse {
+        if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response) {
             return error.response.data as ApiErrorResponse;
         }
         return {
             title: 'Error de red o de servidor',
             status: 500,
-            detail: error.message || 'Ha ocurrido un error inesperado al conectar con el servidor',
+            detail: (error instanceof Error ? error.message : 'Ha ocurrido un error inesperado al conectar con el servidor'),
         } as ApiErrorResponse;
     }
 }

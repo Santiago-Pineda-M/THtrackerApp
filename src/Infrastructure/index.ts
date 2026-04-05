@@ -11,15 +11,23 @@ export { LocalStorageAdapter, SecureStorageAdapter } from './Adapters/storage';
 
 // Repositories
 export { AuthSessionRepository } from './Repositories/AuthSessionRepository';
+export { SidebarRepository } from './Repositories/SidebarRepository';
 
 // Dependency Injection
 export { dependenciesLocator } from './DI/DependenciesLocator';
 
 // Context
-export { DependenciesProvider, useDependencies } from './Context/DependenciesProvider';
+export { DependenciesProvider } from './Context/DependenciesProvider';
+export { useDependencies } from './Context/useDependencies';
 
 // Services
+export { AuthService } from './Services/AuthService';
+export { ActivityService } from './Services/ActivityService';
+export { ActivityLogService } from './Services/ActivityLogService';
 export { CategoryService } from './Services/CategoryService';
+export { UserService } from './Services/UserService';
+export { UserSessionService } from './Services/UserSessionService';
+
 
 // Hooks
 export { usePlocState } from './Hooks/usePlocState';

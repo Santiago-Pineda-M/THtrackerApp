@@ -1,4 +1,5 @@
 export { CategoriesList } from './CategoriesList';
+export { CategoriesListItem } from './CategoriesListItem';
 export { CategoryCreate } from './CategoryCreate';
-export { CategoryFormEdit } from './CategoryFormEdit';
-export { CategoryDeleteConfirm } from './CategoryDeleteConfirm';
+export { CategoryEdit } from './CategoryEdit';
+export { CategoryDelete } from './CategoryDelete';

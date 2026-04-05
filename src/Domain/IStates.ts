@@ -230,13 +230,16 @@ export const initialUserProfileFormState: IUserProfileFormState = {
 /**
  * Estado para la lista de categorías del usuario autenticado
  */
+export interface ICategory {
+    id: string;
+    userId: string;
+    name: string | null;
+    color: string | null;
+}
+
+
 export interface ICategoriesListState {
-    categories: Array<{
-        id: string;
-        userId: string;
-        name: string | null;
-        color: string | null;
-    }>;
+    categories: Array<ICategory>;
     error: ApiErrorResponse | null;
     isLoading: boolean;
 }
@@ -257,12 +260,7 @@ export const initialCategoriesListState: ICategoriesListState = {
  * Estado para mostrar una categoría individual
  */
 export interface ICategoryDetailState {
-    category: {
-        id: string;
-        userId: string;
-        name: string | null;
-        color: string | null;
-    } | null;
+    category: ICategory | null;
     error: ApiErrorResponse | null;
     isLoading: boolean;
 }
@@ -297,7 +295,7 @@ export interface ICategoryCreateFormState {
 
 export const initialCategoryCreateFormState: ICategoryCreateFormState = {
     name: '',
-    color: '',
+    color: '#000000',
     errors: {},
     isLoading: false,
     success: false,
@@ -430,7 +428,7 @@ export interface IActivityCreateFormState {
 export const initialActivityCreateFormState: IActivityCreateFormState = {
     categoryId: '',
     name: '',
-    color: '',
+    color: '#000000',
     allowOverlap: false,
     errors: {},
     isLoading: false,

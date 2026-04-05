@@ -1,62 +1,64 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Text, Modal, Input, FormField } from '../..';
 import { useDependencies } from '../../../../Context/useDependencies';
 import { usePlocState } from '../../../../Hooks/usePlocState';
-import type { ICategoryCreateFormState } from '../../../../../Domain/IStates';
-import styles from './CategoryCreate.module.css';
+import type { ICategory } from '../../../../../Domain';
+import type { ICategoryEditFormState } from '../../../../../Domain/IStates';
+import styles from './CategoryEdit.module.css';
 
-export const CategoryCreate: React.FC = () => {
+interface CategoryEditProps {
+  category: ICategory;
+}
+
+export const CategoryEdit: React.FC<CategoryEditProps> = ({ category }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { providerCategoryCreateFormPloc, providerCategoriesListPloc } = useDependencies();
-  const state = usePlocState<ICategoryCreateFormState>(providerCategoryCreateFormPloc);
-
-  useEffect(() => {
-    if (state.success) {
-      providerCategoriesListPloc.loadCategories();
-    }
-  }, [state.success, providerCategoriesListPloc]);
+  const { providerCategoryEditFormPloc, providerCategoriesListPloc } = useDependencies();
+  const state = usePlocState<ICategoryEditFormState>(providerCategoryEditFormPloc);
 
   const handleOpen = () => {
-    providerCategoryCreateFormPloc.reset();
+    providerCategoryEditFormPloc.reset();
+    providerCategoryEditFormPloc.initializeForm(category.id);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
     setIsModalOpen(false);
-    providerCategoryCreateFormPloc.reset();
+    if (state.success) {
+      providerCategoriesListPloc.loadCategories();
+    }
+    providerCategoryEditFormPloc.reset();
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerCategoryCreateFormPloc.updateName(e.target.value);
+    providerCategoryEditFormPloc.updateName(e.target.value);
   };
 
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerCategoryCreateFormPloc.updateColor(e.target.value);
+    providerCategoryEditFormPloc.updateColor(e.target.value);
   };
 
   const handleSubmit = async () => {
-    await providerCategoryCreateFormPloc.submit();
+    await providerCategoryEditFormPloc.submit();
   };
 
   return (
     <>
       <Button
-        variant='ghost'
-        title='Agregar Categoría'
-        size='md'
+        variant="ghost"
+        size="sm"
         onClick={handleOpen}
       >
-        Agregar categoria
+        Editar
       </Button>
 
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? '¡Éxito!' : 'Nueva Categoría'}
+        title={state.success ? '¡Éxito!' : `Editar ${category.name}`}
       >
         {state.success ? (
           <div className={styles['success-container']}>
-            <Text>La categoría se ha creado con éxito.</Text>
+            <Text>{state.message || 'La categoría se ha actualizado con éxito.'}</Text>
             <div className={styles['success-actions']}>
               <Button onClick={handleClose}>Cerrar</Button>
             </div>
@@ -102,7 +104,7 @@ export const CategoryCreate: React.FC = () => {
                 onClick={handleSubmit}
                 loading={state.isLoading}
               >
-                Crear
+                Guardar Cambios
               </Button>
             </div>
           </div>

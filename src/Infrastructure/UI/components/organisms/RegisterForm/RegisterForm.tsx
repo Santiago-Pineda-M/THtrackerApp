@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { IRegisterState } from '../../../../../Domain/IStates';
-import { useDependencies } from '../../../../Context/DependenciesProvider';
+import { useDependencies } from '../../../../Context/useDependencies';
 import { usePlocState } from '../../../../Hooks/usePlocState';
 import { Card, Input, Button, Text } from '../../../components';
 import FormField from '../../molecules/Form/FormField';

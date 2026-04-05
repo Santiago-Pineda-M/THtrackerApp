@@ -1,7 +1,7 @@
 import React from 'react';
 import s from './Input.module.css';
 
-export type InputType = 'text' | 'password' | 'number' | 'search' | 'email';
+export type InputType = 'text' | 'password' | 'number' | 'search' | 'email' | 'color';
 
 export type InputElement = React.ElementRef<'input'>;
 

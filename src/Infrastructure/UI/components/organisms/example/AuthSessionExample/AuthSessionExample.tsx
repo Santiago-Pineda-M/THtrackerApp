@@ -1,7 +1,7 @@
 import React from 'react';
 import Card from '../../../atoms/Card/Card';
 import { Table } from '../../../molecules/Table/Table';
-import { useDependencies } from '../../../../../Context/DependenciesProvider';
+import { useDependencies } from '../../../../../Context/useDependencies';
 import { usePlocState } from '../../../../../Hooks/usePlocState';
 import type { IAuthState } from '../../../../../../Domain';
 import type { AuthSession } from '../../../../../../Domain/Entities/AuthSession';

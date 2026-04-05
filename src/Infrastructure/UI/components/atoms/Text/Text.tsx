@@ -11,6 +11,7 @@ export interface TextProps extends React.HTMLAttributes<HTMLElement> {
   muted?: boolean;
   truncate?: boolean;
   href?: string;
+  color?: string;
 }
 
 export const Text: React.FC<TextProps> = ({
@@ -21,6 +22,7 @@ export const Text: React.FC<TextProps> = ({
   muted,
   truncate,
   href,
+  color,
   ...props
 }) => {
   const extraProps = Tag === 'a' ? { href } : {};
@@ -31,6 +33,7 @@ export const Text: React.FC<TextProps> = ({
       data-weight={weight}
       data-muted={muted || undefined}
       data-truncate={truncate || undefined}
+      style={{ color }}
       {...extraProps}
       {...props}
     >

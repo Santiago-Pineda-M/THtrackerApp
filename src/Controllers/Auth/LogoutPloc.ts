@@ -35,7 +35,7 @@ export class LogoutPloc extends Ploc<ILogoutState> {
                 success: true,
                 error: undefined,
             });
-        } catch (error) {
+        } catch {
             // Limpiar sesión local aunque el servidor falle
             this.authPloc.onLogout();
             this.changeState({
