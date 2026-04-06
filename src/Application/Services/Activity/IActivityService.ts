@@ -10,6 +10,7 @@ import type {
     CreateActivityRequest,
     UpdateActivityRequest,
     CreateValueDefinitionRequest,
+    UpdateValueDefinitionRequest,
     ApiErrorResponse,
 } from '../../../Domain';
 
@@ -67,4 +68,16 @@ export interface IActivityService {
      * POST /api/v1/activities/{activityId}/definitions
      */
     createValueDefinition(activityId: string, request: CreateValueDefinitionRequest): Promise<ActivityValueDefinitionResponse | ApiErrorResponse>;
+
+    /**
+     * Actualiza una definición de valor existente para una actividad.
+     * PUT /api/v1/activities/{activityId}/definitions/{id}
+     */
+    updateValueDefinition(activityId: string, id: string, request: UpdateValueDefinitionRequest): Promise<ActivityValueDefinitionResponse | ApiErrorResponse>;
+
+    /**
+     * Elimina una definición de valor existente para una actividad.
+     * DELETE /api/v1/activities/{activityId}/definitions/{id}
+     */
+    deleteValueDefinition(activityId: string, id: string): Promise<void | ApiErrorResponse>;
 }

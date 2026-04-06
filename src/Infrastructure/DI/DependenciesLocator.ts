@@ -42,6 +42,9 @@ import {
     DeleteActivityUseCase,
     GetValueDefinitionsUseCase,
     CreateValueDefinitionUseCase,
+    UpdateValueDefinitionUseCase,
+    DeleteValueDefinitionUseCase,
+    GetValueDefinitionByIdUseCase,
 } from '../../Application/UseCases/Activity';
 
 // Application - Casos de Uso ActivityLog
@@ -85,6 +88,8 @@ import {
     ActivityDeletePloc,
     ActivityValueDefinitionsListPloc,
     ValueDefinitionCreateFormPloc,
+    ValueDefinitionEditFormPloc,
+    ValueDefinitionDeletePloc,
 } from '../../Controllers/Activity';
 
 // Controllers - ActivityLog Plocs
@@ -221,6 +226,9 @@ const updateActivityUseCase = new UpdateActivityUseCase(activityService);
 const deleteActivityUseCase = new DeleteActivityUseCase(activityService);
 const getValueDefinitionsUseCase = new GetValueDefinitionsUseCase(activityService);
 const createValueDefinitionUseCase = new CreateValueDefinitionUseCase(activityService);
+const updateValueDefinitionUseCase = new UpdateValueDefinitionUseCase(activityService);
+const deleteValueDefinitionUseCase = new DeleteValueDefinitionUseCase(activityService);
+const getValueDefinitionByIdUseCase = new GetValueDefinitionByIdUseCase(activityService);
 
 // ActivityLog Use Cases
 const getActivityLogsUseCase = new GetActivityLogsUseCase(activityLogService);
@@ -282,6 +290,8 @@ const activityEditFormPloc = new ActivityEditFormPloc(updateActivityUseCase, get
 const activityDeletePloc = new ActivityDeletePloc(deleteActivityUseCase);
 const activityValueDefinitionsListPloc = new ActivityValueDefinitionsListPloc(getValueDefinitionsUseCase);
 const valueDefinitionCreateFormPloc = new ValueDefinitionCreateFormPloc(createValueDefinitionUseCase);
+const valueDefinitionEditFormPloc = new ValueDefinitionEditFormPloc(updateValueDefinitionUseCase, getValueDefinitionByIdUseCase);
+const valueDefinitionDeletePloc = new ValueDefinitionDeletePloc(deleteValueDefinitionUseCase);
 
 // ActivityLog Plocs
 const activityLogsListPloc = new ActivityLogsListPloc(getActivityLogsUseCase, startActivityLogUseCase, stopActivityLogUseCase);
@@ -319,6 +329,8 @@ export interface Dependencies {
     providerActivityDeletePloc: ActivityDeletePloc
     providerActivityValueDefinitionsListPloc: ActivityValueDefinitionsListPloc
     providerValueDefinitionCreateFormPloc: ValueDefinitionCreateFormPloc
+    providerValueDefinitionEditFormPloc: ValueDefinitionEditFormPloc
+    providerValueDefinitionDeletePloc: ValueDefinitionDeletePloc
     providerActivityLogsListPloc: ActivityLogsListPloc
     providerActivityLogDetailPloc: ActivityLogDetailPloc
     // UserSession Providers
@@ -416,6 +428,14 @@ function provideValueDefinitionCreateFormPloc(): ValueDefinitionCreateFormPloc {
     return valueDefinitionCreateFormPloc;
 }
 
+function provideValueDefinitionEditFormPloc(): ValueDefinitionEditFormPloc {
+    return valueDefinitionEditFormPloc;
+}
+
+function provideValueDefinitionDeletePloc(): ValueDefinitionDeletePloc {
+    return valueDefinitionDeletePloc;
+}
+
 // ActivityLog Providers
 function provideActivityLogsListPloc(): ActivityLogsListPloc {
     return activityLogsListPloc;
@@ -461,6 +481,8 @@ export const dependenciesLocator: Dependencies = {
     providerActivityDeletePloc: provideActivityDeletePloc(),
     providerActivityValueDefinitionsListPloc: provideActivityValueDefinitionsListPloc(),
     providerValueDefinitionCreateFormPloc: provideValueDefinitionCreateFormPloc(),
+    providerValueDefinitionEditFormPloc: provideValueDefinitionEditFormPloc(),
+    providerValueDefinitionDeletePloc: provideValueDefinitionDeletePloc(),
     providerActivityLogsListPloc: provideActivityLogsListPloc(),
     providerActivityLogDetailPloc: provideActivityLogDetailPloc(),
     providerUserSessionsListPloc: provideUserSessionsListPloc(),

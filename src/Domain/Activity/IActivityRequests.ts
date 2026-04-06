@@ -35,3 +35,16 @@ export interface CreateValueDefinitionRequest {
     minValue: string | null;
     maxValue: string | null;
 }
+
+/**
+ * Request para el endpoint PUT /api/v1/activities/{activityId}/definitions/{id}
+ * Solicitud para actualizar una definición de valor existente
+ */
+export interface UpdateValueDefinitionRequest {
+    name: string | null;
+    valueType: string | null;  // p.ej. "Number", "Text", "Boolean", "Duration"
+    isRequired: boolean;
+    unit: string | null;
+    minValue: string | null;
+    maxValue: string | null;
+}

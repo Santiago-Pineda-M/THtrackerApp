@@ -86,6 +86,7 @@ export type {
     CreateActivityRequest,
     UpdateActivityRequest,
     CreateValueDefinitionRequest,
+    UpdateValueDefinitionRequest,
 } from './Activity/IActivityRequests';
 
 // Activity Value Definitions States

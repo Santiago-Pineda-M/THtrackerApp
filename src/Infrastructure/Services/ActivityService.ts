@@ -10,6 +10,7 @@ import type {
     CreateActivityRequest,
     UpdateActivityRequest,
     CreateValueDefinitionRequest,
+    UpdateValueDefinitionRequest,
     ApiErrorResponse,
 } from '../../Domain';
 import type { IActivityService } from '../../Application/Services/Activity/IActivityService';
@@ -105,6 +106,31 @@ export class ActivityService implements IActivityService {
                 request
             );
             if (response.status === 201) return response.data as ActivityValueDefinitionResponse;
+            return response.data as ApiErrorResponse;
+        } catch (error) {
+            return this.toNetworkError(error);
+        }
+    }
+
+    async updateValueDefinition(activityId: string, id: string, request: UpdateValueDefinitionRequest): Promise<ActivityValueDefinitionResponse | ApiErrorResponse> {
+        try {
+            const response = await this.httpClient.put<ActivityValueDefinitionResponse | ApiErrorResponse>(
+                `${this.baseUrl}/${activityId}/definitions/${id}`,
+                request
+            );
+            if (response.status === 200) return response.data as ActivityValueDefinitionResponse;
+            return response.data as ApiErrorResponse;
+        } catch (error) {
+            return this.toNetworkError(error);
+        }
+    }
+
+    async deleteValueDefinition(activityId: string, id: string): Promise<void | ApiErrorResponse> {
+        try {
+            const response = await this.httpClient.delete<void | ApiErrorResponse>(
+                `${this.baseUrl}/${activityId}/definitions/${id}`
+            );
+            if (response.status === 204) return;
             return response.data as ApiErrorResponse;
         } catch (error) {
             return this.toNetworkError(error);

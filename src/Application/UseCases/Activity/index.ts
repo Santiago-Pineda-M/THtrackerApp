@@ -10,3 +10,5 @@ export * from './DeleteActivityUseCase';
 export * from './GetValueDefinitionsUseCase';
 export * from './GetValueDefinitionByIdUseCase';
 export * from './CreateValueDefinitionUseCase';
+export * from './UpdateValueDefinitionUseCase';
+export * from './DeleteValueDefinitionUseCase';

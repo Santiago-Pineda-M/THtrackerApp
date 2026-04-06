@@ -570,6 +570,66 @@ export const initialValueDefinitionCreateFormState: IValueDefinitionCreateFormSt
 
 /**
  * ==========================================
+ * VALUE DEFINITION EDIT FORM STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para el formulario de edición de una definición de valor
+ */
+export interface IValueDefinitionEditFormState {
+    id: string;
+    activityId: string;
+    name: string | null;
+    valueType: string | null;
+    isRequired: boolean;
+    unit: string | null;
+    minValue: string | null;
+    maxValue: string | null;
+    errors: Record<string, string[]>;
+    isLoading: boolean;
+    success: boolean;
+    message: string;
+}
+
+export const initialValueDefinitionEditFormState: IValueDefinitionEditFormState = {
+    id: '',
+    activityId: '',
+    name: null,
+    valueType: 'Number',
+    isRequired: false,
+    unit: null,
+    minValue: null,
+    maxValue: null,
+    errors: {},
+    isLoading: false,
+    success: false,
+    message: '',
+};
+
+/**
+ * ==========================================
+ * VALUE DEFINITION DELETE STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para la eliminación de una definición de valor
+ */
+export interface IValueDefinitionDeleteState {
+    isLoading: boolean;
+    success: boolean;
+    error: ApiErrorResponse | null;
+}
+
+export const initialValueDefinitionDeleteState: IValueDefinitionDeleteState = {
+    isLoading: false,
+    success: false,
+    error: null,
+};
+
+/**
+ * ==========================================
  * ACTIVITY LOGS STATES
  * ==========================================
  */
