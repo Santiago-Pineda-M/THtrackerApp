@@ -11,7 +11,11 @@ interface ValueDefinitionDeleteProps {
   definitionName: string;
 }
 
-export const ValueDefinitionDelete: React.FC<ValueDefinitionDeleteProps> = ({ activityId, definitionId, definitionName }) => {
+export const ValueDefinitionDelete: React.FC<ValueDefinitionDeleteProps> = ({
+  activityId,
+  definitionId,
+  definitionName,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { providerValueDefinitionDeletePloc, providerActivityValueDefinitionsListPloc } = useDependencies();
   const state = usePlocState<IValueDefinitionDeleteState>(providerValueDefinitionDeletePloc);
@@ -35,12 +39,7 @@ export const ValueDefinitionDelete: React.FC<ValueDefinitionDeleteProps> = ({ ac
 
   return (
     <>
-      <Button
-        variant="danger"
-        size="sm"
-        onClick={handleOpen}
-        title="Eliminar Propiedad"
-      >
+      <Button variant="danger" size="sm" onClick={handleOpen} title="Eliminar Propiedad">
         <Icon name="Trash2" size={14} />
       </Button>
 
@@ -76,11 +75,7 @@ export const ValueDefinitionDelete: React.FC<ValueDefinitionDeleteProps> = ({ ac
             </Text>
 
             <div className={styles.modalActions}>
-              <Button
-                variant="ghost"
-                onClick={handleClose}
-                disabled={state.isLoading}
-              >
+              <Button variant="ghost" onClick={handleClose} disabled={state.isLoading}>
                 Cancelar
               </Button>
               <Button

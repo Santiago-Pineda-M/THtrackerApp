@@ -1,5 +1,5 @@
 /**
- * CONTROLLER LAYER - ValueDefinitionDeletePloc
+ * CONTROLLER LAYER - ActivityValueDefinitionDeletePloc
  * PLOC para la eliminación de definiciones de valores.
  */
 
@@ -8,18 +8,18 @@ import {
     type IValueDefinitionDeleteState,
     initialValueDefinitionDeleteState
 } from "../../Domain";
-import type { DeleteValueDefinitionUseCase } from "../../Application/UseCases/Activity";
+import type { DeleteActivityValueDefinitionUseCase } from "../../Application/UseCases/ActivityValueDefinition";
 
-export class ValueDefinitionDeletePloc extends Ploc<IValueDefinitionDeleteState> {
-    private readonly deleteValueDefinitionUseCase: DeleteValueDefinitionUseCase;
+export class ActivityValueDefinitionDeletePloc extends Ploc<IValueDefinitionDeleteState> {
+    private readonly deleteValueDefinitionUseCase: DeleteActivityValueDefinitionUseCase;
 
-    constructor(deleteValueDefinitionUseCase: DeleteValueDefinitionUseCase) {
+    constructor(deleteValueDefinitionUseCase: DeleteActivityValueDefinitionUseCase) {
         super(initialValueDefinitionDeleteState);
         this.deleteValueDefinitionUseCase = deleteValueDefinitionUseCase;
     }
 
     /**
-     * Elimina una definición de valor por su ID y activityId.
+     * Elimina una definición de valor por su ID.
      */
     async deleteValueDefinition(activityId: string, id: string): Promise<void> {
         this.changeState({

@@ -1,17 +1,17 @@
 /**
- * APPLICATION LAYER - CreateValueDefinitionUseCase
+ * APPLICATION LAYER - CreateActivityValueDefinitionUseCase
  * Crea una nueva definición de valor para una actividad.
  */
 
 import type { IUseCase } from '../../../Domain';
-import type { IActivityService } from '../../Services/Activity/IActivityService';
+import type { IActivityValueDefinitionService } from '../../Services/ActivityValueDefinition/IActivityValueDefinitionService';
 import type {
     ActivityValueDefinitionResponse,
     CreateValueDefinitionRequest,
     ApiErrorResponse,
 } from '../../../Domain';
 
-export interface CreateValueDefinitionInput {
+export interface CreateActivityValueDefinitionInput {
     activityId: string;
     name: string | null;
     valueType: string | null;
@@ -21,18 +21,18 @@ export interface CreateValueDefinitionInput {
     maxValue: string | null;
 }
 
-export type CreateValueDefinitionOutput =
+export type CreateActivityValueDefinitionOutput =
     | { success: true; definition: ActivityValueDefinitionResponse }
     | { success: false; error: ApiErrorResponse };
 
-export class CreateValueDefinitionUseCase implements IUseCase<CreateValueDefinitionInput, CreateValueDefinitionOutput> {
-    private readonly activityService: IActivityService;
+export class CreateActivityValueDefinitionUseCase implements IUseCase<CreateActivityValueDefinitionInput, CreateActivityValueDefinitionOutput> {
+    private readonly activityValueDefinitionService: IActivityValueDefinitionService;
 
-    constructor(activityService: IActivityService) {
-        this.activityService = activityService;
+    constructor(activityValueDefinitionService: IActivityValueDefinitionService) {
+        this.activityValueDefinitionService = activityValueDefinitionService;
     }
 
-    async execute(input: CreateValueDefinitionInput): Promise<CreateValueDefinitionOutput> {
+    async execute(input: CreateActivityValueDefinitionInput): Promise<CreateActivityValueDefinitionOutput> {
         const request: CreateValueDefinitionRequest = {
             name: input.name,
             valueType: input.valueType,
@@ -42,7 +42,7 @@ export class CreateValueDefinitionUseCase implements IUseCase<CreateValueDefinit
             maxValue: input.maxValue,
         };
 
-        const result = await this.activityService.createValueDefinition(input.activityId, request);
+        const result = await this.activityValueDefinitionService.createValueDefinition(input.activityId, request);
 
         if (this.isDefinition(result)) {
             return { success: true, definition: result };

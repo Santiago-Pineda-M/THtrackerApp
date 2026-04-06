@@ -1,17 +1,17 @@
 /**
- * APPLICATION LAYER - UpdateValueDefinitionUseCase
+ * APPLICATION LAYER - UpdateActivityValueDefinitionUseCase
  * Actualiza una definición de valor existente para una actividad.
  */
 
 import type { IUseCase } from '../../../Domain';
-import type { IActivityService } from '../../Services/Activity/IActivityService';
+import type { IActivityValueDefinitionService } from '../../Services/ActivityValueDefinition/IActivityValueDefinitionService';
 import type {
     ActivityValueDefinitionResponse,
     UpdateValueDefinitionRequest,
     ApiErrorResponse,
 } from '../../../Domain';
 
-export interface UpdateValueDefinitionInput {
+export interface UpdateActivityValueDefinitionInput {
     activityId: string;
     id: string;
     name: string | null;
@@ -22,18 +22,18 @@ export interface UpdateValueDefinitionInput {
     maxValue: string | null;
 }
 
-export type UpdateValueDefinitionOutput =
+export type UpdateActivityValueDefinitionOutput =
     | { success: true; definition: ActivityValueDefinitionResponse }
     | { success: false; error: ApiErrorResponse };
 
-export class UpdateValueDefinitionUseCase implements IUseCase<UpdateValueDefinitionInput, UpdateValueDefinitionOutput> {
-    private readonly activityService: IActivityService;
+export class UpdateActivityValueDefinitionUseCase implements IUseCase<UpdateActivityValueDefinitionInput, UpdateActivityValueDefinitionOutput> {
+    private readonly activityValueDefinitionService: IActivityValueDefinitionService;
 
-    constructor(activityService: IActivityService) {
-        this.activityService = activityService;
+    constructor(activityValueDefinitionService: IActivityValueDefinitionService) {
+        this.activityValueDefinitionService = activityValueDefinitionService;
     }
 
-    async execute(input: UpdateValueDefinitionInput): Promise<UpdateValueDefinitionOutput> {
+    async execute(input: UpdateActivityValueDefinitionInput): Promise<UpdateActivityValueDefinitionOutput> {
         const request: UpdateValueDefinitionRequest = {
             name: input.name,
             valueType: input.valueType,
@@ -43,7 +43,7 @@ export class UpdateValueDefinitionUseCase implements IUseCase<UpdateValueDefinit
             maxValue: input.maxValue,
         };
 
-        const result = await this.activityService.updateValueDefinition(input.activityId, input.id, request);
+        const result = await this.activityValueDefinitionService.updateValueDefinition(input.activityId, input.id, request);
 
         if (this.isDefinition(result)) {
             return { success: true, definition: result };

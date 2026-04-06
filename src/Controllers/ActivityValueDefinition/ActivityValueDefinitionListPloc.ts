@@ -1,19 +1,19 @@
 /**
- * CONTROLLER LAYER - ActivityValueDefinitionsListPloc
+ * CONTROLLER LAYER - ActivityValueDefinitionListPloc
  * PLOC para gestionar la lista de definiciones de valores.
  */
 
 import { Ploc } from "../../Domain/Ploc";
-import { 
-    type IActivityValueDefinitionsState, 
-    initialActivityValueDefinitionsState 
+import {
+    type IActivityValueDefinitionsState,
+    initialActivityValueDefinitionsState
 } from "../../Domain";
-import type { GetValueDefinitionsUseCase } from "../../Application/UseCases/Activity";
+import type { GetListActivityValueDefinitionUseCase } from "../../Application/UseCases/ActivityValueDefinition";
 
-export class ActivityValueDefinitionsListPloc extends Ploc<IActivityValueDefinitionsState> {
-    private readonly getValueDefinitionsUseCase: GetValueDefinitionsUseCase;
+export class ActivityValueDefinitionListPloc extends Ploc<IActivityValueDefinitionsState> {
+    private readonly getValueDefinitionsUseCase: GetListActivityValueDefinitionUseCase;
 
-    constructor(getValueDefinitionsUseCase: GetValueDefinitionsUseCase) {
+    constructor(getValueDefinitionsUseCase: GetListActivityValueDefinitionUseCase) {
         super(initialActivityValueDefinitionsState);
         this.getValueDefinitionsUseCase = getValueDefinitionsUseCase;
     }

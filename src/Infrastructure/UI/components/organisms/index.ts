@@ -4,4 +4,5 @@ export { UserProfileDisplay, UserProfileForm } from './UserProfile';
 export * from './example';
 export * from './Activities';
 export * from './Categories';
+export * from './Calendar';
 

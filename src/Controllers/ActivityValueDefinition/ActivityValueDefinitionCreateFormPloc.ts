@@ -1,19 +1,18 @@
 /**
- * CONTROLLER LAYER - ValueDefinitionCreateFormPloc
+ * CONTROLLER LAYER - ActivityValueDefinitionCreateFormPloc
  * PLOC para el formulario de creación de definiciones de valores.
  */
 
 import { Ploc } from "../../Domain/Ploc";
-import { 
-    type IValueDefinitionCreateFormState, 
-    initialValueDefinitionCreateFormState 
+import {
+    type IValueDefinitionCreateFormState,
+    initialValueDefinitionCreateFormState
 } from "../../Domain";
-import type { CreateValueDefinitionUseCase } from "../../Application/UseCases/Activity";
+import type { CreateActivityValueDefinitionUseCase } from "../../Application/UseCases/ActivityValueDefinition";
 
-export class ValueDefinitionCreateFormPloc extends Ploc<IValueDefinitionCreateFormState> {
-    private readonly createValueDefinitionUseCase: CreateValueDefinitionUseCase;
-
-    constructor(createValueDefinitionUseCase: CreateValueDefinitionUseCase) {
+export class ActivityValueDefinitionCreateFormPloc extends Ploc<IValueDefinitionCreateFormState> {
+    private readonly createValueDefinitionUseCase: CreateActivityValueDefinitionUseCase;
+    constructor(createValueDefinitionUseCase: CreateActivityValueDefinitionUseCase) {
         super(initialValueDefinitionCreateFormState);
         this.createValueDefinitionUseCase = createValueDefinitionUseCase;
     }

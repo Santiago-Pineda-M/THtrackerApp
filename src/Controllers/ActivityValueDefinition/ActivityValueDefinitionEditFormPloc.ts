@@ -1,5 +1,5 @@
 /**
- * CONTROLLER LAYER - ValueDefinitionEditFormPloc
+ * CONTROLLER LAYER - ActivityValueDefinitionEditFormPloc
  * PLOC para el formulario de edición de definiciones de valores.
  */
 
@@ -8,64 +8,62 @@ import {
     type IValueDefinitionEditFormState,
     initialValueDefinitionEditFormState
 } from "../../Domain";
-import type { UpdateValueDefinitionUseCase, GetValueDefinitionByIdUseCase } from "../../Application/UseCases/Activity";
+import type { GetByIdActivityValueDefinitionUseCase, UpdateActivityValueDefinitionUseCase } from "../../Application/UseCases/ActivityValueDefinition";
 
-export class ValueDefinitionEditFormPloc extends Ploc<IValueDefinitionEditFormState> {
-    private readonly updateValueDefinitionUseCase: UpdateValueDefinitionUseCase;
-    private readonly getValueDefinitionByIdUseCase: GetValueDefinitionByIdUseCase;
+export class ActivityValueDefinitionEditFormPloc extends Ploc<IValueDefinitionEditFormState> {
+    private readonly getValueDefinitionByIdUseCase: GetByIdActivityValueDefinitionUseCase;
+    private readonly updateValueDefinitionUseCase: UpdateActivityValueDefinitionUseCase;
 
     constructor(
-        updateValueDefinitionUseCase: UpdateValueDefinitionUseCase,
-        getValueDefinitionByIdUseCase: GetValueDefinitionByIdUseCase
+        getValueDefinitionByIdUseCase: GetByIdActivityValueDefinitionUseCase,
+        updateValueDefinitionUseCase: UpdateActivityValueDefinitionUseCase
     ) {
         super(initialValueDefinitionEditFormState);
-        this.updateValueDefinitionUseCase = updateValueDefinitionUseCase;
         this.getValueDefinitionByIdUseCase = getValueDefinitionByIdUseCase;
+        this.updateValueDefinitionUseCase = updateValueDefinitionUseCase;
     }
 
     /**
-     * Carga una definición de valor existente para editarla.
+     * Carga la definición para editar.
      */
     async loadDefinition(activityId: string, id: string): Promise<void> {
         this.changeState({
-            ...initialValueDefinitionEditFormState,
+            ...this.state,
+            activityId,
+            id,
             isLoading: true,
+            errors: {},
         });
 
         try {
-            const result = await this.getValueDefinitionByIdUseCase.execute({ activityId, definitionId: id });
+            const result = await this.getValueDefinitionByIdUseCase.execute({ activityId, id });
 
             if (result.success) {
                 const definition = result.definition;
                 this.changeState({
-                    id: definition.id,
-                    activityId,
+                    ...this.state,
                     name: definition.name,
                     valueType: definition.valueType,
                     isRequired: definition.isRequired,
                     unit: definition.unit,
                     minValue: definition.minValue,
                     maxValue: definition.maxValue,
-                    errors: {},
                     isLoading: false,
-                    success: false,
-                    message: '',
                 });
-            } else {
-                this.changeState({
-                    ...this.state,
-                    isLoading: false,
-                    errors: { general: [result.error.title || 'Error al cargar la definición.'] },
-                    message: result.error.title || 'Error al cargar la definición.',
-                });
+                return;
             }
+
+            this.changeState({
+                ...this.state,
+                isLoading: false,
+                errors: result.error ? { general: [result.error.detail || 'Error al cargar datos'] } : {},
+            });
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'Error desconocido';
             this.changeState({
                 ...this.state,
                 isLoading: false,
                 errors: { general: [message] },
-                message,
             });
         }
     }
@@ -123,12 +121,12 @@ export class ValueDefinitionEditFormPloc extends Ploc<IValueDefinitionEditFormSt
             const request = {
                 activityId: this.state.activityId,
                 id: this.state.id,
-                name: this.state.name ? this.state.name.trim() : null,
-                valueType: this.state.valueType,
+                name: this.state.name?.trim() || null,
+                valueType: this.state.valueType || 'Number',
                 isRequired: this.state.isRequired,
-                unit: this.state.unit ? this.state.unit.trim() : null,
-                minValue: this.state.minValue ? this.state.minValue.trim() : null,
-                maxValue: this.state.maxValue ? this.state.maxValue.trim() : null,
+                unit: this.state.unit?.trim() || null,
+                minValue: this.state.minValue?.trim() || null,
+                maxValue: this.state.maxValue?.trim() || null,
             };
 
             const result = await this.updateValueDefinitionUseCase.execute(request);

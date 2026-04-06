@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Text, Modal, Input, FormField, Icon } from '../../../../components';
 import { useDependencies } from '../../../../../Context/useDependencies';
 import { usePlocState } from '../../../../../Hooks/usePlocState';
@@ -10,20 +10,13 @@ interface ValueDefinitionEditFormProps {
   definitionId: string;
 }
 
-export const ValueDefinitionEditForm: React.FC<ValueDefinitionEditFormProps> = ({ activityId, definitionId }) => {
+export const ValueDefinitionEditForm: React.FC<ValueDefinitionEditFormProps> = ({
+  activityId,
+  definitionId,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {
-    providerValueDefinitionEditFormPloc,
-    providerActivityValueDefinitionsListPloc
-  } = useDependencies();
-
+  const { providerValueDefinitionEditFormPloc, providerActivityValueDefinitionsListPloc } = useDependencies();
   const state = usePlocState<IValueDefinitionEditFormState>(providerValueDefinitionEditFormPloc);
-
-  useEffect(() => {
-    if (state.success) {
-      providerActivityValueDefinitionsListPloc.loadDefinitions(activityId);
-    }
-  }, [state.success, providerActivityValueDefinitionsListPloc, activityId]);
 
   const handleOpen = () => {
     providerValueDefinitionEditFormPloc.loadDefinition(activityId, definitionId);
@@ -32,6 +25,9 @@ export const ValueDefinitionEditForm: React.FC<ValueDefinitionEditFormProps> = (
 
   const handleClose = () => {
     setIsModalOpen(false);
+    if (state.success) {
+      providerActivityValueDefinitionsListPloc.loadDefinitions(activityId);
+    }
     providerValueDefinitionEditFormPloc.reset();
   };
 
@@ -65,12 +61,7 @@ export const ValueDefinitionEditForm: React.FC<ValueDefinitionEditFormProps> = (
 
   return (
     <>
-      <Button
-        variant='ghost'
-        title='Editar Propiedad'
-        size='sm'
-        onClick={handleOpen}
-      >
+      <Button variant="ghost" title="Editar Propiedad" size="sm" onClick={handleOpen}>
         <Icon name="Edit" size={14} />
       </Button>
 
@@ -83,7 +74,9 @@ export const ValueDefinitionEditForm: React.FC<ValueDefinitionEditFormProps> = (
           <div className={styles.successContainer}>
             <Text>La propiedad se ha actualizado con éxito.</Text>
             <div className={styles.successActions}>
-              <Button variant='primary' onClick={handleClose}>Cerrar</Button>
+              <Button variant="primary" onClick={handleClose}>
+                Cerrar
+              </Button>
             </div>
           </div>
         ) : (
@@ -93,7 +86,10 @@ export const ValueDefinitionEditForm: React.FC<ValueDefinitionEditFormProps> = (
                 size="sm"
                 className={styles.errorMessage}
                 style={{
-                  color: Object.keys(state.errors).length > 0 ? 'var(--color-error)' : 'var(--color-success)',
+                  color:
+                    Object.keys(state.errors).length > 0
+                      ? 'var(--color-error)'
+                      : 'var(--color-success)',
                 }}
               >
                 {state.message}
@@ -132,7 +128,9 @@ export const ValueDefinitionEditForm: React.FC<ValueDefinitionEditFormProps> = (
                   onChange={handleIsRequiredChange}
                   disabled={state.isLoading}
                 />
-                <Text size="xs" color="secondary">Esta propiedad es obligatoria.</Text>
+                <Text size="xs" color="secondary">
+                  Esta propiedad es obligatoria.
+                </Text>
               </div>
             </FormField>
 
@@ -149,7 +147,7 @@ export const ValueDefinitionEditForm: React.FC<ValueDefinitionEditFormProps> = (
             <FormField label="Valor Mínimo">
               <Input
                 type="text"
-                value={state.minValue  || ''}
+                value={state.minValue || ''}
                 onChange={handleMinValueChange}
                 placeholder="Ej: 0"
                 disabled={state.isLoading}
@@ -167,11 +165,7 @@ export const ValueDefinitionEditForm: React.FC<ValueDefinitionEditFormProps> = (
             </FormField>
 
             <div className={styles.modalActions}>
-              <Button
-                variant="primary"
-                onClick={handleSubmit}
-                loading={state.isLoading}
-              >
+              <Button variant="primary" onClick={handleSubmit} loading={state.isLoading}>
                 Guardar cambios
               </Button>
             </div>
