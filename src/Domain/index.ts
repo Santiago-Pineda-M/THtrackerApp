@@ -5,136 +5,136 @@
  */
 
 // Entities
-export { AuthSession, type AuthSessionProps, type UserData } from './Entities/AuthSession';
-export { SidebarState, type SidebarStateProps } from './Entities/SidebarState';
+export {
+  AuthSession,
+  type AuthSessionProps,
+  type UserData,
+} from './Entities/AuthSession'
+export { SidebarState, type SidebarStateProps } from './Entities/SidebarState'
 
 // Value Objects
-export { Email, AuthTokens, decodeJwtExp, isoToExpiresInSeconds } from './ValueObjects';
-export { UserId } from './ValueObjects/UserId';
+export {
+  Email,
+  AuthTokens,
+  decodeJwtExp,
+  isoToExpiresInSeconds,
+} from './ValueObjects'
+export { UserId } from './ValueObjects/UserId'
 
 // Repositories
-export type { IAuthSessionRepository } from './Repositories/IAuthSessionRepository';
-export type { ISidebarRepository } from './Repositories/ISidebarRepository';
+export type { IAuthSessionRepository } from './Repositories/IAuthSessionRepository'
+export type { ISidebarRepository } from './Repositories/ISidebarRepository'
 
 // Request Interfaces (Auth)
 export type {
-    ILoginRequest,
-    IRegisterRequest,
-    IRefreshTokenRequest,
-} from './Auth/IAuthRequest';
+  ILoginRequest,
+  IRegisterRequest,
+  IRefreshTokenRequest,
+} from './Auth/IAuthRequest'
 
 // Response Interfaces (Auth)
 export type {
-    ILoginResponse,
-    IRegisterResponse,
-    IRefreshTokenResponse,
-} from './Auth/IAuthResponses';
+  ILoginResponse,
+  IRegisterResponse,
+  IRefreshTokenResponse,
+} from './Auth/IAuthResponses'
 
 // Error Response Interfaces
 export type {
-    ILoginResponseError,
-    IRefreshTokenResponseError,
-    IProblemDetails,
-} from './Auth/IAuthResponsesError';
+  ILoginResponseError,
+  IRefreshTokenResponseError,
+  IProblemDetails,
+} from './Auth/IAuthResponsesError'
 
 // Pattern Interfaces
-export { 
-    type IUseCase, 
-    type IHttpClient, 
-    type ISecureStorage, 
-    type IStorage,
-    type HttpResponse,
-} from './IPatterns';
+export {
+  type IUseCase,
+  type IHttpClient,
+  type ISecureStorage,
+  type IStorage,
+  type HttpResponse,
+} from './IPatterns'
 
 // States & Enums
-export * from './IStates';
+export * from './IStates'
 
 // Domain Services
-export { AuthValidationService, type ValidationError, type ValidationResult, type LoginRequestData, type RegisterRequestData } from './Services';
+export {
+  AuthValidationService,
+  type ValidationError,
+  type ValidationResult,
+  type LoginRequestData,
+  type RegisterRequestData,
+} from './Services'
 
 // Base PLOC
-export { Ploc } from './Ploc';
+export { Ploc } from './Ploc'
 
 // Common Types
-export type { ApiErrorResponse } from './Common/IApiErrorResponse';
+export type { ApiErrorResponse } from './Common/IApiErrorResponse'
 
 // User Domain Types
-export type {
-    UserProfileResponse,
-    ProblemDetails,
-} from './User/IUserResponses';
-export type {
-    UpdateUserProfileRequest,
-} from './User/IUserRequests';
+export type { UserProfileResponse, ProblemDetails } from './User/IUserResponses'
+export type { UpdateUserProfileRequest } from './User/IUserRequests'
 
 // Category Domain Types
+export type { CategoryResponse } from './Category/ICategoryResponses'
 export type {
-    CategoryResponse,
-} from './Category/ICategoryResponses';
-export type {
-    CreateCategoryRequest,
-    UpdateCategoryRequest,
-} from './Category/ICategoryRequests';
+  CreateCategoryRequest,
+  UpdateCategoryRequest,
+} from './Category/ICategoryRequests'
 
 // Activity Domain Types
 export type {
-    ActivityResponse,
-    ActivityValueDefinitionResponse,
-    ActivityErrorResponse,
-} from './Activity/IActivityResponses';
+  ActivityResponse,
+  ActivityValueDefinitionResponse,
+  ActivityErrorResponse,
+} from './Activity/IActivityResponses'
 export type {
-    CreateActivityRequest,
-    UpdateActivityRequest,
-    CreateValueDefinitionRequest,
-    UpdateValueDefinitionRequest,
-} from './Activity/IActivityRequests';
+  CreateActivityRequest,
+  UpdateActivityRequest,
+  CreateValueDefinitionRequest,
+  UpdateValueDefinitionRequest,
+} from './Activity/IActivityRequests'
 
 // Activity Value Definitions States
 export type {
-    IActivityValueDefinitionsState,
-    IValueDefinitionCreateFormState,
-} from './IStates';
+  IActivityValueDefinitionsState,
+  IValueDefinitionCreateFormState,
+} from './IStates'
 export {
-    initialActivityValueDefinitionsState,
-    initialValueDefinitionCreateFormState,
-} from './IStates';
+  initialActivityValueDefinitionsState,
+  initialValueDefinitionCreateFormState,
+} from './IStates'
 
 // Activity Logs Domain Types
 export type {
-    ActivityLogResponse,
-    LogValueResponse,
-} from './ActivityLog/IActivityLogResponses';
+  ActivityLogResponse,
+  LogValueResponse,
+} from './ActivityLog/IActivityLogResponses'
 export type {
-    StartActivityLogRequest,
-    UpdateActivityLogRequest,
-    LogValueRequest,
-} from './ActivityLog/IActivityLogRequests';
+  StartActivityLogRequest,
+  UpdateActivityLogRequest,
+  LogValueRequest,
+} from './ActivityLog/IActivityLogRequests'
 
 // Activity Logs States
-export type {
-    IActivityLogsListState,
-    IActivityLogDetailState,
-} from './IStates';
+export type { IActivityLogsListState, IActivityLogDetailState } from './IStates'
 export {
-    initialActivityLogsListState,
-    initialActivityLogDetailState,
-} from './IStates';
+  initialActivityLogsListState,
+  initialActivityLogDetailState,
+} from './IStates'
 
 // UserSession Domain Types
 export type {
-    IUserSessionResponse,
-    IRevokeSessionResponse,
-} from './UserSession/IUserSessionResponses';
-export type {
-    IRevokeSessionRequest,
-} from './UserSession/IUserSessionRequests';
+  IUserSessionResponse,
+  IRevokeSessionResponse,
+} from './UserSession/IUserSessionResponses'
+export type { IRevokeSessionRequest } from './UserSession/IUserSessionRequests'
 
 // UserSession States
-export type {
-    IUserSessionsListState,
-    ISessionRevokeState,
-} from './IStates';
+export type { IUserSessionsListState, ISessionRevokeState } from './IStates'
 export {
-    initialUserSessionsListState,
-    initialSessionRevokeState,
-} from './IStates';
+  initialUserSessionsListState,
+  initialSessionRevokeState,
+} from './IStates'

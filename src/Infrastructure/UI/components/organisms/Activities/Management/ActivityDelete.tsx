@@ -1,46 +1,53 @@
-import React, { useState } from 'react';
-import { Button, Text, Modal, Icon } from '../../..';
-import { useDependencies } from '../../../../../Context/useDependencies';
-import { usePlocState } from '../../../../../Hooks/usePlocState';
-import type { IActivityDeleteState } from '../../../../../../Domain/IStates';
-import styles from './ActivityForm.module.css';
+import React, { useState } from 'react'
+import { Button, Text, Modal, Icon } from '../../..'
+import { useDependencies } from '../../../../../Context/useDependencies'
+import { usePlocState } from '../../../../../Hooks/usePlocState'
+import type { IActivityDeleteState } from '../../../../../../Domain/IStates'
+import styles from './ActivityForm.module.css'
 
 interface ActivityDeleteProps {
-  activityId: string;
-  activityName: string;
+  activityId: string
+  activityName: string
 }
 
-export const ActivityDelete: React.FC<ActivityDeleteProps> = ({ activityId, activityName }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { providerActivityDeletePloc, providerActivitiesListPloc } = useDependencies();
-  const state = usePlocState<IActivityDeleteState>(providerActivityDeletePloc);
+export const ActivityDelete: React.FC<ActivityDeleteProps> = ({
+  activityId,
+  activityName,
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { providerActivityDeletePloc, providerActivitiesListPloc } =
+    useDependencies()
+  const state = usePlocState<IActivityDeleteState>(providerActivityDeletePloc)
 
   const handleOpen = () => {
-    providerActivityDeletePloc.reset();
-    setIsModalOpen(true);
-  };
+    providerActivityDeletePloc.reset()
+    setIsModalOpen(true)
+  }
 
   const handleClose = () => {
-    setIsModalOpen(false);
+    setIsModalOpen(false)
     if (state.success) {
-      providerActivitiesListPloc.loadActivities();
+      providerActivitiesListPloc.loadActivities()
     }
-    providerActivityDeletePloc.reset();
-  };
+    providerActivityDeletePloc.reset()
+  }
 
   const handleDelete = async () => {
-    await providerActivityDeletePloc.deleteActivity(activityId);
-  };
+    await providerActivityDeletePloc.deleteActivity(activityId)
+  }
 
   return (
     <>
       <Button
-        variant="danger"
-        size="md"
+        variant='danger'
+        size='md'
         onClick={handleOpen}
-        title="Eliminar Actividad"
+        title='Eliminar Actividad'
       >
-        <Icon name="Trash2" size={16} />
+        <Icon
+          name='Trash2'
+          size={16}
+        />
         <span>Eliminar</span>
       </Button>
 
@@ -60,7 +67,7 @@ export const ActivityDelete: React.FC<ActivityDeleteProps> = ({ activityId, acti
           <div className={styles.modalContent}>
             {state.error && (
               <Text
-                size="sm"
+                size='sm'
                 className={styles.errorMessage}
                 style={{
                   color: 'var(--color-error)',
@@ -71,20 +78,20 @@ export const ActivityDelete: React.FC<ActivityDeleteProps> = ({ activityId, acti
             )}
 
             <Text className={styles.modalText}>
-              ¿Estás seguro de que deseas eliminar la actividad <strong>{activityName}</strong>?
-              Esta acción no se puede deshacer.
+              ¿Estás seguro de que deseas eliminar la actividad{' '}
+              <strong>{activityName}</strong>? Esta acción no se puede deshacer.
             </Text>
 
             <div className={styles.modalActions}>
               <Button
-                variant="ghost"
+                variant='ghost'
                 onClick={handleClose}
                 disabled={state.isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                variant="primary"
+                variant='primary'
                 style={{ backgroundColor: 'var(--color-error)' }}
                 onClick={handleDelete}
                 loading={state.isLoading}
@@ -96,5 +103,5 @@ export const ActivityDelete: React.FC<ActivityDeleteProps> = ({ activityId, acti
         )}
       </Modal>
     </>
-  );
-};
+  )
+}

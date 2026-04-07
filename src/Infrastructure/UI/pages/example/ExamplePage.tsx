@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   TypographyBadgesExample,
   ButtonsExample,
@@ -9,13 +9,11 @@ import {
   SpinnersExample,
   AvatarsIconsExample,
   AuthSessionExample,
-} from '../../components/organisms';
-import { MainLayout } from '../../components/layouts';
+} from '../../components/organisms'
+import { MainLayout } from '../../components/layouts'
 
 const ExamplePage: React.FC = () => {
-  const breadcrumbs = [
-    { label: 'Ejemplos' }
-  ];
+  const breadcrumbs = [{ label: 'Ejemplos' }]
 
   return (
     <MainLayout breadcrumbs={breadcrumbs}>
@@ -29,7 +27,7 @@ const ExamplePage: React.FC = () => {
       <SpinnersExample />
       <AvatarsIconsExample />
     </MainLayout>
-  );
-};
+  )
+}
 
-export default ExamplePage;
+export default ExamplePage

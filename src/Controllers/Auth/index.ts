@@ -6,8 +6,8 @@
  * Son TypeScript puro, sin dependencia de React.
  */
 
-export { AuthPloc } from './AuthPloc';
-export { LoginPloc } from './LoginPloc';
-export { RegisterPloc } from './RegisterPloc';
-export { RefreshTokenPloc } from './RefreshTokenPloc';
-export { LogoutPloc } from './LogoutPloc';
+export { AuthPloc } from './AuthPloc'
+export { LoginPloc } from './LoginPloc'
+export { RegisterPloc } from './RegisterPloc'
+export { RefreshTokenPloc } from './RefreshTokenPloc'
+export { LogoutPloc } from './LogoutPloc'

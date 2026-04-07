@@ -3,6 +3,6 @@
  * Barrel export para todos los Value Objects del dominio.
  */
 
-export { Email } from './Email';
-export { AuthTokens, decodeJwtExp, isoToExpiresInSeconds } from './AuthTokens';
-export { UserId } from './UserId';
+export { Email } from './Email'
+export { AuthTokens, decodeJwtExp, isoToExpiresInSeconds } from './AuthTokens'
+export { UserId } from './UserId'

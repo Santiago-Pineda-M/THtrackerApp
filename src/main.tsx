@@ -11,5 +11,5 @@ createRoot(document.getElementById('root')!).render(
     <DependenciesProvider>
       <App />
     </DependenciesProvider>
-  </StrictMode>,
+  </StrictMode>
 )

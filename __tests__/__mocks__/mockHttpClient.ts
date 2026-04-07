@@ -1,5 +1,5 @@
-import { vi } from 'vitest';
-import type { IHttpClient } from '../../src/Domain/IPatterns';
+import { vi } from 'vitest'
+import type { IHttpClient } from '../../src/Domain/IPatterns'
 
 /**
  * Fábrica de mock para IHttpClient.
@@ -7,8 +7,8 @@ import type { IHttpClient } from '../../src/Domain/IPatterns';
  * Uso: const httpClient = createMockHttpClient();
  */
 export const createMockHttpClient = (): IHttpClient => ({
-    get: vi.fn(),
-    post: vi.fn(),
-    put: vi.fn(),
-    delete: vi.fn(),
-});
+  get: vi.fn(),
+  post: vi.fn(),
+  put: vi.fn(),
+  delete: vi.fn(),
+})

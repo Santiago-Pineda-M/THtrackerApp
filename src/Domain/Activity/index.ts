@@ -3,11 +3,11 @@
  */
 
 export type {
-    CreateActivityRequest,
-    UpdateActivityRequest,
-} from './IActivityRequests';
+  CreateActivityRequest,
+  UpdateActivityRequest,
+} from './IActivityRequests'
 
 export type {
-    ActivityResponse,
-    ActivityErrorResponse,
-} from './IActivityResponses';
+  ActivityResponse,
+  ActivityErrorResponse,
+} from './IActivityResponses'

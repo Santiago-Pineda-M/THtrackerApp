@@ -1,2 +1,2 @@
-export * from './ActivityLogsListPloc';
-export * from './ActivityLogDetailPloc';
+export * from './ActivityLogsListPloc'
+export * from './ActivityLogDetailPloc'

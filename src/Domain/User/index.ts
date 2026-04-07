@@ -1,2 +1,2 @@
-export * from './IUserResponses';
-export * from './IUserRequests';
+export * from './IUserResponses'
+export * from './IUserRequests'

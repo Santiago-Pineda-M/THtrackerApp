@@ -2,4 +2,4 @@
  * APPLICATION LAYER - Activity Service Barrel Exports
  */
 
-export type { IActivityService } from './IActivityService';
+export type { IActivityService } from './IActivityService'

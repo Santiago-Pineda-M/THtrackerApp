@@ -3,6 +3,6 @@
  * Solicitud para actualizar los datos del usuario autenticado
  */
 export interface UpdateUserProfileRequest {
-  name?: string | null;
-  email?: string | null;
+  name?: string | null
+  email?: string | null
 }

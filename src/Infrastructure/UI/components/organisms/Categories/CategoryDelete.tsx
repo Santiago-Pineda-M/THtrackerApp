@@ -1,42 +1,43 @@
-import React, { useState } from 'react';
-import { Button, Text, Modal } from '../..';
-import { useDependencies } from '../../../../Context/useDependencies';
-import { usePlocState } from '../../../../Hooks/usePlocState';
-import type { ICategory } from '../../../../../Domain';
-import type { ICategoryDeleteState } from '../../../../../Controllers/Category/CategoryDeletePloc';
-import styles from './CategoryDelete.module.css';
+import React, { useState } from 'react'
+import { Button, Text, Modal } from '../..'
+import { useDependencies } from '../../../../Context/useDependencies'
+import { usePlocState } from '../../../../Hooks/usePlocState'
+import type { ICategory } from '../../../../../Domain'
+import type { ICategoryDeleteState } from '../../../../../Controllers/Category/CategoryDeletePloc'
+import styles from './CategoryDelete.module.css'
 
 interface CategoryDeleteProps {
-  category: ICategory;
+  category: ICategory
 }
 
 export const CategoryDelete: React.FC<CategoryDeleteProps> = ({ category }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { providerCategoryDeletePloc, providerCategoriesListPloc } = useDependencies();
-  const state = usePlocState<ICategoryDeleteState>(providerCategoryDeletePloc);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { providerCategoryDeletePloc, providerCategoriesListPloc } =
+    useDependencies()
+  const state = usePlocState<ICategoryDeleteState>(providerCategoryDeletePloc)
 
   const handleOpen = () => {
-    providerCategoryDeletePloc.reset();
-    setIsModalOpen(true);
-  };
+    providerCategoryDeletePloc.reset()
+    setIsModalOpen(true)
+  }
 
   const handleClose = () => {
-    setIsModalOpen(false);
+    setIsModalOpen(false)
     if (state.success) {
-      providerCategoriesListPloc.loadCategories(); // Reload ONLY after closing the success message
+      providerCategoriesListPloc.loadCategories() // Reload ONLY after closing the success message
     }
-    providerCategoryDeletePloc.reset();
-  };
+    providerCategoryDeletePloc.reset()
+  }
 
   const handleDelete = async () => {
-    await providerCategoryDeletePloc.deleteCategory(category.id);
-  };
+    await providerCategoryDeletePloc.deleteCategory(category.id)
+  }
 
   return (
     <>
       <Button
-        variant="danger"
-        size="sm"
+        variant='danger'
+        size='sm'
         onClick={handleOpen}
       >
         Eliminar
@@ -49,7 +50,9 @@ export const CategoryDelete: React.FC<CategoryDeleteProps> = ({ category }) => {
       >
         {state.success ? (
           <div className={styles['success-container']}>
-            <Text>{state.message || 'La categoría se ha eliminado con éxito.'}</Text>
+            <Text>
+              {state.message || 'La categoría se ha eliminado con éxito.'}
+            </Text>
             <div className={styles['success-actions']}>
               <Button onClick={handleClose}>Cerrar</Button>
             </div>
@@ -58,11 +61,13 @@ export const CategoryDelete: React.FC<CategoryDeleteProps> = ({ category }) => {
           <div className={styles['modal-content']}>
             {state.message && (
               <Text
-                size="sm"
+                size='sm'
                 style={{
-                  color: state.error ? 'var(--danger-color, #ff4d4f)' : 'var(--success-color, #52c41a)',
+                  color: state.error
+                    ? 'var(--danger-color, #ff4d4f)'
+                    : 'var(--success-color, #52c41a)',
                   marginBottom: '16px',
-                  display: 'block'
+                  display: 'block',
                 }}
               >
                 {state.message}
@@ -70,12 +75,13 @@ export const CategoryDelete: React.FC<CategoryDeleteProps> = ({ category }) => {
             )}
 
             <Text className={styles['modal-text']}>
-              ¿Estás seguro de que deseas eliminar la categoría <strong>{category.name}</strong>?
+              ¿Estás seguro de que deseas eliminar la categoría{' '}
+              <strong>{category.name}</strong>?
             </Text>
 
             <div className={styles['modal-actions']}>
               <Button
-                variant="danger"
+                variant='danger'
                 onClick={handleDelete}
                 loading={state.isLoading}
               >
@@ -86,5 +92,5 @@ export const CategoryDelete: React.FC<CategoryDeleteProps> = ({ category }) => {
         )}
       </Modal>
     </>
-  );
-};
+  )
+}

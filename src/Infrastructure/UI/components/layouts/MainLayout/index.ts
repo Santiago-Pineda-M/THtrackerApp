@@ -1,2 +1,2 @@
-export { MainLayout } from './MainLayout';
-export { default } from './MainLayout';
+export { MainLayout } from './MainLayout'
+export { default } from './MainLayout'

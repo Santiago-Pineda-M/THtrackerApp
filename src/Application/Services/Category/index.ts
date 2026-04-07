@@ -1,1 +1,1 @@
-export type { ICategoryService } from './ICategoryService';
+export type { ICategoryService } from './ICategoryService'

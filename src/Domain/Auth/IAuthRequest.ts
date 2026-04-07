@@ -9,24 +9,24 @@
  * deviceInfo es requerido por la API para identificar el dispositivo.
  */
 export interface ILoginRequest {
-    email: string;
-    password: string;
-    deviceInfo: string; // Requerido por la API — usar navigator.userAgent
+  email: string
+  password: string
+  deviceInfo: string // Requerido por la API — usar navigator.userAgent
 }
 
 /**
  * Request para registrar un nuevo usuario.
  */
 export interface IRegisterRequest {
-    name: string;
-    email: string;
-    password: string;
-    confirmPassword?: string; // Validación local opcional
+  name: string
+  email: string
+  password: string
+  confirmPassword?: string // Validación local opcional
 }
 
 /**
  * Request para refrescar el access token.
  */
 export interface IRefreshTokenRequest {
-    refreshToken: string;
+  refreshToken: string
 }

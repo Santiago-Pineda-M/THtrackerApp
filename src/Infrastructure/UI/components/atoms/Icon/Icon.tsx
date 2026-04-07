@@ -1,7 +1,7 @@
 /**
  * Icon - Componente de iconos usando lucide-react
  */
-import React from 'react';
+import React from 'react'
 import {
   DollarSign,
   Users,
@@ -201,8 +201,8 @@ import {
   Circle,
   Pentagon,
   Bot,
-  type LucideProps
-} from 'lucide-react';
+  type LucideProps,
+} from 'lucide-react'
 
 export type IconName =
   | 'DollarSign'
@@ -402,14 +402,14 @@ export type IconName =
   | 'Binoculars'
   | 'Crosshair'
   | 'Circle'
-  | 'Pentagon';
+  | 'Pentagon'
 
 export interface IconProps {
-  name?: IconName;
-  size?: number;
-  color?: string;
-  className?: string;
-  strokeWidth?: number;
+  name?: IconName
+  size?: number
+  color?: string
+  className?: string
+  strokeWidth?: number
 }
 
 const iconComponents: Record<IconName, React.ComponentType<LucideProps>> = {
@@ -611,24 +611,24 @@ const iconComponents: Record<IconName, React.ComponentType<LucideProps>> = {
   Crosshair,
   Circle,
   Pentagon,
-};
+}
 
-export const Icon: React.FC<IconProps> = ({ 
-  name, 
-  size = 16, 
-  color, 
-  className = '', 
-  strokeWidth = 2 
+export const Icon: React.FC<IconProps> = ({
+  name,
+  size = 16,
+  color,
+  className = '',
+  strokeWidth = 2,
 }) => {
   if (!name) {
-    return null;
+    return null
   }
 
-  const IconComponent = iconComponents[name];
+  const IconComponent = iconComponents[name]
 
   if (!IconComponent) {
-    console.warn(`Icon "${name}" not found`);
-    return null;
+    console.warn(`Icon "${name}" not found`)
+    return null
   }
 
   return (
@@ -638,7 +638,7 @@ export const Icon: React.FC<IconProps> = ({
       strokeWidth={strokeWidth}
       className={className}
     />
-  );
-};
+  )
+}
 
-export default Icon;
+export default Icon

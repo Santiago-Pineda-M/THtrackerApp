@@ -1,15 +1,20 @@
-import React from 'react';
-import s from './Badge.module.css';
+import React from 'react'
+import s from './Badge.module.css'
 
-export type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info';
+export type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info'
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  children: React.ReactNode;
-  variant?: BadgeVariant;
-  dot?: boolean;
+  children: React.ReactNode
+  variant?: BadgeVariant
+  dot?: boolean
 }
 
-export const Badge: React.FC<BadgeProps> = ({ children, variant = 'default', dot, ...props }) => {
+export const Badge: React.FC<BadgeProps> = ({
+  children,
+  variant = 'default',
+  dot,
+  ...props
+}) => {
   return (
     <span
       className={s.badge}
@@ -19,7 +24,7 @@ export const Badge: React.FC<BadgeProps> = ({ children, variant = 'default', dot
     >
       {children}
     </span>
-  );
+  )
 }
 
-export default Badge;
+export default Badge

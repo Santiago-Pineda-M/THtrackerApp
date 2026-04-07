@@ -301,15 +301,15 @@ Example:
 describe('LoginUseCase', () => {
   it('should return tokens on successful login', async () => {
     // Arrange
-    const useCase = new LoginUseCase(mockAuthService);
+    const useCase = new LoginUseCase(mockAuthService)
 
     // Act
-    const result = await useCase.execute(validCredentials);
+    const result = await useCase.execute(validCredentials)
 
     // Assert
-    expect(result.accessToken).toBeDefined();
-  });
-});
+    expect(result.accessToken).toBeDefined()
+  })
+})
 ```
 
 ## Scripts

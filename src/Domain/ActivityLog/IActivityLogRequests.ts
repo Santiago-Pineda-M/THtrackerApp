@@ -3,15 +3,15 @@
  */
 
 export interface StartActivityLogRequest {
-    activityId: string;
+  activityId: string
 }
 
 export interface UpdateActivityLogRequest {
-    startedAt: string; // ISO 8601 string date-time
-    endedAt: string | null; // ISO 8601 string date-time
+  startedAt: string // ISO 8601 string date-time
+  endedAt: string | null // ISO 8601 string date-time
 }
 
 export interface LogValueRequest {
-    valueDefinitionId: string;
-    value: string | null;
+  valueDefinitionId: string
+  value: string | null
 }

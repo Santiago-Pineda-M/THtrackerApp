@@ -4,16 +4,16 @@
  * El servidor no tiene endpoint de logout, solo limpiamos la sesión local.
  */
 
-import type { IUseCase, IAuthSessionRepository } from '../../../Domain';
+import type { IUseCase, IAuthSessionRepository } from '../../../Domain'
 
 export class LogoutUseCase implements IUseCase<void, void> {
-    private readonly authSessionRepo: IAuthSessionRepository;
+  private readonly authSessionRepo: IAuthSessionRepository
 
-    constructor(authSessionRepo: IAuthSessionRepository) {
-        this.authSessionRepo = authSessionRepo;
-    }
+  constructor(authSessionRepo: IAuthSessionRepository) {
+    this.authSessionRepo = authSessionRepo
+  }
 
-    async execute(): Promise<void> {
-        await this.authSessionRepo.clearSession();
-    }
+  async execute(): Promise<void> {
+    await this.authSessionRepo.clearSession()
+  }
 }

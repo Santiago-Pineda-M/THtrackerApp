@@ -7,10 +7,10 @@
  * Solicitud para crear una nueva actividad
  */
 export interface CreateActivityRequest {
-    categoryId: string;   // UUID
-    name: string | null;
-    color: string | null;
-    allowOverlap: boolean;
+  categoryId: string // UUID
+  name: string | null
+  color: string | null
+  allowOverlap: boolean
 }
 
 /**
@@ -18,9 +18,9 @@ export interface CreateActivityRequest {
  * Solicitud para actualizar una actividad existente
  */
 export interface UpdateActivityRequest {
-    name: string | null;
-    color: string | null;
-    allowOverlap: boolean;
+  name: string | null
+  color: string | null
+  allowOverlap: boolean
 }
 
 /**
@@ -28,12 +28,12 @@ export interface UpdateActivityRequest {
  * Solicitud para crear una definición de valor para una actividad
  */
 export interface CreateValueDefinitionRequest {
-    name: string | null;
-    valueType: string | null;  // p.ej. "Number", "Text", "Boolean", "Duration"
-    isRequired: boolean;
-    unit: string | null;
-    minValue: string | null;
-    maxValue: string | null;
+  name: string | null
+  valueType: string | null // p.ej. "Number", "Text", "Boolean", "Duration"
+  isRequired: boolean
+  unit: string | null
+  minValue: string | null
+  maxValue: string | null
 }
 
 /**
@@ -41,10 +41,10 @@ export interface CreateValueDefinitionRequest {
  * Solicitud para actualizar una definición de valor existente
  */
 export interface UpdateValueDefinitionRequest {
-    name: string | null;
-    valueType: string | null;  // p.ej. "Number", "Text", "Boolean", "Duration"
-    isRequired: boolean;
-    unit: string | null;
-    minValue: string | null;
-    maxValue: string | null;
+  name: string | null
+  valueType: string | null // p.ej. "Number", "Text", "Boolean", "Duration"
+  isRequired: boolean
+  unit: string | null
+  minValue: string | null
+  maxValue: string | null
 }

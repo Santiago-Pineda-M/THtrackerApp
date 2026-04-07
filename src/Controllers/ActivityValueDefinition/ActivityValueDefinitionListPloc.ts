@@ -3,65 +3,69 @@
  * PLOC para gestionar la lista de definiciones de valores.
  */
 
-import { Ploc } from "../../Domain/Ploc";
+import { Ploc } from '../../Domain/Ploc'
 import {
-    type IActivityValueDefinitionsState,
-    initialActivityValueDefinitionsState
-} from "../../Domain";
-import type { GetListActivityValueDefinitionUseCase } from "../../Application/UseCases/ActivityValueDefinition";
+  type IActivityValueDefinitionsState,
+  initialActivityValueDefinitionsState,
+} from '../../Domain'
+import type { GetListActivityValueDefinitionUseCase } from '../../Application/UseCases/ActivityValueDefinition'
 
 export class ActivityValueDefinitionListPloc extends Ploc<IActivityValueDefinitionsState> {
-    private readonly getValueDefinitionsUseCase: GetListActivityValueDefinitionUseCase;
+  private readonly getValueDefinitionsUseCase: GetListActivityValueDefinitionUseCase
 
-    constructor(getValueDefinitionsUseCase: GetListActivityValueDefinitionUseCase) {
-        super(initialActivityValueDefinitionsState);
-        this.getValueDefinitionsUseCase = getValueDefinitionsUseCase;
-    }
+  constructor(
+    getValueDefinitionsUseCase: GetListActivityValueDefinitionUseCase
+  ) {
+    super(initialActivityValueDefinitionsState)
+    this.getValueDefinitionsUseCase = getValueDefinitionsUseCase
+  }
 
-    /**
-     * Carga las definiciones de una actividad.
-     */
-    async loadDefinitions(activityId: string): Promise<void> {
+  /**
+   * Carga las definiciones de una actividad.
+   */
+  async loadDefinitions(activityId: string): Promise<void> {
+    this.changeState({
+      ...this.state,
+      activityId,
+      isLoading: true,
+      error: null,
+    })
+
+    try {
+      const result = await this.getValueDefinitionsUseCase.execute({
+        activityId,
+      })
+
+      if (result.success) {
         this.changeState({
-            ...this.state,
-            activityId,
-            isLoading: true,
-            error: null,
-        });
+          ...this.state,
+          definitions: result.definitions,
+          isLoading: false,
+        })
+        return
+      }
 
-        try {
-            const result = await this.getValueDefinitionsUseCase.execute({ activityId });
-
-            if (result.success) {
-                this.changeState({
-                    ...this.state,
-                    definitions: result.definitions,
-                    isLoading: false,
-                });
-                return;
-            }
-
-            this.changeState({
-                ...this.state,
-                definitions: [],
-                isLoading: false,
-                error: result.error,
-            });
-        } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : 'Error desconocido';
-            this.changeState({
-                ...this.state,
-                definitions: [],
-                isLoading: false,
-                error: { title: 'Error', detail: message },
-            });
-        }
+      this.changeState({
+        ...this.state,
+        definitions: [],
+        isLoading: false,
+        error: result.error,
+      })
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
+      this.changeState({
+        ...this.state,
+        definitions: [],
+        isLoading: false,
+        error: { title: 'Error', detail: message },
+      })
     }
+  }
 
-    /**
-     * Resetea el estado.
-     */
-    reset(): void {
-        this.changeState(initialActivityValueDefinitionsState);
-    }
+  /**
+   * Resetea el estado.
+   */
+  reset(): void {
+    this.changeState(initialActivityValueDefinitionsState)
+  }
 }

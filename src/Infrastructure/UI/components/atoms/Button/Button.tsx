@@ -1,13 +1,13 @@
-import React from 'react';
-import s from './Button.module.css';
-import { Spinner } from '../Spinner/Spinner';
+import React from 'react'
+import s from './Button.module.css'
+import { Spinner } from '../Spinner/Spinner'
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
-  loading?: boolean;
-  icon?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
+  size?: 'sm' | 'md' | 'lg'
+  loading?: boolean
+  icon?: React.ReactNode
+  iconPosition?: 'left' | 'right'
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -30,7 +30,7 @@ export const Button: React.FC<ButtonProps> = ({
       {...props}
     >
       {loading ? (
-        <Spinner size="sm" />
+        <Spinner size='sm' />
       ) : (
         <>
           {icon && iconPosition === 'left' && icon}
@@ -39,7 +39,7 @@ export const Button: React.FC<ButtonProps> = ({
         </>
       )}
     </button>
-  );
-};
+  )
+}
 
-export default Button;
+export default Button
