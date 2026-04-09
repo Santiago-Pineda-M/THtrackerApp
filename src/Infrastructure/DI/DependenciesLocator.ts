@@ -118,6 +118,8 @@ import { isoToExpiresInSeconds } from '../../Domain';
 // Infrastructure - Adaptadores y Servicios
 import { TokenRefreshStrategy } from '../Adapters/http/TokenRefreshStrategy';
 import { FetchHttpClient } from '../Adapters/http/FetchHttpClient';
+import { RequestCache } from '../Adapters/http/RequestCache';
+import { InflightDeduplicator } from '../Adapters/http/InflightDeduplicator';
 import { SecureStorageAdapter, LocalStorageAdapter } from '../Adapters/storage';
 import { AuthSessionRepository } from '../Repositories/AuthSessionRepository';
 import { SidebarRepository } from '../Repositories/SidebarRepository';
@@ -185,7 +187,16 @@ const onSessionRefreshed = async (
 // ============================================
 
 const refreshStrategy = new TokenRefreshStrategy(API_URL, getRefreshToken, onSessionRefreshed);
-const httpClient = new FetchHttpClient(API_URL, getAccessToken, refreshStrategy);
+const requestCache = new RequestCache();
+const inflightDeduplicator = new InflightDeduplicator();
+
+const httpClient = new FetchHttpClient(
+    API_URL, 
+    getAccessToken, 
+    refreshStrategy, 
+    requestCache, 
+    inflightDeduplicator
+);
 
 
 // ============================================
