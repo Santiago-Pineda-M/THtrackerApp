@@ -21,8 +21,25 @@ export interface HttpResponse<T = unknown> {
   status: number
 }
 
+/**
+ * Extiende RequestInit con una opción de caché opcional.
+ * Cada Service que llama a get() decide su propia política de caché.
+ *
+ * @property cacheTtl - Time-to-live en milisegundos. Omitir o 0 = sin caché.
+ *
+ * @example
+ * // En CategoryService — cachear 5 minutos:
+ * this.httpClient.get(url, { cacheTtl: 5 * 60 * 1000 })
+ *
+ * // En ActiveLogsService — nunca cachear:
+ * this.httpClient.get(url) // sin cacheTtl
+ */
+export interface HttpRequestConfig extends RequestInit {
+  cacheTtl?: number
+}
+
 export interface IHttpClient {
-  get<T>(url: string, config?: RequestInit): Promise<HttpResponse<T>>
+  get<T>(url: string, config?: HttpRequestConfig): Promise<HttpResponse<T>>
   post<T>(
     url: string,
     data?: unknown,
@@ -34,6 +51,18 @@ export interface IHttpClient {
     config?: RequestInit
   ): Promise<HttpResponse<T>>
   delete<T>(url: string, config?: RequestInit): Promise<HttpResponse<T>>
+
+  /**
+   * Invalida entradas de caché cuya clave contenga el patrón.
+   * Llamar desde los Services tras POST/PUT/DELETE exitosos.
+   */
+  invalidateCache(pattern: string): void
+
+  /**
+   * Limpia todo el caché en memoria.
+   * Llamar al hacer logout.
+   */
+  clearCache(): void
 }
 
 /**

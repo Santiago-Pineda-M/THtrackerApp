@@ -23,7 +23,7 @@ export class UserService implements IUserService {
     try {
       const response = await this.httpClient.get<
         UserProfileResponse | ProblemDetails
-      >(`${this.baseUrl}/me`)
+      >(`${this.baseUrl}/me`, { cacheTtl: 10 * 60 * 1000 })
       if (response.status === 200) return response.data as UserProfileResponse
       return response.data as ProblemDetails
     } catch (error) {
@@ -38,7 +38,10 @@ export class UserService implements IUserService {
       const response = await this.httpClient.put<
         UserProfileResponse | ProblemDetails
       >(`${this.baseUrl}/me`, request)
-      if (response.status === 200) return response.data as UserProfileResponse
+      if (response.status === 200) {
+        this.httpClient.invalidateCache(`${this.baseUrl}/me`)
+        return response.data as UserProfileResponse
+      }
       return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)

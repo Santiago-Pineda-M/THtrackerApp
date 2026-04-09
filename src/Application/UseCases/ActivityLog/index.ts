@@ -36,3 +36,7 @@ export {
   type GetActivityLogValuesRequest,
   type GetActivityLogValuesResult,
 } from './GetActivityLogValuesUseCase'
+export {
+  GetActiveActivityLogsUseCase,
+  type GetActiveActivityLogsResult,
+} from './GetActiveActivityLogsUseCase'

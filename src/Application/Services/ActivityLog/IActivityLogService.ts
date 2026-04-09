@@ -33,4 +33,5 @@ export interface IActivityLogService {
   getActivityLogValues(
     id: string
   ): Promise<LogValueResponse[] | ApiErrorResponse>
+  getActiveActivityLogs(): Promise<ActivityLogResponse[] | ApiErrorResponse>
 }

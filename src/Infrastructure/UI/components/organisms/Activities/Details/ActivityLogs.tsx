@@ -39,8 +39,16 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
               >
                 <div className={styles.timeInfo}>
                   <Text weight='medium'>
-                    {new Date(log.startedAt).toLocaleDateString()}{' '}
-                    {new Date(log.startedAt).toLocaleTimeString([], {
+                    {new Date(
+                      log.startedAt.endsWith('Z')
+                        ? log.startedAt
+                        : `${log.startedAt}Z`
+                    ).toLocaleDateString()}{' '}
+                    {new Date(
+                      log.startedAt.endsWith('Z')
+                        ? log.startedAt
+                        : `${log.startedAt}Z`
+                    ).toLocaleTimeString([], {
                       hour: '2-digit',
                       minute: '2-digit',
                     })}
@@ -51,7 +59,11 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
                       color='secondary'
                     >
                       Fin:{' '}
-                      {new Date(log.endedAt).toLocaleTimeString([], {
+                      {new Date(
+                        log.endedAt.endsWith('Z')
+                          ? log.endedAt
+                          : `${log.endedAt}Z`
+                      ).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}

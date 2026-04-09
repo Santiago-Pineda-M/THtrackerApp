@@ -14,7 +14,7 @@ export type TextAs =
   | 'a'
 
 export interface TextProps extends React.HTMLAttributes<HTMLElement> {
-  children: React.ReactNode
+  children?: React.ReactNode
   as?: TextAs
   size?: 'xl' | 'lg' | 'md' | 'sm' | 'xs'
   weight?: 'normal' | 'medium' | 'bold'

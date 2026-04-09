@@ -54,6 +54,9 @@ export class ActivityLogService implements IActivityLogService {
         '/api/v1/activity-logs/start',
         request
       )
+      if (response.status === 201) {
+        this.httpClient.invalidateCache('/api/v1/activity-logs')
+      }
       return response.data
     } catch (error: unknown) {
       return this.handleError(error)
@@ -67,6 +70,9 @@ export class ActivityLogService implements IActivityLogService {
       const response = await this.httpClient.post<ActivityLogResponse>(
         `/api/v1/activity-logs/${id}/stop`
       )
+      if (response.status === 200) {
+        this.httpClient.invalidateCache('/api/v1/activity-logs')
+      }
       return response.data
     } catch (error: unknown) {
       return this.handleError(error)
@@ -82,6 +88,9 @@ export class ActivityLogService implements IActivityLogService {
         `/api/v1/activity-logs/${id}`,
         request
       )
+      if (response.status === 200) {
+        this.httpClient.invalidateCache('/api/v1/activity-logs')
+      }
       return response.data
     } catch (error: unknown) {
       return this.handleError(error)
@@ -108,6 +117,19 @@ export class ActivityLogService implements IActivityLogService {
     try {
       const response = await this.httpClient.get<LogValueResponse[]>(
         `/api/v1/activity-logs/${id}/values`
+      )
+      return response.data
+    } catch (error: unknown) {
+      return this.handleError(error)
+    }
+  }
+
+  async getActiveActivityLogs(): Promise<
+    ActivityLogResponse[] | ApiErrorResponse
+  > {
+    try {
+      const response = await this.httpClient.get<ActivityLogResponse[]>(
+        '/api/v1/activity-logs/active'
       )
       return response.data
     } catch (error: unknown) {

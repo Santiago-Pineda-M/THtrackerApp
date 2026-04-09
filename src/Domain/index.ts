@@ -50,6 +50,7 @@ export type {
 export {
   type IUseCase,
   type IHttpClient,
+  type HttpRequestConfig,
   type ISecureStorage,
   type IStorage,
   type HttpResponse,
@@ -119,10 +120,19 @@ export type {
 } from './ActivityLog/IActivityLogRequests'
 
 // Activity Logs States
-export type { IActivityLogsListState, IActivityLogDetailState } from './IStates'
+export type {
+  IActivityLogsListState,
+  IActivityLogDetailState,
+  IActiveActivityLogsState,
+  IActivityLogStartState,
+  IActivityLogStopState,
+} from './IStates'
 export {
   initialActivityLogsListState,
   initialActivityLogDetailState,
+  initialActiveActivityLogsState,
+  initialActivityLogStartState,
+  initialActivityLogStopState,
 } from './IStates'
 
 // UserSession Domain Types

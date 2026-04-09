@@ -5,3 +5,4 @@
 
 export { AuthPloc } from './Auth/AuthPloc'
 export { LoginPloc } from './Auth/LoginPloc'
+export * from './ActivityLog'

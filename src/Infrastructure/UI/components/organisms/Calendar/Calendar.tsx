@@ -5,9 +5,7 @@ export const Calendar = () => {
     <Card
       title='Calendar'
       h={2}
-      w={4}
-    >
-      <p>Calendar</p>
-    </Card>
+      w={5}
+    ></Card>
   )
 }

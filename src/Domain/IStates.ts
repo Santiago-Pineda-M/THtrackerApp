@@ -673,6 +673,59 @@ export const initialActivityLogDetailState: IActivityLogDetailState = {
 }
 
 /**
+ * Estado para la lista global de registros activos (en curso) del usuario
+ */
+export interface IActiveActivityLogsState {
+  logs: ActivityLogResponse[]
+  isLoading: boolean
+  error: ApiErrorResponse | null
+}
+
+export const initialActiveActivityLogsState: IActiveActivityLogsState = {
+  logs: [],
+  isLoading: false,
+  error: null,
+}
+
+/**
+ * Estado para la operación de inicio de un registro de actividad
+ */
+export interface IActivityLogStartState {
+  isLoading: boolean
+  success: boolean
+  error: ApiErrorResponse | null
+  newLog: ActivityLogResponse | null
+}
+
+export const initialActivityLogStartState: IActivityLogStartState = {
+  isLoading: false,
+  success: false,
+  error: null,
+  newLog: null,
+}
+
+/**
+ * Estado para el flujo de detención de un registro de actividad
+ */
+export interface IActivityLogStopState {
+  logToStop: ActivityLogResponse | null
+  definitions: ActivityValueDefinitionResponse[]
+  isLoadingDefinitions: boolean
+  isStopping: boolean
+  success: boolean
+  error: ApiErrorResponse | null
+}
+
+export const initialActivityLogStopState: IActivityLogStopState = {
+  logToStop: null,
+  definitions: [],
+  isLoadingDefinitions: false,
+  isStopping: false,
+  success: false,
+  error: null,
+}
+
+/**
  * ==========================================
  * USER SESSIONS LIST STATE
  * ==========================================

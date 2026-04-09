@@ -24,7 +24,7 @@ export class CategoryService implements ICategoryService {
     try {
       const response = await this.httpClient.get<
         CategoryResponse[] | ApiErrorResponse
-      >(this.baseUrl)
+      >(this.baseUrl, { cacheTtl: 5 * 60 * 1000 })
       if (response.status === 200) return response.data as CategoryResponse[]
       return response.data as ApiErrorResponse
     } catch (error) {
@@ -38,7 +38,7 @@ export class CategoryService implements ICategoryService {
     try {
       const response = await this.httpClient.get<
         CategoryResponse | ApiErrorResponse
-      >(`${this.baseUrl}/${id}`)
+      >(`${this.baseUrl}/${id}`, { cacheTtl: 5 * 60 * 1000 })
       if (response.status === 200) return response.data as CategoryResponse
       return response.data as ApiErrorResponse
     } catch (error) {
@@ -53,7 +53,10 @@ export class CategoryService implements ICategoryService {
       const response = await this.httpClient.post<
         CategoryResponse | ApiErrorResponse
       >(this.baseUrl, request)
-      if (response.status === 201) return response.data as CategoryResponse
+      if (response.status === 201) {
+        this.httpClient.invalidateCache(this.baseUrl)
+        return response.data as CategoryResponse
+      }
       return response.data as ApiErrorResponse
     } catch (error) {
       return this.toNetworkError(error)
@@ -68,7 +71,10 @@ export class CategoryService implements ICategoryService {
       const response = await this.httpClient.put<
         CategoryResponse | ApiErrorResponse
       >(`${this.baseUrl}/${id}`, request)
-      if (response.status === 200) return response.data as CategoryResponse
+      if (response.status === 200) {
+        this.httpClient.invalidateCache(this.baseUrl)
+        return response.data as CategoryResponse
+      }
       return response.data as ApiErrorResponse
     } catch (error) {
       return this.toNetworkError(error)
@@ -80,7 +86,10 @@ export class CategoryService implements ICategoryService {
       const response = await this.httpClient.delete<void | ApiErrorResponse>(
         `${this.baseUrl}/${id}`
       )
-      if (response.status === 204) return
+      if (response.status === 204) {
+        this.httpClient.invalidateCache(this.baseUrl)
+        return
+      }
       return response.data as ApiErrorResponse
     } catch (error) {
       return this.toNetworkError(error)

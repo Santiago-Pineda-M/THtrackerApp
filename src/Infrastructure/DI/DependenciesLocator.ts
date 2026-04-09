@@ -60,6 +60,7 @@ import {
   UpdateActivityLogUseCase,
   SaveActivityLogValuesUseCase,
   GetActivityLogValuesUseCase,
+  GetActiveActivityLogsUseCase,
 } from '../../Application/UseCases/ActivityLog'
 
 // Application - Casos de Uso UserSession
@@ -104,6 +105,9 @@ import {
 import {
   ActivityLogsListPloc,
   ActivityLogDetailPloc,
+  ActiveActivityLogsPloc,
+  ActivityLogStartPloc,
+  ActivityLogStopPloc,
 } from '../../Controllers/ActivityLog'
 
 // Controllers - UserSession Plocs
@@ -118,6 +122,8 @@ import { isoToExpiresInSeconds } from '../../Domain'
 // Infrastructure - Adaptadores y Servicios
 import { TokenRefreshStrategy } from '../Adapters/http/TokenRefreshStrategy'
 import { FetchHttpClient } from '../Adapters/http/FetchHttpClient'
+import { RequestCache } from '../Adapters/http/RequestCache'
+import { InflightDeduplicator } from '../Adapters/http/InflightDeduplicator'
 import { SecureStorageAdapter, LocalStorageAdapter } from '../Adapters/storage'
 import { AuthSessionRepository } from '../Repositories/AuthSessionRepository'
 import { SidebarRepository } from '../Repositories/SidebarRepository'
@@ -142,6 +148,10 @@ const API_URL =
 
 const secureStorageAdapter = new SecureStorageAdapter()
 const localStorageAdapter = new LocalStorageAdapter('sidebar')
+
+// ─── HTTP Optimization helpers (instanciados aquí, inyectados en FetchHttpClient) ───
+const requestCache = new RequestCache()
+const inflightDeduplicator = new InflightDeduplicator()
 
 // ============================================
 // 4. REPOSITORIOS
@@ -185,7 +195,13 @@ const refreshStrategy = new TokenRefreshStrategy(
   getRefreshToken,
   onSessionRefreshed
 )
-const httpClient = new FetchHttpClient(API_URL, getAccessToken, refreshStrategy)
+const httpClient = new FetchHttpClient(
+  API_URL,
+  getAccessToken,
+  refreshStrategy,
+  requestCache,
+  inflightDeduplicator
+)
 
 // ============================================
 // 7. SERVICIOS
@@ -214,7 +230,7 @@ const refreshTokenUseCases = new RefreshTokenUseCases(
   authService,
   authSessionRepository
 )
-const logoutUseCase = new LogoutUseCase(authSessionRepository)
+const logoutUseCase = new LogoutUseCase(authSessionRepository, httpClient)
 const checkAuthSessionUseCase = new CheckAuthSessionUseCase(
   authSessionRepository,
   authService
@@ -274,6 +290,9 @@ const saveActivityLogValuesUseCase = new SaveActivityLogValuesUseCase(
   activityLogService
 )
 const getActivityLogValuesUseCase = new GetActivityLogValuesUseCase(
+  activityLogService
+)
+const getActiveActivityLogsUseCase = new GetActiveActivityLogsUseCase(
   activityLogService
 )
 
@@ -371,6 +390,15 @@ const activityLogDetailPloc = new ActivityLogDetailPloc(
   saveActivityLogValuesUseCase,
   getActivityLogValuesUseCase
 )
+const activeActivityLogsPloc = new ActiveActivityLogsPloc(
+  getActiveActivityLogsUseCase
+)
+const activityLogStartPloc = new ActivityLogStartPloc(startActivityLogUseCase)
+const activityLogStopPloc = new ActivityLogStopPloc(
+  stopActivityLogUseCase,
+  getValueDefinitionsUseCase,
+  saveActivityLogValuesUseCase
+)
 
 // UserSession Plocs
 const userSessionsListPloc = new UserSessionsListPloc(getUserSessionsUseCase)
@@ -407,6 +435,9 @@ export interface Dependencies {
   providerValueDefinitionDeletePloc: ActivityValueDefinitionDeletePloc
   providerActivityLogsListPloc: ActivityLogsListPloc
   providerActivityLogDetailPloc: ActivityLogDetailPloc
+  providerActiveActivityLogsPloc: ActiveActivityLogsPloc
+  providerActivityLogStartPloc: ActivityLogStartPloc
+  providerActivityLogStopPloc: ActivityLogStopPloc
   // UserSession Providers
   providerUserSessionsListPloc: UserSessionsListPloc
   providerSessionRevokePloc: SessionRevokePloc
@@ -520,6 +551,18 @@ function provideActivityLogDetailPloc(): ActivityLogDetailPloc {
   return activityLogDetailPloc
 }
 
+function provideActiveActivityLogsPloc(): ActiveActivityLogsPloc {
+  return activeActivityLogsPloc
+}
+
+function provideActivityLogStartPloc(): ActivityLogStartPloc {
+  return activityLogStartPloc
+}
+
+function provideActivityLogStopPloc(): ActivityLogStopPloc {
+  return activityLogStopPloc
+}
+
 // UserSession Providers
 function provideUserSessionsListPloc(): UserSessionsListPloc {
   return userSessionsListPloc
@@ -565,6 +608,9 @@ export const dependenciesLocator: Dependencies = {
   providerValueDefinitionDeletePloc: provideValueDefinitionDeletePloc(),
   providerActivityLogsListPloc: provideActivityLogsListPloc(),
   providerActivityLogDetailPloc: provideActivityLogDetailPloc(),
+  providerActiveActivityLogsPloc: provideActiveActivityLogsPloc(),
+  providerActivityLogStartPloc: provideActivityLogStartPloc(),
+  providerActivityLogStopPloc: provideActivityLogStopPloc(),
   providerUserSessionsListPloc: provideUserSessionsListPloc(),
   providerSessionRevokePloc: provideSessionRevokePloc(),
   createValueDefinitionDeletePloc: createValueDefinitionDeletePloc,

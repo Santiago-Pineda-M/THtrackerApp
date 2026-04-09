@@ -59,8 +59,12 @@ export class ActivityValueDefinitionService implements IActivityValueDefinitionS
       const response = await this.httpClient.post<
         ActivityValueDefinitionResponse | ApiErrorResponse
       >(`${this.baseUrl}/${activityId}/definitions`, request)
-      if (response.status === 201)
+      if (response.status === 201) {
+        this.httpClient.invalidateCache(
+          `${this.baseUrl}/${activityId}/definitions`
+        )
         return response.data as ActivityValueDefinitionResponse
+      }
       return response.data as ApiErrorResponse
     } catch (error) {
       return this.toNetworkError(error)
@@ -76,8 +80,12 @@ export class ActivityValueDefinitionService implements IActivityValueDefinitionS
       const response = await this.httpClient.put<
         ActivityValueDefinitionResponse | ApiErrorResponse
       >(`${this.baseUrl}/${activityId}/definitions/${id}`, request)
-      if (response.status === 200)
+      if (response.status === 200) {
+        this.httpClient.invalidateCache(
+          `${this.baseUrl}/${activityId}/definitions`
+        )
         return response.data as ActivityValueDefinitionResponse
+      }
       return response.data as ApiErrorResponse
     } catch (error) {
       return this.toNetworkError(error)
@@ -92,9 +100,19 @@ export class ActivityValueDefinitionService implements IActivityValueDefinitionS
       const response = await this.httpClient.delete<boolean | ApiErrorResponse>(
         `${this.baseUrl}/${activityId}/definitions/${id}`
       )
-      if (response.status === 204) return
+      if (response.status === 204) {
+        this.httpClient.invalidateCache(
+          `${this.baseUrl}/${activityId}/definitions`
+        )
+        return
+      }
       // El API retorna 200 con "true" para indicar éxito
-      if (response.status === 200 && response.data === true) return
+      if (response.status === 200 && response.data === true) {
+        this.httpClient.invalidateCache(
+          `${this.baseUrl}/${activityId}/definitions`
+        )
+        return
+      }
       return response.data as ApiErrorResponse
     } catch (error) {
       return this.toNetworkError(error)
