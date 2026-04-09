@@ -149,7 +149,6 @@ const API_URL =
 const secureStorageAdapter = new SecureStorageAdapter()
 const localStorageAdapter = new LocalStorageAdapter('sidebar')
 
-
 // ============================================
 // 4. REPOSITORIOS
 // ============================================
