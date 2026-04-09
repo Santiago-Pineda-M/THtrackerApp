@@ -3,212 +3,221 @@
  * PLOC para el formulario de edición de categorías.
  */
 
-import { Ploc } from "../../Domain/Ploc";
-import { 
-    type ICategoryEditFormState, 
-    initialCategoryEditFormState 
-} from "../../Domain";
-import type { UpdateCategoryUseCase } from "../../Application/UseCases/Category";
-import type { GetCategoryByIdUseCase } from "../../Application/UseCases/Category";
+import { Ploc } from '../../Domain/Ploc'
+import {
+  type ICategoryEditFormState,
+  initialCategoryEditFormState,
+} from '../../Domain'
+import type { UpdateCategoryUseCase } from '../../Application/UseCases/Category'
+import type { GetCategoryByIdUseCase } from '../../Application/UseCases/Category'
 
 export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
-    private readonly updateCategoryUseCase: UpdateCategoryUseCase;
-    private readonly getCategoryByIdUseCase: GetCategoryByIdUseCase;
+  private readonly updateCategoryUseCase: UpdateCategoryUseCase
+  private readonly getCategoryByIdUseCase: GetCategoryByIdUseCase
 
-    constructor(
-        updateCategoryUseCase: UpdateCategoryUseCase,
-        getCategoryByIdUseCase: GetCategoryByIdUseCase
-    ) {
-        super(initialCategoryEditFormState);
-        this.updateCategoryUseCase = updateCategoryUseCase;
-        this.getCategoryByIdUseCase = getCategoryByIdUseCase;
-    }
+  constructor(
+    updateCategoryUseCase: UpdateCategoryUseCase,
+    getCategoryByIdUseCase: GetCategoryByIdUseCase
+  ) {
+    super(initialCategoryEditFormState)
+    this.updateCategoryUseCase = updateCategoryUseCase
+    this.getCategoryByIdUseCase = getCategoryByIdUseCase
+  }
 
-    /**
-     * Inicializa el formulario con los datos de la categoría a editar.
-     */
-    async initializeForm(id: string): Promise<void> {
+  /**
+   * Inicializa el formulario con los datos de la categoría a editar.
+   */
+  async initializeForm(id: string): Promise<void> {
+    this.changeState({
+      ...this.state,
+      isLoading: true,
+      id,
+    })
+
+    try {
+      const result = await this.getCategoryByIdUseCase.execute({ id })
+
+      if (result.success) {
+        const category = result.category
         this.changeState({
-            ...this.state,
-            isLoading: true,
-            id,
-        });
+          ...this.state,
+          name: category.name ?? '',
+          color: category.color ?? '',
+          initialValues: {
+            name: category.name ?? '',
+            color: category.color ?? '',
+          },
+          isLoading: false,
+          errors: {},
+        })
+        return
+      }
 
-        try {
-            const result = await this.getCategoryByIdUseCase.execute({ id });
+      this.changeState({
+        ...this.state,
+        isLoading: false,
+        errors: result.error
+          ? { general: [result.error.detail || 'Error al cargar datos'] }
+          : {},
+      })
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
+      this.changeState({
+        ...this.state,
+        isLoading: false,
+        errors: { general: [message] },
+      })
+    }
+  }
 
-            if (result.success) {
-                const category = result.category;
-                this.changeState({
-                    ...this.state,
-                    name: category.name ?? '',
-                    color: category.color ?? '',
-                    initialValues: {
-                        name: category.name ?? '',
-                        color: category.color ?? '',
-                    },
-                    isLoading: false,
-                    errors: {},
-                });
-                return;
-            }
+  /**
+   * Actualiza el nombre en el estado.
+   */
+  updateName(name: string): void {
+    const newErrors = { ...this.state.errors }
+    delete newErrors.name
+    this.changeState({
+      ...this.state,
+      name,
+      errors: newErrors,
+      success: false,
+      message: '',
+    })
+  }
 
-            this.changeState({
-                ...this.state,
-                isLoading: false,
-                errors: result.error ? { general: [result.error.detail || 'Error al cargar datos'] } : {},
-            });
-        } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : 'Error desconocido';
-            this.changeState({
-                ...this.state,
-                isLoading: false,
-                errors: { general: [message] },
-            });
-        }
+  /**
+   * Actualiza el color en el estado.
+   */
+  updateColor(color: string): void {
+    this.changeState({
+      ...this.state,
+      color,
+      success: false,
+      message: '',
+    })
+  }
+
+  /**
+   * Envía el formulario de actualización.
+   */
+  async submit(): Promise<void> {
+    const validationErrors = this.validateForm()
+    if (Object.keys(validationErrors).length > 0) {
+      this.changeState({
+        ...this.state,
+        errors: validationErrors,
+        success: false,
+        message: 'Corrige los errores del formulario.',
+        isLoading: false,
+      })
+      return
     }
 
-    /**
-     * Actualiza el nombre en el estado.
-     */
-    updateName(name: string): void {
-        const newErrors = { ...this.state.errors };
-        delete newErrors.name;
-        this.changeState({ 
-            ...this.state, 
-            name, 
-            errors: newErrors,
-            success: false,
-            message: '',
-        });
+    // Verificar si hay cambios
+    const hasChanges =
+      this.state.name !== this.state.initialValues.name ||
+      this.state.color !== this.state.initialValues.color
+
+    if (!hasChanges) {
+      this.changeState({
+        ...this.state,
+        success: true,
+        message: 'No hay cambios para guardar.',
+        isLoading: false,
+      })
+      return
     }
 
-    /**
-     * Actualiza el color en el estado.
-     */
-    updateColor(color: string): void {
-        this.changeState({ 
-            ...this.state, 
-            color,
-            success: false,
-            message: '',
-        });
-    }
+    this.changeState({
+      ...this.state,
+      errors: {},
+      message: '',
+      isLoading: true,
+    })
 
-    /**
-     * Envía el formulario de actualización.
-     */
-    async submit(): Promise<void> {
-        const validationErrors = this.validateForm();
-        if (Object.keys(validationErrors).length > 0) {
-            this.changeState({
-                ...this.state,
-                errors: validationErrors,
-                success: false,
-                message: 'Corrige los errores del formulario.',
-                isLoading: false,
-            });
-            return;
-        }
+    try {
+      const request = {
+        id: this.state.id,
+        name: this.state.name.trim() || null,
+        color: this.state.color.trim() || null,
+      }
 
-        // Verificar si hay cambios
-        const hasChanges = this.state.name !== this.state.initialValues.name || 
-                          this.state.color !== this.state.initialValues.color;
+      const result = await this.updateCategoryUseCase.execute(request)
 
-        if (!hasChanges) {
-            this.changeState({
-                ...this.state,
-                success: true,
-                message: 'No hay cambios para guardar.',
-                isLoading: false,
-            });
-            return;
-        }
-
+      if (result.success) {
         this.changeState({
-            ...this.state,
-            errors: {},
-            message: '',
-            isLoading: true,
-        });
+          ...this.state,
+          name: result.category.name ?? '',
+          color: result.category.color ?? '',
+          initialValues: {
+            name: result.category.name ?? '',
+            color: result.category.color ?? '',
+          },
+          errors: {},
+          success: true,
+          message: 'Categoría actualizada correctamente.',
+          isLoading: false,
+        })
+        return
+      }
 
-        try {
-            const request = {
-                id: this.state.id,
-                name: this.state.name.trim() || null,
-                color: this.state.color.trim() || null,
-            };
+      // Error del servidor
+      const errorResult = result.error
+      const rawErrors = errorResult.errors ?? {
+        general: [errorResult.title || errorResult.detail],
+      }
+      const errors = this.normalizeErrorKeys(
+        rawErrors as Record<string, string[]>
+      )
 
-            const result = await this.updateCategoryUseCase.execute(request);
+      this.changeState({
+        ...this.state,
+        errors,
+        success: false,
+        message: errorResult.title || 'Error al actualizar la categoría.',
+        isLoading: false,
+      })
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
+      this.changeState({
+        ...this.state,
+        errors: { general: [message] },
+        success: false,
+        message,
+        isLoading: false,
+      })
+    }
+  }
 
-            if (result.success) {
-                this.changeState({
-                    ...this.state,
-                    name: result.category.name ?? '',
-                    color: result.category.color ?? '',
-                    initialValues: {
-                        name: result.category.name ?? '',
-                        color: result.category.color ?? '',
-                    },
-                    errors: {},
-                    success: true,
-                    message: 'Categoría actualizada correctamente.',
-                    isLoading: false,
-                });
-                return;
-            }
+  /**
+   * Resetea el estado del formulario.
+   */
+  reset(): void {
+    this.changeState({
+      ...initialCategoryEditFormState,
+      name: this.state.initialValues.name,
+      color: this.state.initialValues.color,
+      initialValues: this.state.initialValues,
+    })
+  }
 
-            // Error del servidor
-            const errorResult = result.error;
-            const rawErrors = errorResult.errors ?? { general: [errorResult.title || errorResult.detail] };
-            const errors = this.normalizeErrorKeys(rawErrors as Record<string, string[]>);
+  private validateForm(): Record<string, string[]> {
+    const errors: Record<string, string[]> = {}
 
-            this.changeState({
-                ...this.state,
-                errors,
-                success: false,
-                message: errorResult.title || 'Error al actualizar la categoría.',
-                isLoading: false,
-            });
-        } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : 'Error desconocido';
-            this.changeState({
-                ...this.state,
-                errors: { general: [message] },
-                success: false,
-                message,
-                isLoading: false,
-            });
-        }
+    if (!this.state.name || this.state.name.trim() === '') {
+      errors.name = ['El nombre de la categoría es requerido']
     }
 
-    /**
-     * Resetea el estado del formulario.
-     */
-    reset(): void {
-        this.changeState({
-            ...initialCategoryEditFormState,
-            name: this.state.initialValues.name,
-            color: this.state.initialValues.color,
-            initialValues: this.state.initialValues,
-        });
-    }
+    return errors
+  }
 
-    private validateForm(): Record<string, string[]> {
-        const errors: Record<string, string[]> = {};
-        
-        if (!this.state.name || this.state.name.trim() === '') {
-            errors.name = ['El nombre de la categoría es requerido'];
-        }
-        
-        return errors;
+  private normalizeErrorKeys(
+    errors: Record<string, string[]>
+  ): Record<string, string[]> {
+    const normalized: Record<string, string[]> = {}
+    for (const [key, value] of Object.entries(errors)) {
+      normalized[key.toLowerCase()] = value
     }
-
-    private normalizeErrorKeys(errors: Record<string, string[]>): Record<string, string[]> {
-        const normalized: Record<string, string[]> = {};
-        for (const [key, value] of Object.entries(errors)) {
-            normalized[key.toLowerCase()] = value;
-        }
-        return normalized;
-    }
+    return normalized
+  }
 }

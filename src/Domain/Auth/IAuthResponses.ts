@@ -10,9 +10,9 @@
  * ⚠ Los datos del usuario se extraen decodificando el accessToken (JWT claims).
  */
 export interface ILoginResponse {
-    accessToken: string;
-    refreshToken: string;
-    refreshTokenExpiry: string; // ISO date-time — e.g. "2026-03-21T22:00:00Z"
+  accessToken: string
+  refreshToken: string
+  refreshTokenExpiry: string // ISO date-time — e.g. "2026-03-21T22:00:00Z"
 }
 
 /**
@@ -20,14 +20,14 @@ export interface ILoginResponse {
  * La API devuelve 200 con body vacío en caso de éxito.
  */
 export interface IRegisterResponse {
-    message?: string;
+  message?: string
 }
 
 /**
  * Respuesta de /refresh — mismo shape que el login.
  */
 export interface IRefreshTokenResponse {
-    accessToken: string;
-    refreshToken: string;
-    refreshTokenExpiry: string; // ISO date-time
+  accessToken: string
+  refreshToken: string
+  refreshTokenExpiry: string // ISO date-time
 }

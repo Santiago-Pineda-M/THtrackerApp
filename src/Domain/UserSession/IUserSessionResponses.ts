@@ -8,13 +8,13 @@
  * Representa una sesión activa del usuario.
  */
 export interface IUserSessionResponse {
-    id: string; // UUID
-    deviceInfo: string | null;
-    ipAddress: string | null;
-    location: string | null;
-    createdAt: string; // ISO date-time
-    expiresAt: string; // ISO date-time
-    isActive: boolean;
+  id: string // UUID
+  deviceInfo: string | null
+  ipAddress: string | null
+  location: string | null
+  createdAt: string // ISO date-time
+  expiresAt: string // ISO date-time
+  isActive: boolean
 }
 
 /**
@@ -22,5 +22,5 @@ export interface IUserSessionResponse {
  * La API devuelve 204 No Content en caso de éxito.
  */
 export interface IRevokeSessionResponse {
-    success: boolean;
+  success: boolean
 }

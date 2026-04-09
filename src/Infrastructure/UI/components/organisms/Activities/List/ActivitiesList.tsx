@@ -1,29 +1,35 @@
-import React, { useEffect } from 'react';
-import { Card, Divider, Text, Spinner } from '../../..';
-import { useDependencies } from '../../../../../Context/useDependencies';
-import { usePlocState } from '../../../../../Hooks/usePlocState';
-import type { IActivitiesListState } from '../../../../../../Domain/IStates';
-import { ActivitiesListItem } from './ActivitiesListItem';
-import { ActivityCreate } from '../Management/ActivityCreate';
-import styles from './ActivitiesList.module.css';
+import React, { useEffect } from 'react'
+import { Card, Divider, Text, Spinner } from '../../..'
+import { useDependencies } from '../../../../../Context/useDependencies'
+import { usePlocState } from '../../../../../Hooks/usePlocState'
+import type { IActivitiesListState } from '../../../../../../Domain/IStates'
+import { ActivitiesListItem } from './ActivitiesListItem'
+import { ActivityCreate } from '../Management/ActivityCreate'
+import styles from './ActivitiesList.module.css'
 
 export const ActivitiesList: React.FC = () => {
-  const { providerActivitiesListPloc, providerCategoriesListPloc } = useDependencies();
-  const listState = usePlocState<IActivitiesListState>(providerActivitiesListPloc);
-  const categoriesState = usePlocState(providerCategoriesListPloc);
+  const { providerActivitiesListPloc, providerCategoriesListPloc } =
+    useDependencies()
+  const listState = usePlocState<IActivitiesListState>(
+    providerActivitiesListPloc
+  )
+  const categoriesState = usePlocState(providerCategoriesListPloc)
 
   useEffect(() => {
-    providerActivitiesListPloc.loadActivities();
-  }, [providerActivitiesListPloc]);
-
+    providerActivitiesListPloc.loadActivities()
+  }, [providerActivitiesListPloc])
 
   return (
-    <Card h={3} w={2} title="Actividades">
+    <Card
+      h={3}
+      w={2}
+      title='Actividades'
+    >
       <Divider />
 
       {listState.isLoading && listState.activities.length === 0 ? (
         <div className={styles.emptyState}>
-          <Spinner size="lg" />
+          <Spinner size='lg' />
         </div>
       ) : listState.activities.length > 0 ? (
         <ul className={styles.list}>
@@ -31,19 +37,30 @@ export const ActivitiesList: React.FC = () => {
             <ActivitiesListItem
               key={activity.id}
               activity={activity}
-              category={ categoriesState.categories.find((cat) => cat.id === activity.categoryId) || { userId:'', id: '', name: 'Sin categoría', color: null }}
+              category={
+                categoriesState.categories.find(
+                  (cat) => cat.id === activity.categoryId
+                ) || {
+                  userId: '',
+                  id: '',
+                  name: 'Sin categoría',
+                  color: null,
+                }
+              }
             />
           ))}
         </ul>
       ) : (
         <div className={styles.emptyState}>
-          <Text color="secondary">No hay actividades. Crea una nueva para comenzar.</Text>
+          <Text color='secondary'>
+            No hay actividades. Crea una nueva para comenzar.
+          </Text>
         </div>
       )}
 
       {listState.error && (
         <Text
-          size="sm"
+          size='sm'
           className={styles.errorText}
         >
           {listState.error.title || 'Error al cargar actividades.'}
@@ -54,5 +71,5 @@ export const ActivitiesList: React.FC = () => {
         <ActivityCreate />
       </div>
     </Card>
-  );
-};
+  )
+}

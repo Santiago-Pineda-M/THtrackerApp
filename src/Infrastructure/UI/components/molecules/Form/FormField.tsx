@@ -1,21 +1,21 @@
-import React, { useId, cloneElement } from 'react';
-import s from './FormField.module.css';
-import { Text } from '../../atoms/Text/Text';
+import React, { useId, cloneElement } from 'react'
+import s from './FormField.module.css'
+import { Text } from '../../atoms/Text/Text'
 
 type FieldControlProps = {
-  id?: string;
-  'aria-invalid'?: boolean;
-  'aria-describedby'?: string;
-  state?: 'default' | 'error' | 'success';
-};
+  id?: string
+  'aria-invalid'?: boolean
+  'aria-describedby'?: string
+  state?: 'default' | 'error' | 'success'
+}
 
 export interface FormFieldProps {
-  label?: string;
-  required?: boolean;
-  helper?: string;
-  error?: string;
-  children: React.ReactElement<FieldControlProps>;
-  id?: string;
+  label?: string
+  required?: boolean
+  helper?: string
+  error?: string
+  children: React.ReactElement<FieldControlProps>
+  id?: string
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -26,28 +26,34 @@ export const FormField: React.FC<FormFieldProps> = ({
   children,
   id,
 }) => {
-  const generatedId = useId();
-  const inputId = id ?? generatedId;
+  const generatedId = useId()
+  const inputId = id ?? generatedId
 
   const messageId = error
     ? `${inputId}-error`
     : helper
-    ? `${inputId}-helper`
-    : undefined;
+      ? `${inputId}-helper`
+      : undefined
 
   const childWithProps = cloneElement(children, {
     id: inputId,
     'aria-invalid': !!error,
     'aria-describedby': messageId,
     state: error ? 'error' : children.props.state,
-  });
+  })
 
   return (
-    <div className={s.field} data-state={error ? 'error' : 'default'}>
+    <div
+      className={s.field}
+      data-state={error ? 'error' : 'default'}
+    >
       {label && (
-        <label className={s.label} htmlFor={inputId}>
+        <label
+          className={s.label}
+          htmlFor={inputId}
+        >
           {label}
-          {required && <span aria-hidden="true"> *</span>}
+          {required && <span aria-hidden='true'> *</span>}
         </label>
       )}
 
@@ -56,7 +62,7 @@ export const FormField: React.FC<FormFieldProps> = ({
       {(error || helper) && (
         <Text
           id={messageId}
-          size="xs"
+          size='xs'
           muted={!error}
           className={error ? s.error : s.helper}
         >
@@ -64,7 +70,7 @@ export const FormField: React.FC<FormFieldProps> = ({
         </Text>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default FormField;
+export default FormField

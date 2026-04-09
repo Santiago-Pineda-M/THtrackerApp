@@ -45,7 +45,7 @@
   border-right: 2px solid var(--color-border-soft);
   border-bottom: 2px solid var(--color-border-soft);
   border-top: 2px solid var(--color-border-soft);
-  border-bottom-right-radius: var(--radius-lg); 
+  border-bottom-right-radius: var(--radius-lg);
   border-top-right-radius: var(--radius-lg);
 }
 

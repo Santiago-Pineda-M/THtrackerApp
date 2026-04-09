@@ -1,62 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Text, Modal, Input, FormField } from '../../..';
-import { useDependencies } from '../../../../../Context/useDependencies';
-import { usePlocState } from '../../../../../Hooks/usePlocState';
-import type { IActivityCreateFormState, ICategoriesListState } from '../../../../../../Domain/IStates';
-import styles from './ActivityForm.module.css';
+import React, { useState, useEffect } from 'react'
+import { Button, Text, Modal, Input, FormField } from '../../..'
+import { useDependencies } from '../../../../../Context/useDependencies'
+import { usePlocState } from '../../../../../Hooks/usePlocState'
+import type {
+  IActivityCreateFormState,
+  ICategoriesListState,
+} from '../../../../../../Domain/IStates'
+import styles from './ActivityForm.module.css'
 
 export const ActivityCreate: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { 
-    providerActivityCreateFormPloc, 
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const {
+    providerActivityCreateFormPloc,
     providerActivitiesListPloc,
-    providerCategoriesListPloc 
-  } = useDependencies();
-  
-  const state = usePlocState<IActivityCreateFormState>(providerActivityCreateFormPloc);
-  const categoriesState = usePlocState<ICategoriesListState>(providerCategoriesListPloc);
+    providerCategoriesListPloc,
+  } = useDependencies()
+
+  const state = usePlocState<IActivityCreateFormState>(
+    providerActivityCreateFormPloc
+  )
+  const categoriesState = usePlocState<ICategoriesListState>(
+    providerCategoriesListPloc
+  )
 
   useEffect(() => {
     if (isModalOpen) {
-      providerCategoriesListPloc.loadCategories();
+      providerCategoriesListPloc.loadCategories()
     }
-  }, [isModalOpen, providerCategoriesListPloc]);
+  }, [isModalOpen, providerCategoriesListPloc])
 
   useEffect(() => {
     if (state.success) {
-      providerActivitiesListPloc.loadActivities();
+      providerActivitiesListPloc.loadActivities()
     }
-  }, [state.success, providerActivitiesListPloc]);
+  }, [state.success, providerActivitiesListPloc])
 
   const handleOpen = () => {
-    providerActivityCreateFormPloc.reset();
-    setIsModalOpen(true);
-  };
+    providerActivityCreateFormPloc.reset()
+    setIsModalOpen(true)
+  }
 
   const handleClose = () => {
-    setIsModalOpen(false);
-    providerActivityCreateFormPloc.reset();
-  };
+    setIsModalOpen(false)
+    providerActivityCreateFormPloc.reset()
+  }
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerActivityCreateFormPloc.updateName(e.target.value);
-  };
+    providerActivityCreateFormPloc.updateName(e.target.value)
+  }
 
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerActivityCreateFormPloc.updateColor(e.target.value);
-  };
+    providerActivityCreateFormPloc.updateColor(e.target.value)
+  }
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    providerActivityCreateFormPloc.updateCategory(e.target.value);
-  };
+    providerActivityCreateFormPloc.updateCategory(e.target.value)
+  }
 
   const handleOverlapChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerActivityCreateFormPloc.updateAllowOverlap(e.target.checked);
-  };
+    providerActivityCreateFormPloc.updateAllowOverlap(e.target.checked)
+  }
 
   const handleSubmit = async () => {
-    await providerActivityCreateFormPloc.submit();
-  };
+    await providerActivityCreateFormPloc.submit()
+  }
 
   return (
     <>
@@ -85,45 +92,63 @@ export const ActivityCreate: React.FC = () => {
           <div className={styles.modalContent}>
             {state.message && (
               <Text
-                size="sm"
+                size='sm'
                 className={styles.errorMessage}
                 style={{
-                  color: Object.keys(state.errors).length > 0 ? 'var(--color-error)' : 'var(--color-success)',
+                  color:
+                    Object.keys(state.errors).length > 0
+                      ? 'var(--color-error)'
+                      : 'var(--color-success)',
                 }}
               >
                 {state.message}
               </Text>
             )}
 
-            <FormField label="Categoría" required error={state.errors.categoryId?.[0]}>
+            <FormField
+              label='Categoría'
+              required
+              error={state.errors.categoryId?.[0]}
+            >
               <select
                 value={state.categoryId}
                 onChange={handleCategoryChange}
                 disabled={state.isLoading}
                 className={styles.select}
               >
-                <option value="">Selecciona una categoría</option>
+                <option value=''>Selecciona una categoría</option>
                 {categoriesState.categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
+                  <option
+                    key={cat.id}
+                    value={cat.id}
+                  >
                     {cat.name}
                   </option>
                 ))}
               </select>
             </FormField>
 
-            <FormField label="Nombre" required error={state.errors.name?.[0]}>
+            <FormField
+              label='Nombre'
+              required
+              error={state.errors.name?.[0]}
+            >
               <Input
-                type="text"
+                type='text'
                 value={state.name}
                 onChange={handleNameChange}
-                placeholder="Ej: Desarrollo Backend, Lectura"
+                placeholder='Ej: Desarrollo Backend, Lectura'
                 disabled={state.isLoading}
               />
             </FormField>
 
-            <FormField label="Color" required error={state.errors.color?.[0]}>
+            <FormField
+              label='Color'
+              required
+              error={state.errors.color?.[0]}
+            >
               <Input
-                type="color"
+                type='color'
                 value={state.color || '#000000'}
                 onChange={handleColorChange}
                 disabled={state.isLoading}
@@ -131,21 +156,26 @@ export const ActivityCreate: React.FC = () => {
               />
             </FormField>
 
-            <FormField label="Permitir solapamiento">
+            <FormField label='Permitir solapamiento'>
               <div className={styles.overlapOption}>
                 <input
-                  type="checkbox"
+                  type='checkbox'
                   checked={state.allowOverlap}
                   onChange={handleOverlapChange}
                   disabled={state.isLoading}
                 />
-                <Text size="xs" color="secondary">Esta actividad puede ocurrir al mismo tiempo que otras.</Text>
+                <Text
+                  size='xs'
+                  color='secondary'
+                >
+                  Esta actividad puede ocurrir al mismo tiempo que otras.
+                </Text>
               </div>
             </FormField>
 
             <div className={styles.modalActions}>
               <Button
-                variant="primary"
+                variant='primary'
                 onClick={handleSubmit}
                 loading={state.isLoading}
               >
@@ -156,5 +186,5 @@ export const ActivityCreate: React.FC = () => {
         )}
       </Modal>
     </>
-  );
-};
+  )
+}

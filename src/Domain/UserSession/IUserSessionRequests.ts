@@ -8,5 +8,5 @@
  * El sessionId se pasa como path parameter en la URL.
  */
 export interface IRevokeSessionRequest {
-    sessionId: string; // UUID de la sesión a revocar
+  sessionId: string // UUID de la sesión a revocar
 }

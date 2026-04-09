@@ -21,7 +21,7 @@ export const ReloadPrompt: React.FC = () => {
   if (!offlineReady && !needRefresh) return null
 
   return (
-    <aside id="reload-prompt">
+    <aside id='reload-prompt'>
       {offlineReady ? (
         <p>App lista para trabajar sin conexión</p>
       ) : (
@@ -29,14 +29,10 @@ export const ReloadPrompt: React.FC = () => {
       )}
 
       {needRefresh && (
-        <Button onClick={() => updateServiceWorker(true)}>
-          Recargar
-        </Button>
+        <Button onClick={() => updateServiceWorker(true)}>Recargar</Button>
       )}
 
-      <Button onClick={close}>
-        Cerrar
-      </Button>
+      <Button onClick={close}>Cerrar</Button>
     </aside>
   )
 }

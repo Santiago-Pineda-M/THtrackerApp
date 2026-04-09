@@ -1,9 +1,11 @@
-import { Card } from  '../../';
+import { Card } from '../../'
 
 export const Calendar = () => {
   return (
-    <Card      title="Calendar" h={2} w={4}>
-        <p>Calendar</p>
-    </Card>
-  );
+    <Card
+      title='Calendar'
+      h={2}
+      w={5}
+    ></Card>
+  )
 }

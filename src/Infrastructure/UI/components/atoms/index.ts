@@ -1,19 +1,22 @@
-export { Avatar } from './Avatar/Avatar';
-export { Badge } from './Badge/Badge';
-export type { BadgeProps, BadgeVariant } from './Badge/Badge';
-export { Button } from './Button/Button';
-export type { ButtonProps } from './Button/Button';
-export { default as Card } from './Card/Card';
-export { Divider } from './Divider/Divider';
-export { Icon } from './Icon/Icon';
-export type { IconProps, IconName } from './Icon/Icon';
-export { Input } from './Input/Input';
-export type { InputType, InputProps, InputElement } from './Input/Input';
-export { Spinner } from './Spinner/Spinner';
-export type { SpinnerProps } from './Spinner/Spinner';
-export { Text } from './Text/Text';
-export type { TextProps, TextAs } from './Text/Text';
-export { ToggleSwitch } from './ToggleSwitch/ToggleSwitch';
-export type { ToggleSwitchProps, ToggleSwitchSize } from './ToggleSwitch/ToggleSwitch';
-export { Label } from './Label/Label';
-export type { LabelProps } from './Label/Label';
+export { Avatar } from './Avatar/Avatar'
+export { Badge } from './Badge/Badge'
+export type { BadgeProps, BadgeVariant } from './Badge/Badge'
+export { Button } from './Button/Button'
+export type { ButtonProps } from './Button/Button'
+export { default as Card } from './Card/Card'
+export { Divider } from './Divider/Divider'
+export { Icon } from './Icon/Icon'
+export type { IconProps, IconName } from './Icon/Icon'
+export { Input } from './Input/Input'
+export type { InputType, InputProps, InputElement } from './Input/Input'
+export { Spinner } from './Spinner/Spinner'
+export type { SpinnerProps } from './Spinner/Spinner'
+export { Text } from './Text/Text'
+export type { TextProps, TextAs } from './Text/Text'
+export { ToggleSwitch } from './ToggleSwitch/ToggleSwitch'
+export type {
+  ToggleSwitchProps,
+  ToggleSwitchSize,
+} from './ToggleSwitch/ToggleSwitch'
+export { Label } from './Label/Label'
+export type { LabelProps } from './Label/Label'

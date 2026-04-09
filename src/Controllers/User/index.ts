@@ -1,2 +1,2 @@
-export { UserProfileDisplayPloc } from './UserProfileDisplayPloc';
-export { UserProfileFormPloc } from './UserProfileFormPloc';
+export { UserProfileDisplayPloc } from './UserProfileDisplayPloc'
+export { UserProfileFormPloc } from './UserProfileFormPloc'

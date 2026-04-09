@@ -4,33 +4,32 @@
  */
 
 // HTTP Clients
-export { FetchHttpClient } from './Adapters/http/FetchHttpClient';
+export { FetchHttpClient } from './Adapters/http/FetchHttpClient'
 
 // Storage Adapters
-export { LocalStorageAdapter, SecureStorageAdapter } from './Adapters/storage';
+export { LocalStorageAdapter, SecureStorageAdapter } from './Adapters/storage'
 
 // Repositories
-export { AuthSessionRepository } from './Repositories/AuthSessionRepository';
-export { SidebarRepository } from './Repositories/SidebarRepository';
+export { AuthSessionRepository } from './Repositories/AuthSessionRepository'
+export { SidebarRepository } from './Repositories/SidebarRepository'
 
 // Dependency Injection
-export { dependenciesLocator } from './DI/DependenciesLocator';
+export { dependenciesLocator } from './DI/DependenciesLocator'
 
 // Context
-export { DependenciesProvider } from './Context/DependenciesProvider';
-export { useDependencies } from './Context/useDependencies';
+export { DependenciesProvider } from './Context/DependenciesProvider'
+export { useDependencies } from './Context/useDependencies'
 
 // Services
-export { AuthService } from './Services/AuthService';
-export { ActivityService } from './Services/ActivityService';
-export { ActivityLogService } from './Services/ActivityLogService';
-export { CategoryService } from './Services/CategoryService';
-export { UserService } from './Services/UserService';
-export { UserSessionService } from './Services/UserSessionService';
-
+export { AuthService } from './Services/AuthService'
+export { ActivityService } from './Services/ActivityService'
+export { ActivityLogService } from './Services/ActivityLogService'
+export { CategoryService } from './Services/CategoryService'
+export { UserService } from './Services/UserService'
+export { UserSessionService } from './Services/UserSessionService'
 
 // Hooks
-export { usePlocState } from './Hooks/usePlocState';
+export { usePlocState } from './Hooks/usePlocState'
 
 // UI
-export { AppRouter } from './UI/router/AppRouter';
+export { AppRouter } from './UI/router/AppRouter'

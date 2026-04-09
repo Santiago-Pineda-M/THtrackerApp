@@ -1,29 +1,31 @@
-import React from 'react';
-import s from './Input.module.css';
+import React from 'react'
+import s from './Input.module.css'
 
-export type InputType = 'text' | 'password' | 'number' | 'search' | 'email' | 'color';
+export type InputType =
+  | 'text'
+  | 'password'
+  | 'number'
+  | 'search'
+  | 'email'
+  | 'color'
 
-export type InputElement = React.ElementRef<'input'>;
+export type InputElement = React.ElementRef<'input'>
 
-type InputSize = 'sm' | 'md' | 'lg';
-type InputState = 'default' | 'error' | 'success';
+type InputSize = 'sm' | 'md' | 'lg'
+type InputState = 'default' | 'error' | 'success'
 
-export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
-  type?: InputType;
-  inputSize?: InputSize;
-  state?: InputState;
+export interface InputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'size'
+> {
+  type?: InputType
+  inputSize?: InputSize
+  state?: InputState
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    {
-      type = 'text',
-      inputSize = 'md',
-      state = 'default',
-      className,
-      ...props
-    },
+    { type = 'text', inputSize = 'md', state = 'default', className, ...props },
     ref
   ) => {
     return (
@@ -35,10 +37,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         className={`${s.input} ${className ?? ''}`}
         {...props}
       />
-    );
+    )
   }
-);
+)
 
-Input.displayName = 'Input';
+Input.displayName = 'Input'
 
-export default Input;
+export default Input

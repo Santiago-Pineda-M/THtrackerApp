@@ -15,7 +15,7 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
-        globIgnores: ['**/node_modules/**/*', 'dev-dist/**/*']
+        globIgnores: ['**/node_modules/**/*', 'dev-dist/**/*'],
       },
       manifest: {
         name: 'THtracker',
@@ -27,19 +27,19 @@ export default defineConfig({
             src: 'icon.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
-            purpose: 'any'
+            purpose: 'any',
           },
           {
             src: 'icon.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
-            purpose: 'maskable'
-          }
-        ]
+            purpose: 'maskable',
+          },
+        ],
       },
       devOptions: {
-        enabled: true
-      }
-    })
+        enabled: true,
+      },
+    }),
   ],
 })

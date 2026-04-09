@@ -8,21 +8,21 @@
  * Respuesta de error de login.
  */
 export interface ILoginResponseError {
-    title: string;
-    status: number;
-    detail?: string;
-    errors?: Record<string, string[]>;
-    type?: string;
+  title: string
+  status: number
+  detail?: string
+  errors?: Record<string, string[]>
+  type?: string
 }
 
 /**
  * Respuesta de error de refresh de token.
  */
 export interface IRefreshTokenResponseError {
-    title: string;
-    status: number;
-    detail?: string;
-    type?: string;
+  title: string
+  status: number
+  detail?: string
+  type?: string
 }
 
 /**
@@ -30,10 +30,10 @@ export interface IRefreshTokenResponseError {
  * Tipo genérico para parsear respuestas de error HTTP.
  */
 export interface IProblemDetails {
-    type?: string;
-    title?: string;
-    status?: number;
-    detail?: string;
-    instance?: string;
-    errors?: Record<string, string[]>;
+  type?: string
+  title?: string
+  status?: number
+  detail?: string
+  instance?: string
+  errors?: Record<string, string[]>
 }

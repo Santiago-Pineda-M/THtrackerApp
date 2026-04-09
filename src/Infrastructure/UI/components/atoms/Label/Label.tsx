@@ -1,9 +1,8 @@
-import React from 'react';
-import s from './Label.module.css';
+import React from 'react'
+import s from './Label.module.css'
 
-export interface LabelProps
-  extends React.LabelHTMLAttributes<HTMLLabelElement> {
-  required?: boolean;
+export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  required?: boolean
 }
 
 export const Label: React.FC<LabelProps> = ({
@@ -13,11 +12,14 @@ export const Label: React.FC<LabelProps> = ({
   ...props
 }) => {
   return (
-    <label className={`${s.label} ${className ?? ''}`} {...props}>
+    <label
+      className={`${s.label} ${className ?? ''}`}
+      {...props}
+    >
       {children}
       {required && <span className={s.required}> *</span>}
     </label>
-  );
-};
+  )
+}
 
-export default Label;
+export default Label

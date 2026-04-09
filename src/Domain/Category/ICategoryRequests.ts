@@ -3,8 +3,8 @@
  * Solicitud para crear una nueva categoría
  */
 export interface CreateCategoryRequest {
-  name: string | null;
-  color: string | null;
+  name: string | null
+  color: string | null
 }
 
 /**
@@ -12,6 +12,6 @@ export interface CreateCategoryRequest {
  * Solicitud para actualizar una categoría existente
  */
 export interface UpdateCategoryRequest {
-  name: string | null;
-  color: string | null;
+  name: string | null
+  color: string | null
 }

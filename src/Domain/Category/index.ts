@@ -1,2 +1,2 @@
-export * from './ICategoryResponses';
-export * from './ICategoryRequests';
+export * from './ICategoryResponses'
+export * from './ICategoryRequests'

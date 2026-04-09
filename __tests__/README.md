@@ -1,4 +1,4 @@
-# __tests__ — Capa Centralizada de Pruebas Unitarias
+# **tests** — Capa Centralizada de Pruebas Unitarias
 
 Este directorio contiene **todas** las pruebas unitarias del proyecto, organizadas
 siguiendo la misma estructura de capas que `src/`.
