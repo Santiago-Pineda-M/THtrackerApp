@@ -1,34 +1,40 @@
 /**
- * APPLICATION LAYER - Caso de Uso para obtener logs de una actividad
+ * APPLICATION LAYER - Caso de Uso para obtener logs filtrados por fecha
  */
 
 import type {
   IUseCase,
   ApiErrorResponse,
   ActivityLogResponse,
-  IGetActivityLogsRequest,
 } from '../../../Domain'
 import type { IActivityLogService } from '../../Services/ActivityLog/IActivityLogService'
 
-export type GetActivityLogsRequest = IGetActivityLogsRequest
+export interface GetCalendarLogsRequest {
+  startDate: Date
+  endDate: Date
+}
 
-export type GetActivityLogsResult =
+export type GetCalendarLogsResult =
   | { success: true; logs: ActivityLogResponse[] }
   | { success: false; error: ApiErrorResponse }
 
-export class GetActivityLogsUseCase implements IUseCase<
-  GetActivityLogsRequest,
-  GetActivityLogsResult
+export class GetCalendarLogsUseCase implements IUseCase<
+  GetCalendarLogsRequest,
+  GetCalendarLogsResult
 > {
   private readonly activityLogService: IActivityLogService
+
   constructor(activityLogService: IActivityLogService) {
     this.activityLogService = activityLogService
   }
 
   async execute(
-    request: GetActivityLogsRequest
-  ): Promise<GetActivityLogsResult> {
-    const result = await this.activityLogService.getActivityLogs(request)
+    request: GetCalendarLogsRequest
+  ): Promise<GetCalendarLogsResult> {
+    const result = await this.activityLogService.getActivityLogs({
+      startDate: request.startDate.toISOString(),
+      endDate: request.endDate.toISOString(),
+    })
 
     if (Array.isArray(result)) {
       return { success: true, logs: result }

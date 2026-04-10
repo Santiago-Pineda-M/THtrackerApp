@@ -9,6 +9,7 @@ import type {
   UpdateActivityLogRequest,
   LogValueRequest,
   LogValueResponse,
+  IGetActivityLogsRequest,
   ApiErrorResponse,
 } from '../../Domain'
 import type { IActivityLogService } from '../../Application/Services/ActivityLog/IActivityLogService'
@@ -20,13 +21,27 @@ export class ActivityLogService implements IActivityLogService {
   }
 
   async getActivityLogs(
-    activityId: string
+    request?: IGetActivityLogsRequest
   ): Promise<ActivityLogResponse[] | ApiErrorResponse> {
     try {
-      // Pasamos activityId como query param
-      const response = await this.httpClient.get<ActivityLogResponse[]>(
-        `/api/v1/activity-logs?activityId=${activityId}`
-      )
+      const params = new URLSearchParams()
+
+      if (request?.activityId) {
+        params.append('ActivityId', request.activityId)
+      }
+      if (request?.startDate) {
+        params.append('StartDate', request.startDate)
+      }
+      if (request?.endDate) {
+        params.append('EndDate', request.endDate)
+      }
+
+      const queryString = params.toString()
+      const url = queryString
+        ? `/api/v1/activity-logs?${queryString}`
+        : '/api/v1/activity-logs'
+
+      const response = await this.httpClient.get<ActivityLogResponse[]>(url)
       return response.data
     } catch (error: unknown) {
       return this.handleError(error)

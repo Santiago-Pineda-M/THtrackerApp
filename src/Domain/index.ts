@@ -67,6 +67,7 @@ export {
   type LoginRequestData,
   type RegisterRequestData,
 } from './Services'
+export type { IDateProvider } from './Services/IDateProvider'
 
 // Base PLOC
 export { Ploc } from './Ploc'
@@ -117,6 +118,7 @@ export type {
   StartActivityLogRequest,
   UpdateActivityLogRequest,
   LogValueRequest,
+  IGetActivityLogsRequest,
 } from './ActivityLog/IActivityLogRequests'
 
 // Activity Logs States
@@ -126,6 +128,7 @@ export type {
   IActiveActivityLogsState,
   IActivityLogStartState,
   IActivityLogStopState,
+  ICalendarLogsState,
 } from './IStates'
 export {
   initialActivityLogsListState,
@@ -133,6 +136,7 @@ export {
   initialActiveActivityLogsState,
   initialActivityLogStartState,
   initialActivityLogStopState,
+  initialCalendarLogsState,
 } from './IStates'
 
 // UserSession Domain Types

@@ -15,3 +15,9 @@ export interface LogValueRequest {
   valueDefinitionId: string
   value: string | null
 }
+
+export interface IGetActivityLogsRequest {
+  activityId?: string
+  startDate?: string // ISO 8601 string date-time
+  endDate?: string // ISO 8601 string date-time
+}

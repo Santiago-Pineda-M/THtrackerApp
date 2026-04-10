@@ -12,7 +12,7 @@ export const ChronometerRecordLogs = ({
 }: {
   log: ActivityLogResponse
 }) => {
-  const { providerActivityDetailPloc } = useDependencies()
+  const { providerActivityDetailPloc, providerDateProvider } = useDependencies()
   const state = usePlocState<IActivityDetailState>(providerActivityDetailPloc)
 
   useEffect(() => {
@@ -49,9 +49,7 @@ export const ChronometerRecordLogs = ({
         {state.activity?.name || 'Actividad desconocida'}
       </Text>
       <Chronometer
-        time={new Date(
-          log.startedAt.endsWith('Z') ? log.startedAt : `${log.startedAt}Z`
-        ).getTime()}
+        time={providerDateProvider.parse(log.startedAt).getTime()}
         textProps={{
           size: 'lg',
           weight: 'bold',

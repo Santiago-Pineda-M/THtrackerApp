@@ -776,3 +776,26 @@ export const initialSessionRevokeState: ISessionRevokeState = {
   error: null,
   revokedSessionId: null,
 }
+
+/**
+ * ==========================================
+ * CALENDAR LOGS STATE
+ * ==========================================
+ */
+
+/**
+ * Estado para la visualización del calendario semanal
+ */
+export interface ICalendarLogsState {
+  currentWeekDate: Date
+  logs: ActivityLogResponse[]
+  isLoading: boolean
+  error: ApiErrorResponse | null
+}
+
+export const initialCalendarLogsState: ICalendarLogsState = {
+  currentWeekDate: new Date(),
+  logs: [],
+  isLoading: false,
+  error: null,
+}

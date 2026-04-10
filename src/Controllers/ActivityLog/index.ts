@@ -1,5 +1,6 @@
 export * from './ActivityLogsListPloc'
 export * from './ActivityLogDetailPloc'
-export * from './ActiveActivityLogsPloc'
 export * from './ActivityLogStartPloc'
 export * from './ActivityLogStopPloc'
+export * from './ActiveActivityLogsPloc'
+export * from './CalendarLogsPloc'

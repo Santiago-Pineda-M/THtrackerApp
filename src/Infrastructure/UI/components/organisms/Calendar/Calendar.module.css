@@ -1,0 +1,154 @@
+.calendarContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-soft);
+  color: var(--color-text-primary);
+  /* Limit the total height so the body scrolls */
+  min-height: 600px;
+}
+
+.calendarControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.weekLabel {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.calendarHeader {
+  display: grid;
+  /* 1 col para la hora, 7 para los días */
+  grid-template-columns: 60px repeat(7, 1fr);
+  border-bottom: 1px solid var(--color-border-soft);
+  background-color: var(--color-bg-secondary);
+}
+
+.timeGutterHeader {
+  width: 60px;
+}
+
+.dayColumnHeader {
+  text-align: center;
+  padding: var(--space-sm);
+  border-left: 1px solid var(--color-border-soft);
+  font-size: 0.9rem;
+}
+.dayColumnHeader:first-of-type {
+  border-left: none; /* No border for the time gutter */
+}
+
+.dayName {
+  display: block;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.dayNumber {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin: 4px auto 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+}
+
+.dayNumber.isToday {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+.calendarBody {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+  display: grid;
+  grid-template-columns: 60px 1fr;
+}
+
+.timeGutter {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-border-soft);
+  background-color: var(--color-bg-secondary);
+}
+
+.timeSlot {
+  height: 60px; /* Cada hora ocupa 60px */
+  border-bottom: 1px solid var(--color-border-soft);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding-right: var(--space-sm);
+  padding-top: var(--space-xs);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  box-sizing: border-box;
+}
+
+.gridContent {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background-size: 100% 60px;
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-border-soft) 1px,
+    transparent 1px
+  );
+  height: calc(24 * 60px);
+}
+
+.dayColumn {
+  position: relative;
+  border-left: 1px solid var(--color-border-soft);
+  height: 100%;
+}
+.dayColumn:first-child {
+  border-left: none;
+}
+
+.eventBlock {
+  position: absolute;
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  overflow: hidden;
+  box-sizing: border-box;
+  color: #fff;
+  transition:
+    width 0.2s,
+    left 0.2s;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(4px);
+}
+
+.eventTitle {
+  font-weight: 600;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.eventTime {
+  font-size: 0.65rem;
+  opacity: 0.8;
+  margin-top: 2px;
+}

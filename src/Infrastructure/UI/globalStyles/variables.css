@@ -82,9 +82,9 @@
   --spacing-grid-gap: var(--space-lg);
 
   /* Grid Layout Constants */
-  --grid-column-min: 200px;
-  --grid-column-max: 210px;
-  --grid-row-height: 200px;
+  --grid-column-min: 150px;
+  --grid-column-max: 160px;
+  --grid-row-height: 130px;
 
   /* ANIMATIONS */
   --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);

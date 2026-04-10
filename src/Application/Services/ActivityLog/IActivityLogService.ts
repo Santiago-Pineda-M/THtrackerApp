@@ -8,12 +8,13 @@ import type {
   UpdateActivityLogRequest,
   LogValueRequest,
   LogValueResponse,
+  IGetActivityLogsRequest,
   ApiErrorResponse,
 } from '../../../Domain'
 
 export interface IActivityLogService {
   getActivityLogs(
-    activityId: string
+    request?: IGetActivityLogsRequest
   ): Promise<ActivityLogResponse[] | ApiErrorResponse>
   getActivityLogById(
     id: string

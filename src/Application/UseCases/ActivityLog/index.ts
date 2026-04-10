@@ -40,3 +40,8 @@ export {
   GetActiveActivityLogsUseCase,
   type GetActiveActivityLogsResult,
 } from './GetActiveActivityLogsUseCase'
+export {
+  GetCalendarLogsUseCase,
+  type GetCalendarLogsRequest,
+  type GetCalendarLogsResult,
+} from './GetCalendarLogsUseCase'

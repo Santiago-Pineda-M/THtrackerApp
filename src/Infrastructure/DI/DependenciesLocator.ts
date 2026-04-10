@@ -61,6 +61,7 @@ import {
   SaveActivityLogValuesUseCase,
   GetActivityLogValuesUseCase,
   GetActiveActivityLogsUseCase,
+  GetCalendarLogsUseCase,
 } from '../../Application/UseCases/ActivityLog'
 
 // Application - Casos de Uso UserSession
@@ -108,6 +109,7 @@ import {
   ActiveActivityLogsPloc,
   ActivityLogStartPloc,
   ActivityLogStopPloc,
+  CalendarLogsPloc,
 } from '../../Controllers/ActivityLog'
 
 // Controllers - UserSession Plocs
@@ -134,6 +136,7 @@ import { ActivityService } from '../Services/ActivityService'
 import { ActivityValueDefinitionService } from '../Services/ActivityValueDefinition'
 import { ActivityLogService } from '../Services/ActivityLogService'
 import { UserSessionService } from '../Services/UserSessionService'
+import { DateProvider } from '../Services/DateProvider'
 
 // ============================================
 // 2. CONSTANTES Y CONFIGURACIÓN
@@ -215,6 +218,7 @@ const activityValueDefinitionService = new ActivityValueDefinitionService(
 )
 const activityLogService = new ActivityLogService(httpClient)
 const userSessionService = new UserSessionService(httpClient)
+const dateProvider = new DateProvider()
 
 // ============================================
 // 8. CASOS DE USO (Use Cases)
@@ -294,6 +298,7 @@ const getActivityLogValuesUseCase = new GetActivityLogValuesUseCase(
 const getActiveActivityLogsUseCase = new GetActiveActivityLogsUseCase(
   activityLogService
 )
+const getCalendarLogsUseCase = new GetCalendarLogsUseCase(activityLogService)
 
 // UserSession Use Cases
 const getUserSessionsUseCase = new GetUserSessionsUseCase(userSessionService)
@@ -398,6 +403,7 @@ const activityLogStopPloc = new ActivityLogStopPloc(
   getValueDefinitionsUseCase,
   saveActivityLogValuesUseCase
 )
+const calendarLogsPloc = new CalendarLogsPloc(getCalendarLogsUseCase)
 
 // UserSession Plocs
 const userSessionsListPloc = new UserSessionsListPloc(getUserSessionsUseCase)
@@ -437,9 +443,11 @@ export interface Dependencies {
   providerActiveActivityLogsPloc: ActiveActivityLogsPloc
   providerActivityLogStartPloc: ActivityLogStartPloc
   providerActivityLogStopPloc: ActivityLogStopPloc
+  providerCalendarLogsPloc: CalendarLogsPloc
   // UserSession Providers
   providerUserSessionsListPloc: UserSessionsListPloc
   providerSessionRevokePloc: SessionRevokePloc
+  providerDateProvider: DateProvider
   // Factory functions
   createValueDefinitionDeletePloc: () => ActivityValueDefinitionDeletePloc
 }
@@ -562,6 +570,10 @@ function provideActivityLogStopPloc(): ActivityLogStopPloc {
   return activityLogStopPloc
 }
 
+function provideCalendarLogsPloc(): CalendarLogsPloc {
+  return calendarLogsPloc
+}
+
 // UserSession Providers
 function provideUserSessionsListPloc(): UserSessionsListPloc {
   return userSessionsListPloc
@@ -569,6 +581,10 @@ function provideUserSessionsListPloc(): UserSessionsListPloc {
 
 function provideSessionRevokePloc(): SessionRevokePloc {
   return sessionRevokePloc
+}
+
+function provideDateProvider(): DateProvider {
+  return dateProvider
 }
 
 // Factory functions
@@ -610,7 +626,9 @@ export const dependenciesLocator: Dependencies = {
   providerActiveActivityLogsPloc: provideActiveActivityLogsPloc(),
   providerActivityLogStartPloc: provideActivityLogStartPloc(),
   providerActivityLogStopPloc: provideActivityLogStopPloc(),
+  providerCalendarLogsPloc: provideCalendarLogsPloc(),
   providerUserSessionsListPloc: provideUserSessionsListPloc(),
   providerSessionRevokePloc: provideSessionRevokePloc(),
+  providerDateProvider: provideDateProvider(),
   createValueDefinitionDeletePloc: createValueDefinitionDeletePloc,
 }
