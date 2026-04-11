@@ -4,10 +4,11 @@
  */
 
 import { useEffect } from 'react'
-import { Card, Text, Spinner, Avatar } from '../../../components'
-import { useDependencies } from '../../../../Context/useDependencies'
-import { usePlocState } from '../../../../Hooks/usePlocState'
-import type { IUserProfileDisplayState } from '../../../../../Domain/IStates'
+import { Card, Text, Spinner, Avatar } from '../../../../components'
+import { useDependencies } from '../../../../../Context/useDependencies'
+import { usePlocState } from '../../../../../Hooks/usePlocState'
+import type { IUserProfileDisplayState } from '../../../../../../Domain/IStates'
+import styles from './UserProfileDisplay.module.css'
 
 /**
  * Obtiene las iniciales de un nombre o email.
@@ -38,9 +39,7 @@ export const UserProfileDisplay: React.FC = () => {
         w={2}
         title='Mi Perfil'
       >
-        <div
-          style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}
-        >
+        <div className={styles.loadingContainer}>
           <Spinner size='md' />
         </div>
       </Card>
@@ -49,7 +48,11 @@ export const UserProfileDisplay: React.FC = () => {
 
   if (state.error) {
     return (
-      <Card title='Mi Perfil'>
+      <Card
+        h={2}
+        w={2}
+        title='Mi Perfil'
+      >
         <Text
           size='sm'
           className='error'
@@ -64,7 +67,11 @@ export const UserProfileDisplay: React.FC = () => {
 
   if (!state.user) {
     return (
-      <Card title='Mi Perfil'>
+      <Card
+        h={2}
+        w={2}
+        title='Mi Perfil'
+      >
         <Text size='sm'>No se encontró información del usuario</Text>
       </Card>
     )
@@ -72,18 +79,11 @@ export const UserProfileDisplay: React.FC = () => {
 
   return (
     <Card
-      h={1}
+      h={2}
       w={2}
       title='Mi Perfil'
     >
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-          marginBottom: '1rem',
-        }}
-      >
+      <div className={styles.header}>
         <Avatar
           initials={getInitials(
             state.user.name || state.user.email || 'Usuario'
@@ -105,7 +105,7 @@ export const UserProfileDisplay: React.FC = () => {
           </Text>
         </div>
       </div>
-      <div style={{ marginTop: '1rem' }}>
+      <div className={styles.info}>
         <Text
           size='sm'
           color='muted'

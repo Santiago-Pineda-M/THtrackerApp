@@ -1,0 +1,83 @@
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-xl);
+}
+
+.messages {
+  margin-bottom: var(--space-md);
+}
+
+.success {
+  color: var(--color-success);
+}
+
+.error {
+  color: var(--color-error);
+}
+
+.fieldList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.fieldRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  transition: var(--transition-fast);
+}
+
+.fieldRow:hover {
+  border-color: var(--color-border-focus);
+  background-color: var(--color-bg-secondary);
+}
+
+.fieldInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.editBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.editBtn:hover {
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  min-width: 320px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
