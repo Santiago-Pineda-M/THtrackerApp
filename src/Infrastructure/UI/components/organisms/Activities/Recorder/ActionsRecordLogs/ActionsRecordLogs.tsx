@@ -69,7 +69,7 @@ export const ActionsRecordLogs = () => {
     <Card
       className={styles.card}
       h={1}
-      w={3}
+      w={4}
     >
       {renderContent()}
     </Card>

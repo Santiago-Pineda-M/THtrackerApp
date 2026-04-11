@@ -50,8 +50,8 @@ export const ActivityGeneralInfo: React.FC<ActivityGeneralInfoProps> = ({
   return (
     <Card
       title='Información General'
-      h={2}
-      w={2}
+      h={3}
+      w={3}
     >
       <div className={styles.Container}>
         <div className={styles.header}>

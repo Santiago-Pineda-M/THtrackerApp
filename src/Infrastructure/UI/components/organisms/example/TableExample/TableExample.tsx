@@ -1,7 +1,6 @@
 import React from 'react'
 import Card from '../../../atoms/Card/Card'
 import { Table } from '../../../molecules/Table/Table'
-import s from './TableExample.module.css'
 
 const columns = [
   { key: 'name', label: 'Nombre' },
@@ -21,11 +20,9 @@ export const TableExample: React.FC = () => (
     w={2}
     h={2}
   >
-    <div className={s.root}>
-      <Table
-        columns={columns}
-        rows={rows}
-      />
-    </div>
+    <Table
+      columns={columns}
+      rows={rows}
+    />
   </Card>
 )

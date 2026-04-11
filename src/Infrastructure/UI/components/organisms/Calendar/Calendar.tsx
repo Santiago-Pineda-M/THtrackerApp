@@ -161,9 +161,9 @@ export const Calendar = () => {
 
   return (
     <Card
-      title='Calendar'
-      h={4}
-      w={5}
+      h={5}
+      w={6}
+      className={styles.calendarCard}
     >
       <div className={styles.calendarContainer}>
         <div className={styles.calendarControls}>

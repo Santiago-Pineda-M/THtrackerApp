@@ -48,16 +48,18 @@ export const CalendarEvent: React.FC<Props> = ({ event }) => {
       className={styles.eventBlock}
       style={{
         top: `${event.top}px`,
-        height: `${Math.max(event.height, 20)}px`, // min height for visibility
+        height: `${Math.max(event.height, 24)}px`, // min height for visibility
         left: `${event.left}%`,
-        width: `calc(${event.width}% - 4px)`, // prevent touching neighbors
+        width: `${event.width}%`, // prevent touching neighbors
         backgroundColor: bgColor,
-        border: `2px solid ${borderColor}`,
+        borderColor: ` ${borderColor}`,
       }}
-      title={`${event.title} (${formatTime(event.startedAt)} - ${formatTime(event.endedAt)})`}
+      title={`
+        ${event.title} : ${formatTime(event.startedAt)} - ${formatTime(event.endedAt)}
+        `}
     >
       <div className={styles.eventTitle}>{event.title}</div>
-      {event.height > 40 && (
+      {event.height > 20 && (
         <div className={styles.eventTime}>
           {formatTime(event.startedAt)} - {formatTime(event.endedAt)}
         </div>

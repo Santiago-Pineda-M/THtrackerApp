@@ -15,8 +15,7 @@
   flex-direction: column;
 
   /* HARD CONSTRAINT */
-  overflow: hidden; /* 👈 clave: nunca crece */
-
+  overflow: hidden;
   position: relative;
 
   /* VISUAL */
@@ -27,20 +26,26 @@
 }
 
 /* HIJOS NO ROMPEN */
-.card > * {
+/* .card > * {
   min-width: 0;
   max-width: 100%;
   flex-shrink: 1;
+} */
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 100%;
+  overflow: hidden;
 }
 
-/* =========================
-   TOP RIGHT REAL (GRID-BASED)
-   ========================= */
+.cardContent > * {
+  min-width: 0;
+  max-width: 100%;
+  flex-shrink: 1;
 
-.grid-top-right {
-  /* Colocación: primera fila, última columna, respetando tamaño */
-  grid-column: span var(--w, 1) / -1; /* ocupa --w columnas terminando en el borde derecho */
-  grid-row: 1 / span var(--h, 1); /* empieza en fila 1 y ocupa --h filas */
+  justify-content: space-evenly;
 }
 
 /* =========================

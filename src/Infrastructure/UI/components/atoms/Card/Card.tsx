@@ -30,7 +30,7 @@ const Card = ({
       }
     >
       {title && <h2 className={styles.cardHeader}>{title}</h2>}
-      {children}
+      <div className={styles.cardContent}>{children}</div>
     </div>
   )
 }

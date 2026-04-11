@@ -5,7 +5,6 @@ import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { IAuthState } from '../../../../../../Domain'
 import type { AuthSession } from '../../../../../../Domain/Entities/AuthSession'
-import s from './AuthSessionExample.module.css'
 
 export const AuthSessionExample: React.FC = () => {
   const { providerAuthPloc } = useDependencies()
@@ -75,14 +74,12 @@ export const AuthSessionExample: React.FC = () => {
     <Card
       title='Auth Session State'
       w={2}
-      h={3}
+      h={4}
     >
-      <div className={s.root}>
-        <Table
-          columns={columns}
-          rows={rows}
-        />
-      </div>
+      <Table
+        columns={columns}
+        rows={rows}
+      />
     </Card>
   )
 }
