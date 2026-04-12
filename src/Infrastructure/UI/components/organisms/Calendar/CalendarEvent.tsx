@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './Calendar.module.css'
+import styles from './CalendarEvent.module.css'
 
 export interface LogEventView {
   id: string
@@ -22,10 +22,10 @@ interface Props {
 
 // Convert RGB/Hex to rgba for soft background
 const getBgColor = (color: string | null) => {
-  if (!color) return 'rgba(99, 102, 241, 0.2)' // Default indigo soft
+  if (!color) return 'rgba(99, 102, 241, 0.15)'
   if (color.startsWith('#')) {
-    // very rudimentary alpha adding for hex
-    return `${color}88` // 88 is roughly 53% opacity
+    // Soft transparent background
+    return `${color}22` // Ultra soft transparency
   }
   return color
 }
@@ -41,25 +41,33 @@ export const CalendarEvent: React.FC<Props> = ({ event }) => {
   }
 
   const bgColor = getBgColor(event.activityColor)
-  const borderColor = getBorderColor(event.categoryColor)
+  const borderColor = getBorderColor(event.categoryColor || event.activityColor)
 
   return (
     <div
       className={styles.eventBlock}
       style={{
         top: `${event.top}px`,
-        height: `${Math.max(event.height, 24)}px`, // min height for visibility
+        height: `${Math.max(event.height, 24)}px`,
         left: `${event.left}%`,
-        width: `${event.width}%`, // prevent touching neighbors
+        width: `${event.width - 2}%`, // Slight gap between concurrent events
         backgroundColor: bgColor,
-        borderColor: ` ${borderColor}`,
+        borderLeftColor: borderColor,
+        borderLeftWidth: '4px',
+        color: borderColor, // Text color matches border for better contrast on light alpha bg
       }}
       title={`
-        ${event.title} : ${formatTime(event.startedAt)} - ${formatTime(event.endedAt)}
+        ${event.title}
+        ${formatTime(event.startedAt)} - ${formatTime(event.endedAt)}
         `}
     >
-      <div className={styles.eventTitle}>{event.title}</div>
-      {event.height > 20 && (
+      <div
+        className={styles.eventTitle}
+        style={{ color: 'var(--color-text-primary)' }}
+      >
+        {event.title}
+      </div>
+      {event.height > 30 && (
         <div className={styles.eventTime}>
           {formatTime(event.startedAt)} - {formatTime(event.endedAt)}
         </div>

@@ -19,16 +19,14 @@
 .cardContent {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
 .cardContent > * {
   min-width: 0;
   max-width: 100%;
-  flex-shrink: 1;
-  justify-content: space-around;
 }
 
 /* =========================

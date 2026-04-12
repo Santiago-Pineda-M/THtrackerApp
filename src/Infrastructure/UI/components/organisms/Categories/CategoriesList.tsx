@@ -19,7 +19,7 @@ export const CategoriesList: React.FC = () => {
 
   return (
     <Card
-      h={3}
+      h={2}
       w={2}
       title='Categorías'
     >
