@@ -6,7 +6,6 @@
   width: 100%;
   margin: 0 auto;
   padding: var(--spacing-page-padding);
-  padding-bottom: calc(var(--spacing-page-padding) + 64px);
   position: relative;
   align-items: start;
 }

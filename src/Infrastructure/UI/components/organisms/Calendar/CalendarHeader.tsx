@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './Calendar.module.css'
+import styles from './CalendarHeader.module.css'
 
 interface Props {
   weekDates: Date[]
@@ -15,11 +15,16 @@ export const CalendarHeader: React.FC<Props> = ({ weekDates }) => {
     <div className={styles.calendarHeader}>
       <div className={styles.timeGutterHeader}></div>
       {weekDates.map((date, idx) => {
-        const isToday = date.getTime() === today.getTime()
+        const dateCopy = new Date(date)
+        dateCopy.setHours(0, 0, 0, 0)
+        const isToday = dateCopy.getTime() === today.getTime()
+
         return (
           <div
             key={idx}
-            className={styles.dayColumnHeader}
+            className={`${styles.dayColumnHeader} ${
+              isToday ? styles.isTodayHeader : ''
+            }`}
           >
             <span className={styles.dayName}>{dayNames[date.getDay()]}</span>
             <span

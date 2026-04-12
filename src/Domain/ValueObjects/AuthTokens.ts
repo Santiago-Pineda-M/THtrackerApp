@@ -16,7 +16,7 @@ export const decodeJwt = (token: string): Record<string, unknown> => {
     const padding = base64.length % 4
     if (padding) base64 += '='.repeat(4 - padding)
     const decoded = atob(base64)
-    return JSON.parse(decoded)
+    return JSON.parse(decoded) as Record<string, unknown>
   } catch {
     return {}
   }

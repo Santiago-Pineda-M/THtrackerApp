@@ -1,65 +1,14 @@
-import { useEffect, useMemo } from 'react'
-import { Card } from '../../'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { Card, Button, Icon } from '../../'
 import styles from './Calendar.module.css'
 import { CalendarHeader } from './CalendarHeader'
 import { CalendarGrid } from './CalendarGrid'
 import type { LogEventView } from './CalendarEvent'
 import { useDependencies } from '../../../../Context/useDependencies'
 import { usePlocState } from '../../../../Hooks/usePlocState'
+import { calculateOverlap } from './utils/overlap'
 
-// Helper para calcular Overlap
-const calculateOverlap = (events: LogEventView[]) => {
-  // Sort by start time
-  events.sort((a, b) => a.startedAt.getTime() - b.startedAt.getTime())
-
-  const groups: LogEventView[][] = []
-  let currentGroup: LogEventView[] = []
-  let groupEnd = 0
-
-  events.forEach((event) => {
-    const start = event.startedAt.getTime()
-    const end = event.endedAt.getTime()
-    if (start >= groupEnd) {
-      if (currentGroup.length > 0) groups.push(currentGroup)
-      currentGroup = [event]
-      groupEnd = end
-    } else {
-      currentGroup.push(event)
-      groupEnd = Math.max(groupEnd, end)
-    }
-  })
-  if (currentGroup.length > 0) groups.push(currentGroup)
-
-  groups.forEach((group) => {
-    const columns: LogEventView[][] = []
-
-    group.forEach((event) => {
-      let placed = false
-      for (const col of columns) {
-        const lastInCol = col[col.length - 1]
-        // Allow placement if previous event ends before or identically at the start of this event
-        if (lastInCol.endedAt.getTime() <= event.startedAt.getTime()) {
-          col.push(event)
-          placed = true
-          break
-        }
-      }
-      if (!placed) {
-        columns.push([event])
-      }
-    })
-
-    const numCols = columns.length
-    columns.forEach((col, colIdx) => {
-      col.forEach((event) => {
-        event.width = 100 / numCols
-        event.left = (100 / numCols) * colIdx
-      })
-    })
-  })
-
-  return events
-}
+// (Eliminado calculateOverlap, ahora en utils/overlap.ts)
 
 export const Calendar = () => {
   const {
@@ -71,6 +20,34 @@ export const Calendar = () => {
   const calendarState = usePlocState(providerCalendarLogsPloc)
   const activitiesState = usePlocState(providerActivitiesListPloc)
   const categoriesState = usePlocState(providerCategoriesListPloc)
+
+  // Zoom State
+  const [pixelsPerHour, setPixelsPerHour] = useState<number>(60)
+  const calendarRef = useRef<HTMLDivElement>(null)
+
+  // Handle Zoom Scroll (Non-passive listener to prevent browser zoom)
+  useEffect(() => {
+    const calendarEl = calendarRef.current
+    if (!calendarEl) return
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault()
+        const zoomFactor = e.deltaY > 0 ? -10 : 10
+        setPixelsPerHour((prev) =>
+          Math.min(Math.max(prev + zoomFactor, 30), 200)
+        )
+      }
+    }
+
+    calendarEl.addEventListener('wheel', handleWheel, { passive: false })
+    return () => calendarEl.removeEventListener('wheel', handleWheel)
+  }, [])
+
+  const handleZoomIn = () =>
+    setPixelsPerHour((prev: number) => Math.min(prev + 20, 200))
+  const handleZoomOut = () =>
+    setPixelsPerHour((prev: number) => Math.max(prev - 20, 30))
 
   // Carga inicial
   useEffect(() => {
@@ -108,19 +85,15 @@ export const Calendar = () => {
       const startedAt = providerDateProvider.parse(log.startedAt)
       let endedAt = log.endedAt ? providerDateProvider.parse(log.endedAt) : null
 
-      // Calculate duration. If there's no endedAt, assume it's ongoing up to now,
-      // but cap to the end of the day or rely on its startedAt.
       if (!endedAt) {
         endedAt = providerDateProvider.now()
       }
       const duration = (endedAt.getTime() - startedAt.getTime()) / 60000
 
-      // Position logic: Top based on start hour/min
-      const pixelsPerHour = 60
+      // Position logic based on dynamic pixelsPerHour
       const startHour = startedAt.getHours()
       const startMin = startedAt.getMinutes()
       const top = startHour * pixelsPerHour + startMin * (pixelsPerHour / 60)
-      // Min height 10 pixels roughly 10 mins
       const height = Math.max(duration * (pixelsPerHour / 60), 10)
 
       return {
@@ -157,33 +130,87 @@ export const Calendar = () => {
     activitiesState.activities,
     categoriesState.categories,
     providerDateProvider,
+    pixelsPerHour,
   ])
 
   return (
     <Card
-      h={5}
+      h={3}
       w={6}
       className={styles.calendarCard}
     >
-      <div className={styles.calendarContainer}>
+      <div
+        ref={calendarRef}
+        className={styles.calendarContainer}
+      >
         <div className={styles.calendarControls}>
-          <button onClick={() => providerCalendarLogsPloc.prevWeek()}>
-            &lt; Prev
-          </button>
-          <div className={styles.weekLabel}>
-            {weekDates[0]?.toLocaleDateString()} -{' '}
-            {weekDates[6]?.toLocaleDateString()}
+          <div className={styles.controlsGroup}>
+            <Button
+              variant='ghost'
+              size='sm'
+              icon={<Icon name='ChevronLeft' />}
+              onClick={() => providerCalendarLogsPloc.prevWeek()}
+            />
+            <Button
+              variant='secondary'
+              size='sm'
+              icon={<Icon name='Target' />}
+              onClick={() => providerCalendarLogsPloc.loadWeek(new Date())}
+            >
+              Hoy
+            </Button>
+            <Button
+              variant='ghost'
+              size='sm'
+              icon={<Icon name='ChevronRight' />}
+              onClick={() => providerCalendarLogsPloc.nextWeek()}
+            />
           </div>
-          <button onClick={() => providerCalendarLogsPloc.nextWeek()}>
-            Next &gt;
-          </button>
+
+          <div className={styles.weekLabel}>
+            {weekDates[0]?.toLocaleDateString('es-ES', {
+              month: 'long',
+              year: 'numeric',
+            })}
+          </div>
+
+          <div className={styles.controlsGroup}>
+            <Button
+              variant='ghost'
+              size='sm'
+              icon={<Icon name='Plus' />}
+              onClick={handleZoomIn}
+              title='Zoom In (Ctrl + Scroll Up)'
+            />
+            <Button
+              variant='ghost'
+              size='sm'
+              icon={<Icon name='Minus' />}
+              onClick={handleZoomOut}
+              title='Zoom Out (Ctrl + Scroll Down)'
+            />
+            <Button
+              variant='ghost'
+              size='sm'
+              loading={calendarState.isLoading}
+              icon={<Icon name='RefreshCw' />}
+              onClick={() =>
+                providerCalendarLogsPloc.loadWeek(calendarState.currentWeekDate)
+              }
+            />
+          </div>
         </div>
+
         <CalendarHeader weekDates={weekDates} />
+
         <CalendarGrid
           weekDates={weekDates}
           events={events}
+          pixelsPerHour={pixelsPerHour}
         />
       </div>
     </Card>
   )
 }
+
+export default Calendar
