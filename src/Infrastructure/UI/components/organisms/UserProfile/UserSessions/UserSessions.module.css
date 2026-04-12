@@ -1,9 +1,3 @@
-.cardContent {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
-
 .loadingContainer {
   display: flex;
   justify-content: center;
@@ -14,6 +8,9 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  height: 100%;
+  overflow-y: auto;
+  justify-content: flex-start;
 }
 
 .sessionRow {
@@ -33,13 +30,21 @@
 }
 
 .sessionRow.active {
-  border-left: 3px solid var(--color-success);
+  border-left: 6px solid var(--color-success);
 }
 
 .sessionInfo {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
+}
+
+.sessionInfoText {
+  display: -webkit-box;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .sessionMeta {

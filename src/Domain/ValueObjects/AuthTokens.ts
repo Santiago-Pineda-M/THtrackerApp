@@ -4,21 +4,29 @@
  * Maneja la lógica de expiración de access token y refresh token internamente.
  */
 
-// Función pura para decodificar JWT expiración (exp está en segundos, retorna milisegundos)
-export const decodeJwtExp = (token: string): number | null => {
-  if (!token) return null
+/**
+ * Función pura para decodificar un JWT y obtener su payload.
+ */
+export const decodeJwt = (token: string): Record<string, unknown> => {
+  if (!token) return {}
   try {
     const parts = token.split('.')
-    if (parts.length !== 3) return null
+    if (parts.length !== 3) return {}
     let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/')
     const padding = base64.length % 4
     if (padding) base64 += '='.repeat(4 - padding)
     const decoded = atob(base64)
-    const payload = JSON.parse(decoded)
-    return payload.exp ? payload.exp * 1000 : null
+    return JSON.parse(decoded)
   } catch {
-    return null
+    return {}
   }
+}
+
+// Función pura para decodificar JWT expiración (exp está en segundos, retorna milisegundos)
+export const decodeJwtExp = (token: string): number | null => {
+  const payload = decodeJwt(token)
+  const exp = payload.exp as number | undefined
+  return exp ? exp * 1000 : null
 }
 
 /**

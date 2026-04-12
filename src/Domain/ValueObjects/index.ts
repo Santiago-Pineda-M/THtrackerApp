@@ -4,5 +4,10 @@
  */
 
 export { Email } from './Email'
-export { AuthTokens, decodeJwtExp, isoToExpiresInSeconds } from './AuthTokens'
+export {
+  AuthTokens,
+  decodeJwt,
+  decodeJwtExp,
+  isoToExpiresInSeconds,
+} from './AuthTokens'
 export { UserId } from './UserId'

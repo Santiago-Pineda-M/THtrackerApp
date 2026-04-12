@@ -4,7 +4,7 @@
  * Ahora usa Value Objects para mayor validación, tipo seguridad y nombramiento estricto.
  */
 
-import { Email, AuthTokens, UserId } from '../ValueObjects'
+import { Email, AuthTokens, UserId, decodeJwt } from '../ValueObjects'
 
 export interface UserData {
   id: string
@@ -126,6 +126,14 @@ export class AuthSession {
 
   get name(): string | undefined {
     return this._name
+  }
+
+  /**
+   * Obtiene el ID de la sesión actual desde el claim 'sid' del token de acceso.
+   */
+  get sessionId(): string | null {
+    const payload = decodeJwt(this.accessToken)
+    return (payload.sid as string) || null
   }
 
   get user(): UserData {

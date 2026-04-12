@@ -1,16 +1,20 @@
 import React, { useEffect } from 'react'
-import { Card, Text, Icon, Spinner, Badge } from '../../../'
+import { Card, Text, Icon, Spinner, Badge, Button } from '../../../'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type {
   IUserSessionsListState,
   ISessionRevokeState,
+  IAuthState,
 } from '../../../../../../Domain/IStates'
 import styles from './UserSessions.module.css'
 
 export const UserSessions: React.FC = () => {
-  const { providerUserSessionsListPloc, providerSessionRevokePloc } =
-    useDependencies()
+  const {
+    providerUserSessionsListPloc,
+    providerSessionRevokePloc,
+    providerAuthPloc,
+  } = useDependencies()
 
   const listState = usePlocState<IUserSessionsListState>(
     providerUserSessionsListPloc
@@ -18,6 +22,9 @@ export const UserSessions: React.FC = () => {
   const revokeState = usePlocState<ISessionRevokeState>(
     providerSessionRevokePloc
   )
+  const authState = usePlocState<IAuthState>(providerAuthPloc)
+
+  const currentSessionId = authState.user?.sessionId
 
   useEffect(() => {
     providerUserSessionsListPloc.loadSessions()
@@ -52,8 +59,8 @@ export const UserSessions: React.FC = () => {
   if (listState.isLoading && listState.sessions.length === 0) {
     return (
       <Card
-        h={2}
-        w={2}
+        h={4}
+        w={4}
         title='Sesiones Activas'
       >
         <div className={styles.loadingContainer}>
@@ -65,42 +72,49 @@ export const UserSessions: React.FC = () => {
 
   return (
     <Card
-      h={2}
-      w={2}
+      h={4}
+      w={3}
       title='Sesiones Activas'
     >
-      <div className={styles.cardContent}>
-        {listState.error && (
-          <Text
-            size='sm'
-            color='error'
-          >
-            {listState.error.detail || 'Error al cargar las sesiones'}
-          </Text>
-        )}
+      {listState.error && (
+        <Text
+          size='sm'
+          color='error'
+        >
+          {listState.error.detail || 'Error al cargar las sesiones'}
+        </Text>
+      )}
 
-        {revokeState.error && (
-          <Text
-            size='sm'
-            color='error'
-          >
-            {revokeState.error.detail || 'Error al revocar la sesión'}
-          </Text>
-        )}
+      {revokeState.error && (
+        <Text
+          size='sm'
+          color='error'
+        >
+          {revokeState.error.detail || 'Error al revocar la sesión'}
+        </Text>
+      )}
 
-        <div className={styles.sessionsList}>
-          {listState.sessions.length === 0 && !listState.isLoading ? (
-            <Text>No hay sesiones activas.</Text>
-          ) : (
-            listState.sessions.map((session) => (
+      <div className={styles.sessionsList}>
+        {listState.sessions.length === 0 && !listState.isLoading ? (
+          <Text>No hay sesiones activas.</Text>
+        ) : (
+          listState.sessions.map((session) => {
+            const isCurrent = session.id === currentSessionId
+
+            return (
               <div
                 key={session.id}
                 className={`${styles.sessionRow} ${
-                  session.isActive ? styles.active : ''
+                  isCurrent ? styles.active : ''
                 }`}
               >
                 <div className={styles.sessionInfo}>
-                  <Text weight='bold'>
+                  <Text
+                    weight='bold'
+                    size='sm'
+                    className={styles.sessionInfoText}
+                    title={session.deviceInfo || 'Dispositivo desconocido'}
+                  >
                     {session.deviceInfo || 'Dispositivo desconocido'}
                   </Text>
 
@@ -133,15 +147,15 @@ export const UserSessions: React.FC = () => {
                     </Text>
                   </div>
 
-                  {session.isActive && (
+                  {isCurrent && (
                     <div style={{ marginTop: '4px' }}>
                       <Badge variant='success'>Sesión Actual</Badge>
                     </div>
                   )}
                 </div>
 
-                {!session.isActive && (
-                  <button
+                {!isCurrent && (
+                  <Button
                     className={styles.revokeBtn}
                     onClick={() => handleRevoke(session.id)}
                     disabled={revokeState.isRevoking}
@@ -153,15 +167,15 @@ export const UserSessions: React.FC = () => {
                     ) : (
                       <Icon
                         name='LogOut'
-                        size={18}
+                        size={20}
                       />
                     )}
-                  </button>
+                  </Button>
                 )}
               </div>
-            ))
-          )}
-        </div>
+            )
+          })
+        )}
       </div>
     </Card>
   )

@@ -3,39 +3,23 @@
    ========================= */
 
 .card {
-  /* GRID SIZE (controlado por --w y --h) */
   grid-column: span var(--w, 1);
   grid-row: span var(--h, 1);
-
-  /* PREVENT OVERFLOW BREAK */
-  min-width: var(--grid-column-min); /* evita que el card se encoja demasiado */
-
-  /* LAYOUT */
+  min-width: var(--grid-column-min);
   display: flex;
   flex-direction: column;
-
-  /* HARD CONSTRAINT */
   overflow: hidden;
   position: relative;
-
-  /* VISUAL */
   background: var(--color-bg-card);
   border-radius: var(--radius-card);
   padding: var(--spacing-card-padding);
   border: 1px solid var(--color-border-soft);
 }
 
-/* HIJOS NO ROMPEN */
-/* .card > * {
-  min-width: 0;
-  max-width: 100%;
-  flex-shrink: 1;
-} */
-
 .cardContent {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-around;
   height: 100%;
   overflow: hidden;
 }
@@ -44,8 +28,7 @@
   min-width: 0;
   max-width: 100%;
   flex-shrink: 1;
-
-  justify-content: space-evenly;
+  justify-content: space-around;
 }
 
 /* =========================
