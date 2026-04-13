@@ -7,7 +7,7 @@ import type {
   IActiveActivityLogsState,
   IActivityLogStartState,
 } from '../../../../../../../../Domain/IStates'
-import styles from '../SelectionModals.module.css'
+import styles from './StartRecordLogs.module.css'
 
 export const StartRecordLogs = () => {
   const {
@@ -80,13 +80,17 @@ export const StartRecordLogs = () => {
   return (
     <>
       <Button
-        variant='ghost'
+        variant='primary'
         size='lg'
-        icon={<Icon name='Play' />}
+        icon={
+          <Icon
+            size={45}
+            name='Play'
+          />
+        }
         onClick={() => setIsSelectionModalOpen(true)}
-      >
-        Iniciar
-      </Button>
+        className={styles.btn}
+      ></Button>
 
       {/* Selection Modal */}
       <Modal

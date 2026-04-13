@@ -5,45 +5,45 @@
 }
 
 /* Sizes */
-.text[data-size='xl'] {
+.sizeXl {
   font-size: 2rem;
   line-height: 1.2;
 }
-.text[data-size='lg'] {
+.sizeLg {
   font-size: 1.25rem;
   line-height: 1.4;
 }
-.text[data-size='md'] {
+.sizeMd {
   font-size: 1rem;
   line-height: 1.6;
 }
-.text[data-size='sm'] {
+.sizeSm {
   font-size: 0.875rem;
   line-height: 1.5;
 }
-.text[data-size='xs'] {
+.sizeXs {
   font-size: 0.75rem;
   line-height: 1.4;
 }
 
 /* Weights */
-.text[data-weight='normal'] {
+.weightNormal {
   font-weight: 400;
 }
-.text[data-weight='medium'] {
+.weightMedium {
   font-weight: 500;
 }
-.text[data-weight='bold'] {
+.weightBold {
   font-weight: 700;
 }
 
 /* Muted */
-.text[data-muted] {
+.muted {
   color: var(--color-text-secondary);
 }
 
 /* Truncate */
-.text[data-truncate] {
+.truncate {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

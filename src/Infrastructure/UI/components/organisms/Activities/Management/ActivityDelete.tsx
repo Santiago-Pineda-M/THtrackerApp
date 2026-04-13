@@ -48,7 +48,6 @@ export const ActivityDelete: React.FC<ActivityDeleteProps> = ({
           name='Trash2'
           size={16}
         />
-        <span>Eliminar</span>
       </Button>
 
       <Modal

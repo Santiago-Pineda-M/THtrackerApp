@@ -18,11 +18,12 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   icon,
   iconPosition = 'left',
+  className,
   ...props
 }) => {
   return (
     <button
-      className={s.button}
+      className={`${s.button} ${className || ''}`.trim()}
       data-variant={variant}
       data-size={size}
       data-loading={loading || undefined}

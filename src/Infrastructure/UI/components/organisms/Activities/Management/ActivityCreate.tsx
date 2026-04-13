@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Text, Modal, Input, FormField } from '../../..'
+import { Button, Text, Modal, Input, FormField, Icon } from '../../..'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type {
@@ -73,7 +73,11 @@ export const ActivityCreate: React.FC = () => {
         size='md'
         onClick={handleOpen}
       >
-        Agregar actividad
+        <Icon
+          name='Plus'
+          size={18}
+        />
+        <span>Actividad</span>
       </Button>
 
       <Modal

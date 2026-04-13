@@ -1,12 +1,24 @@
 import React, { useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Card, Button, Icon, Text, Divider } from '../../atoms'
+import { Card, Button, Icon, Text, Divider, type IconProps } from '../../atoms'
 import { usePlocState } from '../../../../Hooks/usePlocState'
 import { useDependencies } from '../../../../Context/useDependencies'
 import type { IAuthState, ISidebarState } from '../../../../../Domain'
 import styles from './Sidebar.module.css'
 
-// Función para verificar si la ruta actual coincide con el patrón (incluyendo subrutas)
+interface NavItem {
+  path: string
+  label: string
+  icon?: IconProps['name']
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { path: '/dashboard', label: 'Inicio', icon: 'Home' },
+  { path: '/activities', label: 'Actividades', icon: 'Activity' },
+  { path: '/example', label: 'Ejemplos', icon: 'FileText' },
+  { path: '/user-profile', label: 'Perfil', icon: 'User' },
+]
+
 const isRouteActive = (currentPath: string, targetRoute: string): boolean => {
   const pattern = new RegExp(`^${targetRoute}(/.*)?$`)
   return pattern.test(currentPath)
@@ -32,8 +44,12 @@ export const Sidebar: React.FC = () => {
     navigate('/login')
   }
 
+  const isOpen = sidebarState.isMenuOpen
+  const sidebarClass = `${styles.sidebar} ${isOpen ? styles.sidebarOpen : styles.sidebarClosed}`
+  const iconSize = isOpen ? 20 : 18
+
   return (
-    <Card className={`${styles.sidebar}`}>
+    <Card className={sidebarClass}>
       <div className={styles.header}>
         <Text
           as='h2'
@@ -41,68 +57,39 @@ export const Sidebar: React.FC = () => {
           weight='bold'
           className={styles.logo}
         >
-          {sidebarState.isMenuOpen ? 'THtracke' : 'TH'}
+          {isOpen ? 'THtracke' : 'TH'}
         </Text>
-        {/* btn para alternar el menú en pc */}
         <Button
           variant='ghost'
           size='sm'
           onClick={() => providerSidebarPloc.toggleMenu()}
         >
           <Icon
-            name={sidebarState.isMenuOpen ? 'X' : 'Menu'}
-            size={18}
+            name={isOpen ? 'X' : 'Menu'}
+            size={16}
           />
         </Button>
       </div>
       <Divider />
-      <nav
-        className={`${styles.nav} ${!sidebarState.isMenuOpen ? styles.navMenuClosed : ''}`}
-      >
-        <Link
-          to='/dashboard'
-          className={`${styles.link} ${isRouteActive(location.pathname, '/dashboard') ? styles.active : ''}`}
-        >
-          <Icon
-            name='Home'
-            size={20}
-          />
-          {sidebarState.isMenuOpen && <span>Inicio</span>}
-        </Link>
-        <Link
-          to='/activities'
-          className={`${styles.link} ${isRouteActive(location.pathname, '/activities') ? styles.active : ''}`}
-        >
-          <Icon
-            name='Activity'
-            size={20}
-          />
-          {sidebarState.isMenuOpen && <span>Actividades</span>}
-        </Link>
-        <Link
-          to='/example'
-          className={`${styles.link} ${isRouteActive(location.pathname, '/example') ? styles.active : ''}`}
-        >
-          <Icon
-            name='FileText'
-            size={20}
-          />
-          {sidebarState.isMenuOpen && <span>Ejemplos</span>}
-        </Link>
-        <Link
-          to='/user-profile'
-          className={`${styles.link} ${isRouteActive(location.pathname, '/user-profile') ? styles.active : ''}`}
-        >
-          <Icon
-            name='User'
-            size={20}
-          />
-          {sidebarState.isMenuOpen && <span>Perfil</span>}
-        </Link>
+      <nav className={`${styles.nav} ${!isOpen ? styles.navMenuClosed : ''}`}>
+        {NAV_ITEMS.map((item) => (
+          <Link
+            key={item.path}
+            to={item.path}
+            className={`${styles.link} ${isRouteActive(location.pathname, item.path) ? styles.active : ''}`}
+          >
+            <Icon
+              name={item.icon ?? 'FileText'}
+              size={iconSize}
+              className={styles.linkIcon}
+            />
+            {isOpen && <span>{item.label}</span>}
+          </Link>
+        ))}
       </nav>
       <Divider />
       <div className={styles.footer}>
-        {userEmail && sidebarState.isMenuOpen && (
+        {userEmail && isOpen && (
           <Text
             size='xs'
             className={styles.email}
@@ -113,14 +100,15 @@ export const Sidebar: React.FC = () => {
         )}
         <Button
           variant='danger'
-          size='md'
+          size='sm'
           onClick={handleLogout}
+          className={styles.logoutButton}
         >
           <Icon
             name='LogOut'
-            size={18}
+            size={iconSize}
           />
-          {sidebarState.isMenuOpen && <span>Cerrar Sesión</span>}
+          {isOpen && <span>Cerrar Sesión</span>}
         </Button>
       </div>
     </Card>

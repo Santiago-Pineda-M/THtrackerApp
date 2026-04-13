@@ -16,7 +16,7 @@ import type {
   IActivityLogStopState,
   IActivitiesListState,
 } from '../../../../../../../../Domain/IStates'
-import styles from '../SelectionModals.module.css'
+import styles from './StopRecordLogs.module.css'
 
 export const StopRecordLogs = () => {
   const {
@@ -114,12 +114,16 @@ export const StopRecordLogs = () => {
       <Button
         variant='danger'
         size='lg'
-        icon={<Icon name='Square' />}
+        icon={
+          <Icon
+            size={45}
+            name='Square'
+          />
+        }
         disabled={activeState.logs.length === 0}
         onClick={() => setIsSelectionModalOpen(true)}
-      >
-        Detener
-      </Button>
+        className={styles.btn}
+      ></Button>
 
       {/* Selection Modal */}
       <Modal
@@ -185,31 +189,17 @@ export const StopRecordLogs = () => {
           </Text>
 
           {stopState.isLoadingDefinitions ? (
-            <div
-              style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}
-            >
+            <div className={styles.loadingRow}>
               <Spinner size='sm' />
               <Text size='sm'>Cargando valores requeridos...</Text>
             </div>
           ) : (
             stopState.definitions.length > 0 && (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '1rem',
-                  width: '100%',
-                  textAlign: 'left',
-                }}
-              >
+              <div className={styles.formContainer}>
                 {stopState.definitions.map((def) => (
                   <div
                     key={def.id}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '0.5rem',
-                    }}
+                    className={styles.formField}
                   >
                     <Label htmlFor={def.id}>
                       {def.name} {def.isRequired && '*'}

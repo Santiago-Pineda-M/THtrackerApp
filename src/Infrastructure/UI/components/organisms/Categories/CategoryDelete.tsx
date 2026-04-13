@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Text, Modal } from '../..'
+import { Button, Text, Modal, Icon } from '../..'
 import { useDependencies } from '../../../../Context/useDependencies'
 import { usePlocState } from '../../../../Hooks/usePlocState'
 import type { ICategory } from '../../../../../Domain'
@@ -40,7 +40,10 @@ export const CategoryDelete: React.FC<CategoryDeleteProps> = ({ category }) => {
         size='sm'
         onClick={handleOpen}
       >
-        Eliminar
+        <Icon
+          name='Trash2'
+          size={16}
+        />
       </Button>
 
       <Modal

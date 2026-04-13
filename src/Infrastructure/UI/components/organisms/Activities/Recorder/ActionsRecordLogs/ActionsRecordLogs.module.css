@@ -1,13 +1,14 @@
 .card {
   overflow: hidden;
+  border-radius: var(--radius-full);
 }
 
 .container {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
   height: 100%;
-  padding: 0 1rem;
+  padding: 0;
   gap: 1.5rem;
 }
 

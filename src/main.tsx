@@ -1,4 +1,4 @@
-// import { StrictMode } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { DependenciesProvider } from './Infrastructure/Context/DependenciesProvider.tsx'
 import './Infrastructure/UI/globalStyles/reset.css'
@@ -23,9 +23,9 @@ if (import.meta.env.DEV) {
 }
 
 createRoot(document.getElementById('root')!).render(
-  // <StrictMode>
-  <DependenciesProvider>
-    <App />
-  </DependenciesProvider>
-  // </StrictMode>
+  <StrictMode>
+    <DependenciesProvider>
+      <App />
+    </DependenciesProvider>
+  </StrictMode>
 )

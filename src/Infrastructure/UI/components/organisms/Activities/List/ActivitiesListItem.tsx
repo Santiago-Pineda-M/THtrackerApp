@@ -31,13 +31,11 @@ export const ActivitiesListItem: React.FC<ActivitiesListItemProps> = ({
       onClick={handleNavigate}
     >
       <div className={styles.colorBarContainer}>
-        {category && (
-          <div
-            style={{
-              backgroundColor: category.color ?? 'var(--color-text-secondary)',
-            }}
-          />
-        )}
+        <div
+          style={{
+            backgroundColor: category.color ?? 'var(--color-text-secondary)',
+          }}
+        />
         <div
           style={{
             backgroundColor: activity.color || 'var(--color-text-secondary)',
@@ -45,19 +43,21 @@ export const ActivitiesListItem: React.FC<ActivitiesListItemProps> = ({
         />
       </div>
       <div className={styles.itemContent}>
-        <Text
-          weight='medium'
-          size='md'
-        >
-          {activity.name || 'Sin nombre'}
-        </Text>
-        <Text
-          weight='normal'
-          size='xs'
-          muted
-        >
-          ( {category.name} )
-        </Text>
+        <div className={styles.nameContainer}>
+          <Text
+            weight='medium'
+            size='md'
+          >
+            {activity.name || 'Sin nombre'}
+          </Text>
+          <Text
+            weight='normal'
+            size='xs'
+            muted
+          >
+            ( {category.name} )
+          </Text>
+        </div>
         <Icon
           name='ChevronRight'
           size={20}

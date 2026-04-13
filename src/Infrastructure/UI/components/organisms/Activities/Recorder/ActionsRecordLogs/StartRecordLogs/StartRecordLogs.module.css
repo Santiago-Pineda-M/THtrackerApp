@@ -1,3 +1,14 @@
+.btn {
+  padding: var(--space-lg) !important;
+  border-radius: var(--radius-full);
+}
+
+@media (max-width: 640px) {
+  .btn {
+    padding: var(--space-sm) !important;
+  }
+}
+
 .listContainer {
   display: flex;
   flex-direction: column;
@@ -59,4 +70,24 @@
   text-align: center;
   color: var(--color-text-secondary);
   font-style: italic;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  text-align: left;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.loadingRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }

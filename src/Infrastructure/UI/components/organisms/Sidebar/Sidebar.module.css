@@ -1,6 +1,19 @@
 .sidebar {
-  min-width: 90px;
+  min-width: 64px;
+  max-height: 94vh;
   padding: 18px;
+}
+
+.sidebarClosed {
+  --icon-size: 18px;
+  --link-padding: var(--space-sm);
+  --button-size: sm;
+}
+
+.sidebarOpen {
+  --icon-size: 20px;
+  --link-padding: var(--space-sm) var(--space-md);
+  --button-size: md;
 }
 
 .header {
@@ -19,9 +32,15 @@
   text-decoration: none;
   border-radius: var(--radius-md);
   transition: background-color 0.2s ease-in-out;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--link-padding, var(--space-md) var(--space-md));
   gap: var(--space-md);
   width: 100%;
+}
+
+.linkIcon {
+  width: var(--icon-size, 20px);
+  height: var(--icon-size, 20px);
+  flex-shrink: 0;
 }
 
 .link:hover {
@@ -43,6 +62,8 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-md);
+  width: 100%;
+  overflow-y: auto;
 }
 
 .footer {
@@ -57,6 +78,12 @@
 .footer button {
   width: 100%;
   justify-content: left;
+  padding: var(--link-padding, var(--space-sm));
+}
+
+.logoutButton {
+  padding: var(--space-sm) !important;
+  justify-content: center !important;
 }
 
 .email {

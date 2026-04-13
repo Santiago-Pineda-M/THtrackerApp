@@ -24,7 +24,6 @@ video,
 canvas,
 svg {
   display: block;
-  max-width: 100%;
 }
 
 /* 5. Formularios heredan la fuente */

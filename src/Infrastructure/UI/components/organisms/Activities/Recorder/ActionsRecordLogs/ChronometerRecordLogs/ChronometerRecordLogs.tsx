@@ -6,6 +6,7 @@ import type {
   ActivityLogResponse,
 } from '../../../../../../../../Domain'
 import { Chronometer, Text, Spinner } from '../../../../../'
+import styles from './ChronometerRecordLogs.module.css'
 
 export const ChronometerRecordLogs = ({
   log,
@@ -21,7 +22,7 @@ export const ChronometerRecordLogs = ({
 
   if (state.isLoading) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div className={styles.loadingRow}>
         <Spinner size='sm' />
         <Text size='sm'>Cargando actividad...</Text>
       </div>
@@ -31,7 +32,7 @@ export const ChronometerRecordLogs = ({
   if (state.error) {
     return (
       <Text
-        size='sm'
+        size='lg'
         color='danger'
       >
         Error al cargar
@@ -40,11 +41,13 @@ export const ChronometerRecordLogs = ({
   }
 
   return (
-    <div>
+    <div className={styles.container}>
       <Text
-        size='sm'
+        as='h2'
+        size='lg'
         weight='medium'
         color='secondary'
+        className={styles.activityName}
       >
         {state.activity?.name || 'Actividad desconocida'}
       </Text>
@@ -53,6 +56,7 @@ export const ChronometerRecordLogs = ({
         textProps={{
           size: 'lg',
           weight: 'bold',
+          className: styles.chronometerWrapper,
         }}
       />
     </div>

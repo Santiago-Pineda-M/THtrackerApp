@@ -8,13 +8,13 @@
   transition: var(--transition-fast);
   overflow: visible;
   border-radius: var(--radius-lg);
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
 .item:hover {
   background-color: rgba(99, 102, 241, 0.12);
   box-shadow: var(--shadow-soft);
-  transform: translateY(-2px) scale(1.01);
+  transform: translateY(-2px) scale(1, 1.02);
 }
 
 .item:active {

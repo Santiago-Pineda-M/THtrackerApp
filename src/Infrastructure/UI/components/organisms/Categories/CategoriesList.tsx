@@ -22,8 +22,9 @@ export const CategoriesList: React.FC = () => {
       h={2}
       w={2}
       title='Categorías'
+      className={styles.card}
     >
-      <Divider />
+      <Divider spacing='none' />
       <ul className={styles.list}>
         {categoriesListState.categories.map((category) => (
           <CategoriesListItem
@@ -32,7 +33,7 @@ export const CategoriesList: React.FC = () => {
           />
         ))}
       </ul>
-      <Divider />
+      <Divider spacing='none' />
       <div className={styles.footerActions}>
         <CategoryCreate />
       </div>

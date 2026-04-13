@@ -62,7 +62,6 @@ export const ActivityEdit: React.FC<ActivityEditProps> = ({ activityId }) => {
           name='Edit'
           size={16}
         />
-        <span>Editar</span>
       </Button>
 
       <Modal

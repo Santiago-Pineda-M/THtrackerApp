@@ -1,8 +1,16 @@
+.card > div {
+  padding-top: 14px;
+}
+
 .list {
   list-style: none;
-  padding: 0;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 0px;
+  padding-right: 6px;
   margin: 0;
   height: 100%;
+  overflow-y: scroll;
 }
 
 .emptyState {
@@ -18,7 +26,7 @@
 }
 
 .footerActions {
-  padding: 8px 0px;
+  padding: var(--space-md) 0px 0px;
   display: flex;
   justify-content: flex-end;
 }

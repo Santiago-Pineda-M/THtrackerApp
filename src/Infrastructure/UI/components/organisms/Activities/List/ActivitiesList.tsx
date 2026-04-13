@@ -24,8 +24,9 @@ export const ActivitiesList: React.FC = () => {
       h={2}
       w={2}
       title='Actividades'
+      className={styles.card}
     >
-      <Divider />
+      <Divider spacing='none' />
 
       {listState.isLoading && listState.activities.length === 0 ? (
         <div className={styles.emptyState}>
@@ -66,7 +67,7 @@ export const ActivitiesList: React.FC = () => {
           {listState.error.title || 'Error al cargar actividades.'}
         </Text>
       )}
-      <Divider />
+      <Divider spacing='none' />
       <div className={styles.footerActions}>
         <ActivityCreate />
       </div>

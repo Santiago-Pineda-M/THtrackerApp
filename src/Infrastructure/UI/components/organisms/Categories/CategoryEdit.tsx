@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Text, Modal, Input, FormField } from '../..'
+import { Button, Text, Modal, Input, FormField, Icon } from '../..'
 import { useDependencies } from '../../../../Context/useDependencies'
 import { usePlocState } from '../../../../Hooks/usePlocState'
 import type { ICategory } from '../../../../../Domain'
@@ -51,7 +51,10 @@ export const CategoryEdit: React.FC<CategoryEditProps> = ({ category }) => {
         size='sm'
         onClick={handleOpen}
       >
-        Editar
+        <Icon
+          name='Edit'
+          size={16}
+        />
       </Button>
 
       <Modal
