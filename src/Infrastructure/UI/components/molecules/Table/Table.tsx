@@ -13,6 +13,7 @@ interface TableProps {
   rows: Record<string, React.ReactNode>[]
   loading?: boolean
   emptyMessage?: string
+  onRowClick?: (index: number) => void
 }
 
 export const Table: React.FC<TableProps> = ({
@@ -20,6 +21,7 @@ export const Table: React.FC<TableProps> = ({
   rows,
   loading,
   emptyMessage = 'Sin datos',
+  onRowClick,
 }) => {
   return (
     <div className={s.wrap}>
@@ -45,7 +47,11 @@ export const Table: React.FC<TableProps> = ({
           )}
           {!loading &&
             rows.map((r, i) => (
-              <tr key={i}>
+              <tr
+                key={i}
+                onClick={() => onRowClick?.(i)}
+                className={onRowClick ? s.clickable : undefined}
+              >
                 {columns.map((c) => (
                   <td key={c.key}>{r[c.key]}</td>
                 ))}

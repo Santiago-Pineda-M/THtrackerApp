@@ -35,3 +35,12 @@
 .table tbody tr:hover td {
   background: rgba(255, 255, 255, 0.03); /* TODO: var(--color-bg-hover) */
 }
+
+.clickable {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.clickable:hover td {
+  background: rgba(255, 255, 255, 0.06);
+}
