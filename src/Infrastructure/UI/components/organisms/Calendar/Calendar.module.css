@@ -36,7 +36,7 @@
   text-align: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .calendarContainer {
     max-height: 50vh;
     min-height: 500px;

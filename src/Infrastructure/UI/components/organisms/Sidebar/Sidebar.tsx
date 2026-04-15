@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Card, Button, Icon, Text, Divider, type IconProps } from '../../atoms'
 import { usePlocState } from '../../../../Hooks/usePlocState'
 import { useDependencies } from '../../../../Context/useDependencies'
@@ -30,7 +30,6 @@ export const Sidebar: React.FC = () => {
   const authState = usePlocState<IAuthState>(providerAuthPloc)
   const sidebarState = usePlocState<ISidebarState>(providerSidebarPloc)
   const location = useLocation()
-  const navigate = useNavigate()
 
   // Inicializar el estado del Sidebar desde localStorage
   useEffect(() => {
@@ -41,7 +40,6 @@ export const Sidebar: React.FC = () => {
 
   const handleLogout = () => {
     providerLogoutPloc.logout()
-    navigate('/login')
   }
 
   const isOpen = sidebarState.isMenuOpen

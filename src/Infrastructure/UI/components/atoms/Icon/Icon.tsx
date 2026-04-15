@@ -17,6 +17,7 @@ import {
   Edit,
   Trash2,
   Eye,
+  EyeClosed,
   Save,
   ArrowLeft,
   ArrowRight,
@@ -219,6 +220,7 @@ export type IconName =
   | 'Edit'
   | 'Trash2'
   | 'Eye'
+  | 'EyeClosed'
   | 'Save'
   | 'ArrowLeft'
   | 'ArrowRight'
@@ -427,6 +429,7 @@ const iconComponents: Record<IconName, React.ComponentType<LucideProps>> = {
   Edit,
   Trash2,
   Eye,
+  EyeClosed,
   Save,
   ArrowLeft,
   ArrowRight,

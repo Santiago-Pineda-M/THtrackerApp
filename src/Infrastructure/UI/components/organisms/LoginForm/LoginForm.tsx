@@ -1,13 +1,18 @@
-import { useMemo, useEffect, useRef } from 'react'
+import { useMemo, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { ILoginState } from '../../../../../Domain/IStates'
 import { useDependencies } from '../../../../Context/useDependencies'
 import { usePlocState } from '../../../../Hooks/usePlocState'
-import { Card, Input, Button, Text } from '../../../components'
+import { Input, Button, Text, Icon } from '../../../components'
 import FormField from '../../molecules/Form/FormField'
-import s from './LoginForm.module.css'
+import styles from './LoginForm.module.css'
 
-export const LoginForm: React.FC = () => {
+type LoginFormProps = React.HTMLAttributes<HTMLFormElement>
+
+export const LoginForm: React.FC<LoginFormProps> = ({
+  className,
+  ...props
+}) => {
   const { providerLoginPloc } = useDependencies()
   const state = usePlocState<ILoginState>(providerLoginPloc)
   const navigate = useNavigate()
@@ -17,6 +22,8 @@ export const LoginForm: React.FC = () => {
     () => `THtracker-Web-${navigator.userAgent}-${new Date().getFullYear()}`,
     []
   )
+
+  const [showPassword, setShowPassword] = useState(false)
 
   // Reset login state when component mounts (handles returning after logout)
   useEffect(() => {
@@ -36,76 +43,90 @@ export const LoginForm: React.FC = () => {
     await providerLoginPloc.login(state.email, state.password, deviceInfo)
   }
 
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev)
+  }
+
+  const formClass = [styles.form, className].filter(Boolean).join(' ')
+
   return (
-    <Card
-      w={2}
-      h={2}
-      title='Iniciar Sesión'
+    <form
+      className={formClass}
+      onSubmit={(e) => e.preventDefault()}
+      {...props}
     >
-      <div className={s.form}>
-        {state.message && (
-          <Text
-            size='sm'
-            className={state.success ? s.success : s.error}
-          >
-            {state.message}
-          </Text>
-        )}
-
-        <FormField
-          label='Correo Electrónico'
-          required
-          error={state.errors.email?.[0]}
+      {state.message && (
+        <Text
+          size='sm'
+          className={state.success ? styles.success : styles.error}
         >
-          <Input
-            name='email'
-            type='email'
-            value={state.email}
-            onChange={(e) => providerLoginPloc.updateEmail(e.target.value)}
-            placeholder='tu@correo.com'
-            disabled={state.isLoading}
-          />
-        </FormField>
+          {state.message}
+        </Text>
+      )}
 
-        <FormField
-          label='Contraseña'
-          required
-          error={
-            !state.errors.password?.length
-              ? undefined
-              : state.errors.password?.[0]
-          }
-        >
+      <FormField
+        label='Correo Electrónico'
+        required
+        error={state.errors.email?.[0]}
+      >
+        <Input
+          name='email'
+          type='email'
+          value={state.email}
+          onChange={(e) => providerLoginPloc.updateEmail(e.target.value)}
+          placeholder='tu@correo.com'
+          disabled={state.isLoading}
+        />
+      </FormField>
+      <FormField
+        label='Contraseña'
+        required
+        error={
+          !state.errors.password?.length
+            ? undefined
+            : state.errors.password?.[0]
+        }
+      >
+        <div className={styles.passwordContainer}>
           <Input
             name='password'
-            type='password'
+            type={showPassword ? 'text' : 'password'}
             value={state.password}
             onChange={(e) => providerLoginPloc.updatePassword(e.target.value)}
             placeholder='••••••••'
             disabled={state.isLoading}
+            className={styles.passwordInput} // 2. Clase para padding extra
           />
-        </FormField>
+          <button
+            type='button'
+            onClick={togglePasswordVisibility}
+            className={styles.toggleButton}
+            disabled={state.isLoading}
+          >
+            {showPassword ? <Icon name='Eye' /> : <Icon name='EyeClosed' />}
+          </button>
+        </div>
+      </FormField>
+      <Button
+        type='button'
+        variant='primary'
+        onClick={handleLogin}
+        disabled={state.isLoading || state.success}
+        loading={state.isLoading}
+        size='md'
+      >
+        {state.success ? 'Sesión Iniciada' : 'Iniciar Sesión'}
+      </Button>
 
-        <Button
-          type='button'
-          variant='primary'
-          onClick={handleLogin}
-          disabled={state.isLoading || state.success}
-          loading={state.isLoading}
-          size='md'
-        >
-          {state.success ? 'Sesión Iniciada' : 'Iniciar Sesión'}
-        </Button>
-
-        <Text
-          size='xs'
-          className={s.register}
-        >
-          ¿No tienes cuenta? <Link to='/register'>Regístrate aquí</Link>
-        </Text>
-      </div>
-    </Card>
+      <Text
+        size='xs'
+        className={styles.footer}
+      >
+        ¿No tienes cuenta? <Link to='/register'>Regístrate aquí</Link>
+      </Text>
+    </form>
   )
 }
 
+export type { LoginFormProps }
 export default LoginForm

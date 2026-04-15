@@ -1,21 +1,63 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-lg);
 }
 
-.register {
+/* ... tus estilos anteriores */
+
+.passwordContainer {
+  position: relative; /* Referencia para el botón absoluto */
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.passwordInput {
+  width: 100%;
+  padding-right: 4rem; /* 3. Espacio para que el texto no choque con el botón */
+}
+
+.toggleButton {
+  position: absolute; /* Se posiciona sobre el input */
+  right: 0.75rem; /* Distancia desde el borde derecho */
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  padding: 0.25rem;
+  z-index: 2; /* Asegura que esté por encima del input */
+  transition: var(--transition-fast);
+
+  /* Centrado vertical */
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.toggleButton:hover {
+  color: var(--color-text-primary);
+}
+
+.toggleButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.footer {
   margin-top: var(--space-sm);
   color: var(--color-text-secondary);
+  text-align: center;
 }
 
-.register a {
+.footer a {
   color: var(--color-accent);
   text-decoration: none;
   transition: var(--transition-fast);
 }
 
-.register a:hover {
+.footer a:hover {
   color: var(--color-accent-hover);
   text-decoration: underline;
 }
@@ -23,5 +65,9 @@
 .error {
   color: var(--color-error);
   font-weight: 500;
-  margin-bottom: var(--space-md);
+}
+
+.success {
+  color: var(--color-success);
+  font-weight: 500;
 }

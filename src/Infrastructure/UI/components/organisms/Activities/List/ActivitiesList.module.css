@@ -30,3 +30,11 @@
   display: flex;
   justify-content: flex-end;
 }
+
+/* agrgar una altura maxima a la card para mviles de 360 px */
+
+@media (max-width: 640px) {
+  .card {
+    max-height: 310px;
+  }
+}

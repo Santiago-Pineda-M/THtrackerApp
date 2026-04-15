@@ -13,9 +13,6 @@ export class LogoutPloc extends Ploc<ILogoutState> {
     this.authPloc = authPloc
   }
 
-  /**
-   * Cierra la sesión del usuario.
-   */
   async logout(): Promise<void> {
     this.changeState({
       ...this.state,
@@ -26,30 +23,27 @@ export class LogoutPloc extends Ploc<ILogoutState> {
 
     try {
       await this.logoutUseCase.execute()
-      // Notificar al AuthPloc que el logout fue exitoso
       this.authPloc.onLogout()
 
       this.changeState({
         ...this.state,
         isLoggingOut: false,
         success: true,
-        error: undefined,
       })
-    } catch {
-      // Limpiar sesión local aunque el servidor falle
-      this.authPloc.onLogout()
+    } catch (error) {
+      this.authPloc.onLogout() // Forzamos cierre aunque falle red para no dejar al usuario atrapado
       this.changeState({
         ...this.state,
         isLoggingOut: false,
-        success: true, // Consideramos éxito porque la sesión local se limpia
-        error: undefined,
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'No se pudo cerrar la sesión en el servidor, pero se limpió localmente.',
       })
     }
   }
 
-  /**
-   * Resetea el estado.
-   */
   reset(): void {
     this.changeState(initialLogoutState)
   }

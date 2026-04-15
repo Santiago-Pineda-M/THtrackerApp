@@ -22,16 +22,13 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  justify-content: space-around;
 }
 
 .cardContent > * {
   min-width: 0;
   max-width: 100%;
 }
-
-/* =========================
-   MOBILE (SIN !important)
-   ========================= */
 
 @media (max-width: 640px) {
   .card {
