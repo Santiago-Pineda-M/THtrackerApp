@@ -224,22 +224,6 @@ const dateProvider = new DateProvider()
 // 8. CASOS DE USO (Use Cases)
 // ============================================
 
-const loginUserUseCase = new LoginUserUseCase(
-  authService,
-  authSessionRepository
-)
-const registerUseCases = new RegisterUseCases(authService)
-const refreshTokenUseCases = new RefreshTokenUseCases(
-  authService,
-  authSessionRepository
-)
-const logoutUseCase = new LogoutUseCase(authSessionRepository, httpClient)
-const checkAuthSessionUseCase = new CheckAuthSessionUseCase(
-  authSessionRepository,
-  authService
-)
-const getSessionUseCase = new GetSessionUseCase(authSessionRepository)
-
 // Sidebar Use Cases
 const getSidebarStateUseCase = new GetSidebarStateUseCase(sidebarRepository)
 const saveSidebarStateUseCase = new SaveSidebarStateUseCase(sidebarRepository)
@@ -303,6 +287,27 @@ const getCalendarLogsUseCase = new GetCalendarLogsUseCase(activityLogService)
 // UserSession Use Cases
 const getUserSessionsUseCase = new GetUserSessionsUseCase(userSessionService)
 const revokeSessionUseCase = new RevokeSessionUseCase(userSessionService)
+
+// Auth Use Cases
+const loginUserUseCase = new LoginUserUseCase(
+  authService,
+  authSessionRepository
+)
+const registerUseCases = new RegisterUseCases(authService)
+const refreshTokenUseCases = new RefreshTokenUseCases(
+  authService,
+  authSessionRepository
+)
+const logoutUseCase = new LogoutUseCase(
+  authSessionRepository,
+  httpClient,
+  userSessionService
+)
+const checkAuthSessionUseCase = new CheckAuthSessionUseCase(
+  authSessionRepository,
+  authService
+)
+const getSessionUseCase = new GetSessionUseCase(authSessionRepository)
 
 // ============================================
 // 9. CONTROLLERS / PLOCS

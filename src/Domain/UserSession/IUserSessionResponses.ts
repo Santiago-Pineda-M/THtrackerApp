@@ -24,3 +24,9 @@ export interface IUserSessionResponse {
 export interface IRevokeSessionResponse {
   success: boolean
 }
+
+/**
+ * Respuesta de POST /api/v1/sessions/logout.
+ * La API devuelve 204 No Content en caso de éxito.
+ * No requiere interfaz específica ya que retorna vacío.
+ */

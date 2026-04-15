@@ -41,4 +41,15 @@ export class UserSessionService implements IUserSessionService {
       throw error instanceof Error ? error : new Error('Error de conexión')
     }
   }
+
+  async logout(): Promise<void> {
+    try {
+      const response = await this.httpClient.post<void>(
+        `${this.baseUrl}/logout`
+      )
+      if (response.status !== 204) throw new Error('Error al cerrar sesión')
+    } catch (error) {
+      throw error instanceof Error ? error : new Error('Error de conexión')
+    }
+  }
 }

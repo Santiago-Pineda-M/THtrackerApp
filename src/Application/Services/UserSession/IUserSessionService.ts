@@ -1,7 +1,7 @@
 /**
  * APPLICATION LAYER - UserSession Service Interface
  * Puerto para el servicio de sesiones de usuario.
- * Refleja los 2 endpoints que existen en la API para sesiones.
+ * Refleja los 3 endpoints que existen en la API para sesiones.
  */
 
 import type {
@@ -19,4 +19,7 @@ export interface IUserSessionService {
 
   /** Revoca una sesión específica del usuario autenticado. */
   revokeSession(sessionId: string): Promise<IRevokeSessionResponse>
+
+  /** Cierra la sesión actual del usuario. */
+  logout(): Promise<void>
 }
