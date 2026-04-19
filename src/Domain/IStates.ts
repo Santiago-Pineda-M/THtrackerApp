@@ -8,6 +8,7 @@ import type { AuthSession } from './Entities/AuthSession'
 import type { ApiErrorResponse } from './Common/IApiErrorResponse'
 import type { ActivityValueDefinitionResponse } from './Activity/IActivityResponses'
 import type { ActivityLogResponse } from './ActivityLog/IActivityLogResponses'
+import type { ITaskListItem, ITaskItem } from './TaskList/ITaskListResponses'
 
 /**
  * ==========================================
@@ -799,3 +800,71 @@ export const initialCalendarLogsState: ICalendarLogsState = {
   isLoading: false,
   error: null,
 }
+
+export type ITaskListsState =
+  | { kind: 'initial' }
+  | { kind: 'loading' }
+  | { kind: 'empty' }
+  | { kind: 'loadSuccess'; taskLists: ITaskListItem[] }
+  | { kind: 'loadError'; error: string }
+
+export type ITaskListDetailState =
+  | { kind: 'initial' }
+  | { kind: 'loading' }
+  | { kind: 'loadSuccess'; taskList: ITaskListItem }
+  | { kind: 'loadError'; error: string }
+
+export type ITaskListCreateState =
+  | { kind: 'idle' }
+  | { kind: 'submitting' }
+  | { kind: 'submitSuccess'; taskList: ITaskListItem }
+  | { kind: 'submitError'; error: string }
+
+export type ITaskListEditState =
+  | { kind: 'idle' }
+  | { kind: 'loading' }
+  | { kind: 'submitting' }
+  | { kind: 'loadSuccess'; taskList: ITaskListItem }
+  | { kind: 'submitSuccess'; taskList: ITaskListItem }
+  | { kind: 'loadError'; error: string }
+  | { kind: 'submitError'; error: string }
+
+export type ITaskListDeleteState =
+  | { kind: 'idle' }
+  | { kind: 'deleting' }
+  | { kind: 'deleteSuccess' }
+  | { kind: 'deleteError'; error: string }
+
+export type ITasksState =
+  | { kind: 'initial' }
+  | { kind: 'loading' }
+  | { kind: 'empty' }
+  | { kind: 'loadSuccess'; tasks: ITaskItem[] }
+  | { kind: 'loadError'; error: string }
+
+export type ITaskCreateState =
+  | { kind: 'idle' }
+  | { kind: 'submitting' }
+  | { kind: 'submitSuccess'; task: ITaskItem }
+  | { kind: 'submitError'; error: string }
+
+export type ITaskEditState =
+  | { kind: 'idle' }
+  | { kind: 'loading' }
+  | { kind: 'submitting' }
+  | { kind: 'loadSuccess'; task: ITaskItem }
+  | { kind: 'submitSuccess'; task: ITaskItem }
+  | { kind: 'loadError'; error: string }
+  | { kind: 'submitError'; error: string }
+
+export type ITaskDeleteState =
+  | { kind: 'idle' }
+  | { kind: 'deleting' }
+  | { kind: 'deleteSuccess' }
+  | { kind: 'deleteError'; error: string }
+
+export type ITaskToggleState =
+  | { kind: 'idle' }
+  | { kind: 'toggling'; taskId: string }
+  | { kind: 'toggleSuccess'; taskId: string; isCompleted: boolean }
+  | { kind: 'toggleError'; taskId: string; error: string }

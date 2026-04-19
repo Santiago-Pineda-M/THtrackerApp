@@ -70,6 +70,21 @@ import {
   RevokeSessionUseCase,
 } from '../../Application/UseCases/UserSession'
 
+// Application - Casos de Uso TaskList
+import {
+  GetTaskListsUseCase,
+  GetTaskListByIdUseCase,
+  CreateTaskListUseCase,
+  UpdateTaskListUseCase,
+  DeleteTaskListUseCase,
+  GetTasksByListUseCase,
+  GetTaskByIdUseCase,
+  CreateTaskUseCase,
+  UpdateTaskUseCase,
+  DeleteTaskUseCase,
+  ToggleTaskUseCase,
+} from '../../Application/UseCases/TaskList'
+
 // Controllers - Plocs
 import { AuthPloc } from '../../Controllers/Auth/AuthPloc'
 import { LoginPloc } from '../../Controllers/Auth/LoginPloc'
@@ -118,6 +133,20 @@ import {
   SessionRevokePloc,
 } from '../../Controllers/UserSession'
 
+// Controllers - TaskList Plocs
+import {
+  TaskListsPloc,
+  TaskListDetailPloc,
+  TaskListCreateFormPloc,
+  TaskListEditFormPloc,
+  TaskListDeletePloc,
+  TasksPloc,
+  TaskCreateFormPloc,
+  TaskEditFormPloc,
+  TaskDeletePloc,
+  TaskTogglePloc,
+} from '../../Controllers/TaskList'
+
 // Domain
 import { isoToExpiresInSeconds } from '../../Domain'
 
@@ -136,6 +165,7 @@ import { ActivityService } from '../Services/ActivityService'
 import { ActivityValueDefinitionService } from '../Services/ActivityValueDefinition'
 import { ActivityLogService } from '../Services/ActivityLogService'
 import { UserSessionService } from '../Services/UserSessionService'
+import { TaskListService } from '../Services/TaskListService'
 import { DateProvider } from '../Services/DateProvider'
 
 // ============================================
@@ -218,6 +248,7 @@ const activityValueDefinitionService = new ActivityValueDefinitionService(
 )
 const activityLogService = new ActivityLogService(httpClient)
 const userSessionService = new UserSessionService(httpClient)
+const taskListService = new TaskListService(httpClient)
 const dateProvider = new DateProvider()
 
 // ============================================
@@ -287,6 +318,19 @@ const getCalendarLogsUseCase = new GetCalendarLogsUseCase(activityLogService)
 // UserSession Use Cases
 const getUserSessionsUseCase = new GetUserSessionsUseCase(userSessionService)
 const revokeSessionUseCase = new RevokeSessionUseCase(userSessionService)
+
+// TaskList Use Cases
+const getTaskListsUseCase = new GetTaskListsUseCase(taskListService)
+const getTaskListByIdUseCase = new GetTaskListByIdUseCase(taskListService)
+const createTaskListUseCase = new CreateTaskListUseCase(taskListService)
+const updateTaskListUseCase = new UpdateTaskListUseCase(taskListService)
+const deleteTaskListUseCase = new DeleteTaskListUseCase(taskListService)
+const getTasksByListUseCase = new GetTasksByListUseCase(taskListService)
+const getTaskByIdUseCase = new GetTaskByIdUseCase(taskListService)
+const createTaskUseCase = new CreateTaskUseCase(taskListService)
+const updateTaskUseCase = new UpdateTaskUseCase(taskListService)
+const deleteTaskUseCase = new DeleteTaskUseCase(taskListService)
+const toggleTaskUseCase = new ToggleTaskUseCase(taskListService)
 
 // Auth Use Cases
 const loginUserUseCase = new LoginUserUseCase(
@@ -414,6 +458,24 @@ const calendarLogsPloc = new CalendarLogsPloc(getCalendarLogsUseCase)
 const userSessionsListPloc = new UserSessionsListPloc(getUserSessionsUseCase)
 const sessionRevokePloc = new SessionRevokePloc(revokeSessionUseCase)
 
+// TaskList Plocs
+const taskListsPloc = new TaskListsPloc(getTaskListsUseCase)
+const taskListDetailPloc = new TaskListDetailPloc(getTaskListByIdUseCase)
+const taskListCreateFormPloc = new TaskListCreateFormPloc(createTaskListUseCase)
+const taskListEditFormPloc = new TaskListEditFormPloc(
+  getTaskListByIdUseCase,
+  updateTaskListUseCase
+)
+const taskListDeletePloc = new TaskListDeletePloc(deleteTaskListUseCase)
+const tasksPloc = new TasksPloc(getTasksByListUseCase)
+const taskCreateFormPloc = new TaskCreateFormPloc(createTaskUseCase)
+const taskEditFormPloc = new TaskEditFormPloc(
+  getTaskByIdUseCase,
+  updateTaskUseCase
+)
+const taskDeletePloc = new TaskDeletePloc(deleteTaskUseCase)
+const taskTogglePloc = new TaskTogglePloc(toggleTaskUseCase)
+
 // ============================================
 // 10. INTERFAZ DE DEPENDENCIAS
 // ============================================
@@ -453,6 +515,17 @@ export interface Dependencies {
   providerUserSessionsListPloc: UserSessionsListPloc
   providerSessionRevokePloc: SessionRevokePloc
   providerDateProvider: DateProvider
+  // TaskList Providers
+  providerTaskListsPloc: TaskListsPloc
+  providerTaskListDetailPloc: TaskListDetailPloc
+  providerTaskListCreateFormPloc: TaskListCreateFormPloc
+  providerTaskListEditFormPloc: TaskListEditFormPloc
+  providerTaskListDeletePloc: TaskListDeletePloc
+  providerTasksPloc: TasksPloc
+  providerTaskCreateFormPloc: TaskCreateFormPloc
+  providerTaskEditFormPloc: TaskEditFormPloc
+  providerTaskDeletePloc: TaskDeletePloc
+  providerTaskTogglePloc: TaskTogglePloc
   // Factory functions
   createValueDefinitionDeletePloc: () => ActivityValueDefinitionDeletePloc
 }
@@ -592,6 +665,47 @@ function provideDateProvider(): DateProvider {
   return dateProvider
 }
 
+// TaskList Providers
+function provideTaskListsPloc(): TaskListsPloc {
+  return taskListsPloc
+}
+
+function provideTaskListDetailPloc(): TaskListDetailPloc {
+  return taskListDetailPloc
+}
+
+function provideTaskListCreateFormPloc(): TaskListCreateFormPloc {
+  return taskListCreateFormPloc
+}
+
+function provideTaskListEditFormPloc(): TaskListEditFormPloc {
+  return taskListEditFormPloc
+}
+
+function provideTaskListDeletePloc(): TaskListDeletePloc {
+  return taskListDeletePloc
+}
+
+function provideTasksPloc(): TasksPloc {
+  return tasksPloc
+}
+
+function provideTaskCreateFormPloc(): TaskCreateFormPloc {
+  return taskCreateFormPloc
+}
+
+function provideTaskEditFormPloc(): TaskEditFormPloc {
+  return taskEditFormPloc
+}
+
+function provideTaskDeletePloc(): TaskDeletePloc {
+  return taskDeletePloc
+}
+
+function provideTaskTogglePloc(): TaskTogglePloc {
+  return taskTogglePloc
+}
+
 // Factory functions
 function createValueDefinitionDeletePloc(): ActivityValueDefinitionDeletePloc {
   return new ActivityValueDefinitionDeletePloc(deleteValueDefinitionUseCase)
@@ -635,5 +749,15 @@ export const dependenciesLocator: Dependencies = {
   providerUserSessionsListPloc: provideUserSessionsListPloc(),
   providerSessionRevokePloc: provideSessionRevokePloc(),
   providerDateProvider: provideDateProvider(),
+  providerTaskListsPloc: provideTaskListsPloc(),
+  providerTaskListDetailPloc: provideTaskListDetailPloc(),
+  providerTaskListCreateFormPloc: provideTaskListCreateFormPloc(),
+  providerTaskListEditFormPloc: provideTaskListEditFormPloc(),
+  providerTaskListDeletePloc: provideTaskListDeletePloc(),
+  providerTasksPloc: provideTasksPloc(),
+  providerTaskCreateFormPloc: provideTaskCreateFormPloc(),
+  providerTaskEditFormPloc: provideTaskEditFormPloc(),
+  providerTaskDeletePloc: provideTaskDeletePloc(),
+  providerTaskTogglePloc: provideTaskTogglePloc(),
   createValueDefinitionDeletePloc: createValueDefinitionDeletePloc,
 }

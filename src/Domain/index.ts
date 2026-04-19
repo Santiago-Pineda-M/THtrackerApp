@@ -151,3 +151,6 @@ export * from './Errors'
 
 // Domain Events
 export * from './Events'
+
+// TaskList Domain
+export * from './TaskList'

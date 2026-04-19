@@ -47,3 +47,40 @@ export class EventEmitter {
 }
 
 export const globalEventEmitter = new EventEmitter()
+
+export interface ITaskListCreatedEvent {
+  type: 'TASK_LIST_CREATED'
+  payload: { id: string; name: string; createdAt: string }
+}
+export interface ITaskListUpdatedEvent {
+  type: 'TASK_LIST_UPDATED'
+  payload: { id: string; name: string; updatedAt: string }
+}
+export interface ITaskListDeletedEvent {
+  type: 'TASK_LIST_DELETED'
+  payload: { id: string }
+}
+export interface ITaskCreatedEvent {
+  type: 'TASK_CREATED'
+  payload: { id: string; taskListId: string; title: string; createdAt: string }
+}
+export interface ITaskUpdatedEvent {
+  type: 'TASK_UPDATED'
+  payload: { id: string; updatedAt: string }
+}
+export interface ITaskDeletedEvent {
+  type: 'TASK_DELETED'
+  payload: { id: string; taskListId: string }
+}
+export interface ITaskToggledEvent {
+  type: 'TASK_TOGGLED'
+  payload: { id: string; isCompleted: boolean }
+}
+export type TaskListDomainEvent =
+  | ITaskListCreatedEvent
+  | ITaskListUpdatedEvent
+  | ITaskListDeletedEvent
+  | ITaskCreatedEvent
+  | ITaskUpdatedEvent
+  | ITaskDeletedEvent
+  | ITaskToggledEvent

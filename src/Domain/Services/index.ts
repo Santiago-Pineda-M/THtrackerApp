@@ -18,4 +18,3 @@ export {
 
 export * from './types'
 export type { IDateProvider } from './IDateProvider'
-export type { ISecureStorage } from './ISecureStorage'

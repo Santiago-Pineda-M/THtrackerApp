@@ -62,3 +62,15 @@ export function isDomainError(value: unknown): value is AnyDomainError {
   const obj = value as Record<string, unknown>
   return typeof obj.kind === 'string' && typeof obj.message === 'string'
 }
+
+export type TaskListErrorCode =
+  | 'TASK_LIST_NOT_FOUND'
+  | 'TASK_LIST_FORBIDDEN'
+  | 'TASK_LIST_INVALID_NAME'
+  | 'TASK_NOT_FOUND'
+  | 'TASK_FORBIDDEN'
+  | 'TASK_INVALID_TITLE'
+export interface ITaskListError {
+  code: TaskListErrorCode
+  message: string
+}

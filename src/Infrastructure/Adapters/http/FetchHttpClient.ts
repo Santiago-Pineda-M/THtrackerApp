@@ -215,6 +215,18 @@ export class FetchHttpClient implements IHttpClient {
     })
   }
 
+  async patch<T>(
+    url: string,
+    data?: unknown,
+    config?: RequestInit
+  ): Promise<HttpResponse<T>> {
+    return this.request<T>(url, {
+      method: 'PATCH',
+      body: data ? JSON.stringify(data) : undefined,
+      ...config,
+    })
+  }
+
   async delete<T>(url: string, config?: RequestInit): Promise<HttpResponse<T>> {
     return this.request<T>(url, { method: 'DELETE', ...config })
   }
