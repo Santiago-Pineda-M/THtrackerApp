@@ -2,7 +2,7 @@
   flex: 1;
   overflow-y: auto;
   display: grid;
-  grid-template-columns: 60px 1fr;
+  grid-template-columns: 50px 1fr;
 }
 
 .timeGutter {
@@ -13,7 +13,7 @@
 }
 
 .timeSlot {
-  height: 60px; /* Cada hora ocupa 60px por defecto, se sobrescribe por inline style */
+  height: 30px; /* Cada hora ocupa 30px por defecto, se sobrescribe por inline style */
   border-bottom: 1px solid var(--color-border-soft);
   display: flex;
   align-items: flex-start;

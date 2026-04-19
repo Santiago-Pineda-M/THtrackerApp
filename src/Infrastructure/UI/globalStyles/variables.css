@@ -28,6 +28,8 @@
   --color-text-primary: #f8fafc; /* Bright stark white-ish for readability */
   --color-text-secondary: #94a3b8; /* Muted text for labels/captions */
 
+  /* FONT SIZES */
+  --font-size-xxs: 0.625rem;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
@@ -100,7 +102,8 @@
 
   /* ANIMATIONS */
   --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-default: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-default: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 1.4s cubic-bezier(0.4, 0, 0.2, 1);
   --card-hover-lift: -4px;
 }
 

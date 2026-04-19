@@ -44,15 +44,15 @@ export const ActionsRecordLogs = () => {
 
     if (state.logs.length === 0) {
       return (
-        <div className={styles.stateContainer}>
+        <div className={styles.container}>
+          <StartRecordLogs />
           <Text
             className={styles.emptyText}
             size='sm'
           >
             No hay actividades en curso.
           </Text>
-          <StartRecordLogs />
-        </div>
+      </div>
       )
     }
 

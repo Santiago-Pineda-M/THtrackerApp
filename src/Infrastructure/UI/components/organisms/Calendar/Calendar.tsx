@@ -22,7 +22,7 @@ export const Calendar = () => {
   const categoriesState = usePlocState(providerCategoriesListPloc)
 
   // Zoom State
-  const [pixelsPerHour, setPixelsPerHour] = useState<number>(60)
+  const [pixelsPerHour, setPixelsPerHour] = useState<number>(30)
   const calendarRef = useRef<HTMLDivElement>(null)
 
   // Handle Zoom Scroll (Non-passive listener to prevent browser zoom)

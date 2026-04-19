@@ -1,37 +1,29 @@
-/*  Custom scrollbar styles for WebKit browsers (e.g., Chrome, Safari)
-  Note: These styles will not work in Firefox or other non-WebKit browsers.
-*/
 
+/* 1. El track ocupa el ancho MÁXIMO que quieras (tamaño fijo siempre) */
 ::-webkit-scrollbar {
-  width: var(--space-xs);
-  height: var(--space-xs);
-  background: transparent;
-  position: fixed;
-  /* hacer que cuando cambie de tamaño este no altere el tamaño ddel resto del html, poniendolo por encima del resto de elementos */
-  z-index: 100;
-}
-
-::-webkit-scrollbar:hover {
-  width: 12px;
-  height: 12px;
-  transition: var(--transition-default);
+  width: var(--space-sm); /* ej: 8px — este es el ancho real reservado */
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background-color: transparent;
 }
 
-::-webkit-scrollbar-track:hover {
-  background: transparent;
-  transition: var(--transition-default);
-}
-
+/* 2. El thumb parece delgado gracias al border transparente */
 ::-webkit-scrollbar-thumb {
-  background: var(--color-text-secondary);
+  background-color: var(--color-text-secondary);
   border-radius: var(--radius-full);
+  transition: var(--transition-slow);
+
+  /* Este border transparente "encoge" visualmente el thumb */
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
+/* 3. En hover: se quita el border → el thumb parece expandirse */
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-primary);
-  transition: var(--transition-default);
+  background-color: var(--color-text-primary);
+  border: 0px solid transparent; /* o simplemente: border: none */
+  background-clip: padding-box;
+  transition: var(--transition-slow);
 }

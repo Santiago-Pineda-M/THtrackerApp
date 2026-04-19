@@ -33,6 +33,9 @@
 }
 
 .emptyText {
+  display: flex;
   color: var(--color-text-secondary);
   font-style: italic;
+  width:100%;
+  justify-content: center;
 }
