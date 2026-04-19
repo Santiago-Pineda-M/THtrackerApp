@@ -27,13 +27,5 @@ export interface IRefreshTokenResponseError {
 
 /**
  * Estándar RFC 7807 para errores de la API.
- * Tipo genérico para parsear respuestas de error HTTP.
  */
-export interface IProblemDetails {
-  type?: string
-  title?: string
-  status?: number
-  detail?: string
-  instance?: string
-  errors?: Record<string, string[]>
-}
+export type { ProblemDetails as IProblemDetails } from '../Common/ProblemDetails'

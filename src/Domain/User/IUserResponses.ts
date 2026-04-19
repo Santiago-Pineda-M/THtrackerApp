@@ -1,6 +1,11 @@
 /**
+ * DOMAIN LAYER - User Response Interfaces
+ */
+
+import type { ProblemDetails } from '../Common/ProblemDetails'
+
+/**
  * Respuesta del endpoint GET /api/v1/users/me
- * Representa los datos del usuario autenticado
  */
 export interface UserProfileResponse {
   id: string
@@ -8,13 +13,4 @@ export interface UserProfileResponse {
   email: string | null
 }
 
-/**
- * Problema detalles para errores
- */
-export interface ProblemDetails {
-  type?: string
-  title?: string
-  status?: number
-  detail?: string
-  errors?: Record<string, string[]>
-}
+export type { ProblemDetails }

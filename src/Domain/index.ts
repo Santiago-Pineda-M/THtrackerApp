@@ -25,26 +25,18 @@ export { UserId } from './ValueObjects/UserId'
 export type { IAuthSessionRepository } from './Repositories/IAuthSessionRepository'
 export type { ISidebarRepository } from './Repositories/ISidebarRepository'
 
-// Request Interfaces (Auth)
+// Auth Domain Types (via barrel export)
 export type {
   ILoginRequest,
   IRegisterRequest,
   IRefreshTokenRequest,
-} from './Auth/IAuthRequest'
-
-// Response Interfaces (Auth)
-export type {
   ILoginResponse,
   IRegisterResponse,
   IRefreshTokenResponse,
-} from './Auth/IAuthResponses'
-
-// Error Response Interfaces
-export type {
   ILoginResponseError,
   IRefreshTokenResponseError,
   IProblemDetails,
-} from './Auth/IAuthResponsesError'
+} from './Auth'
 
 // Pattern Interfaces
 export {
@@ -61,6 +53,8 @@ export * from './IStates'
 
 // Domain Services
 export {
+  LoginValidator,
+  RegisterValidator,
   AuthValidationService,
   type ValidationError,
   type ValidationResult,
@@ -74,9 +68,10 @@ export { Ploc } from './Ploc'
 
 // Common Types
 export type { ApiErrorResponse } from './Common/IApiErrorResponse'
+export type { ProblemDetails } from './Common/ProblemDetails'
 
 // User Domain Types
-export type { UserProfileResponse, ProblemDetails } from './User/IUserResponses'
+export type { UserProfileResponse } from './User/IUserResponses'
 export type { UpdateUserProfileRequest } from './User/IUserRequests'
 
 // Category Domain Types
@@ -109,17 +104,15 @@ export {
   initialValueDefinitionCreateFormState,
 } from './IStates'
 
-// Activity Logs Domain Types
+// Activity Logs Domain Types (via barrel export)
 export type {
   ActivityLogResponse,
   LogValueResponse,
-} from './ActivityLog/IActivityLogResponses'
-export type {
   StartActivityLogRequest,
   UpdateActivityLogRequest,
   LogValueRequest,
   IGetActivityLogsRequest,
-} from './ActivityLog/IActivityLogRequests'
+} from './ActivityLog'
 
 // Activity Logs States
 export type {
@@ -152,3 +145,9 @@ export {
   initialUserSessionsListState,
   initialSessionRevokeState,
 } from './IStates'
+
+// Domain Errors
+export * from './Errors'
+
+// Domain Events
+export * from './Events'

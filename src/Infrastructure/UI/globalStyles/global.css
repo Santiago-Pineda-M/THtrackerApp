@@ -1,4 +1,3 @@
-
 /* 1. El track ocupa el ancho MÁXIMO que quieras (tamaño fijo siempre) */
 ::-webkit-scrollbar {
   width: var(--space-sm); /* ej: 8px — este es el ancho real reservado */

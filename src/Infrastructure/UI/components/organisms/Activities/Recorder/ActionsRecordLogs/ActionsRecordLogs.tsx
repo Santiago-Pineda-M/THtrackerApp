@@ -52,7 +52,7 @@ export const ActionsRecordLogs = () => {
           >
             No hay actividades en curso.
           </Text>
-      </div>
+        </div>
       )
     }
 
