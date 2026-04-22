@@ -1,8 +1,3 @@
-/**
- * INFRASTRUCTURE LAYER - Barrel Exports
- * Punto de entrada único para importar desde la capa de Infraestructura.
- */
-
 // HTTP Clients
 export { FetchHttpClient } from './Adapters/http/FetchHttpClient'
 
@@ -21,12 +16,12 @@ export { DependenciesProvider } from './Context/DependenciesProvider'
 export { useDependencies } from './Context/useDependencies'
 
 // Services
-export { AuthService } from './Services/AuthService'
-export { ActivityService } from './Services/ActivityService'
-export { ActivityLogService } from './Services/ActivityLogService'
-export { CategoryService } from './Services/CategoryService'
-export { UserService } from './Services/UserService'
-export { UserSessionService } from './Services/UserSessionService'
+export { AuthService } from '../Application/Services/Auth/AuthService'
+export { ActivityService } from '../Application/Services/Activity/ActivityService'
+export { ActivityLogService } from '../Application/Services/ActivityLog/ActivityLogService'
+export { CategoryService } from '../Application/Services/Category/CategoryService'
+export { UserService } from '../Application/Services/User/UserService'
+export { UserSessionService } from '../Application/Services/UserSession/UserSessionService'
 
 // Hooks
 export { usePlocState } from './Hooks/usePlocState'

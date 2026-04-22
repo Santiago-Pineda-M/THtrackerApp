@@ -1,5 +1,5 @@
-import type { IHttpClient, ApiErrorResponse } from '../../Domain'
-import type { ITaskListService } from '../../Application/Services/TaskList/ITaskListService'
+import type { IHttpClient, ApiErrorResponse } from '../../../Domain'
+import type { ITaskListService } from './ITaskListService'
 import type {
   IGetTaskListByIdRequest,
   ICreateTaskListRequest,
@@ -24,7 +24,7 @@ import type {
   IToggleTaskResponse,
   ITaskListItem,
   ITaskItem,
-} from '../../Domain/TaskList'
+} from '../../../Domain/TaskList'
 
 export class TaskListService implements ITaskListService {
   private readonly httpClient: IHttpClient

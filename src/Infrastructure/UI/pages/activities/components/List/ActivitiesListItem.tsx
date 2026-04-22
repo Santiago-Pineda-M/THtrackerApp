@@ -66,4 +66,3 @@ export const ActivitiesListItem: React.FC<ActivitiesListItemProps> = ({
     </li>
   )
 }
-

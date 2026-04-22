@@ -1,16 +1,11 @@
-/**
- * INFRASTRUCTURE LAYER - CategoryService
- * Implementación de ICategoryService que conecta con el API de categorías.
- */
-
 import type {
   IHttpClient,
   CategoryResponse,
   CreateCategoryRequest,
   UpdateCategoryRequest,
   ApiErrorResponse,
-} from '../../Domain'
-import type { ICategoryService } from '../../Application/Services/Category/ICategoryService'
+} from '../../../Domain'
+import type { ICategoryService } from './ICategoryService'
 
 export class CategoryService implements ICategoryService {
   private readonly httpClient: IHttpClient

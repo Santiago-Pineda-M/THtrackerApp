@@ -9,8 +9,8 @@ import type {
   CreateActivityRequest,
   UpdateActivityRequest,
   ApiErrorResponse,
-} from '../../Domain'
-import type { IActivityService } from '../../Application/Services/Activity/IActivityService'
+} from '../../../Domain'
+import type { IActivityService } from './IActivityService'
 
 export class ActivityService implements IActivityService {
   private readonly httpClient: IHttpClient

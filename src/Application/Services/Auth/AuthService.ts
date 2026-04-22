@@ -1,9 +1,3 @@
-/**
- * INFRASTRUCTURE LAYER - AuthService
- * Implementación de IAuthService que conecta con el API de autenticación.
- * Solo implementa los 3 endpoints que existen realmente en la API.
- */
-
 import type {
   IHttpClient,
   ILoginRequest,
@@ -15,8 +9,8 @@ import type {
   ILoginResponseError,
   IRefreshTokenResponseError,
   IProblemDetails,
-} from '../../Domain'
-import type { IAuthService } from '../../Application/Services/Auth/IAuthService'
+} from '../../../Domain'
+import type { IAuthService } from './IAuthService'
 
 export class AuthService implements IAuthService {
   private readonly httpClient: IHttpClient

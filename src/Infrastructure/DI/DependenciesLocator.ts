@@ -1,11 +1,13 @@
-﻿// ============================================
+// ============================================
 // DependenciesLocator — Orquestador de DI
 // Cada propiedad es un getter lazy (Singleton
 // garantizado por cada módulo).
 // ============================================
 
 // ── Core ──────────────────────────────────────────────────────────────────────
-export { authSessionRepository } from './core/storage.config'
+
+import { authSessionRepository } from './core/storage.config'
+import { getDateProvider } from './core/date.config'
 
 // ── Auth module ───────────────────────────────────────────────────────────────
 import {
@@ -71,17 +73,12 @@ import {
   getTaskListCreateFormPloc,
   getTaskListEditFormPloc,
   getTaskListDeletePloc,
-  getTasksPloc,
+  createTasksPloc,
   getTaskCreateFormPloc,
   getTaskEditFormPloc,
   getTaskDeletePloc,
-  getTaskTogglePloc,
+  createTaskTogglePloc,
 } from './modules/taskList.module'
-
-// ── Date module ───────────────────────────────────────────────────────────────
-import { getDateProvider } from './core/date.config'
-import { authSessionRepository } from './core/storage.config'
-
 // ── Tipos exportados para compatibilidad ──────────────────────────────────────
 import type { AuthPloc } from '../../Controllers/Auth/AuthPloc'
 import type { LoginPloc } from '../../Controllers/Auth/LoginPloc'
@@ -134,7 +131,7 @@ import type {
   TaskTogglePloc,
 } from '../../Controllers/TaskList'
 import type { AuthSessionRepository } from '../Repositories/AuthSessionRepository'
-import type { DateProvider } from '../Services/DateProvider'
+import type { DateProvider } from '../../Application/Services/Date/DateProvider'
 
 // ============================================
 // INTERFAZ DE DEPENDENCIAS
@@ -181,13 +178,13 @@ export interface Dependencies {
   providerTaskListCreateFormPloc: TaskListCreateFormPloc
   providerTaskListEditFormPloc: TaskListEditFormPloc
   providerTaskListDeletePloc: TaskListDeletePloc
-  providerTasksPloc: TasksPloc
   providerTaskCreateFormPloc: TaskCreateFormPloc
   providerTaskEditFormPloc: TaskEditFormPloc
   providerTaskDeletePloc: TaskDeletePloc
-  providerTaskTogglePloc: TaskTogglePloc
   // Factory functions
   createValueDefinitionDeletePloc: () => ActivityValueDefinitionDeletePloc
+  createTasksPloc: () => TasksPloc
+  createTaskTogglePloc: () => TaskTogglePloc
 }
 
 // ============================================
@@ -306,9 +303,6 @@ export const dependenciesLocator: Dependencies = {
   get providerTaskListDeletePloc() {
     return getTaskListDeletePloc()
   },
-  get providerTasksPloc() {
-    return getTasksPloc()
-  },
   get providerTaskCreateFormPloc() {
     return getTaskCreateFormPloc()
   },
@@ -318,8 +312,7 @@ export const dependenciesLocator: Dependencies = {
   get providerTaskDeletePloc() {
     return getTaskDeletePloc()
   },
-  get providerTaskTogglePloc() {
-    return getTaskTogglePloc()
-  },
   createValueDefinitionDeletePloc,
+  createTasksPloc,
+  createTaskTogglePloc,
 }

@@ -7,8 +7,8 @@ import type {
   IHttpClient,
   IUserSessionResponse,
   IRevokeSessionResponse,
-} from '../../Domain'
-import type { IUserSessionService } from '../../Application/Services/UserSession/IUserSessionService'
+} from '../../../Domain'
+import type { IUserSessionService } from './IUserSessionService'
 
 export class UserSessionService implements IUserSessionService {
   private readonly httpClient: IHttpClient

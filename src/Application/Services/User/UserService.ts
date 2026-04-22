@@ -1,15 +1,10 @@
-/**
- * INFRASTRUCTURE LAYER - UserService
- * Implementación de IUserService que conecta con el API de usuario.
- */
-
 import type {
   IHttpClient,
   UserProfileResponse,
   UpdateUserProfileRequest,
   ProblemDetails,
-} from '../../Domain'
-import type { IUserService } from '../../Application/Services/User/IUserService'
+} from '../../../Domain'
+import type { IUserService } from './IUserService'
 
 export class UserService implements IUserService {
   private readonly httpClient: IHttpClient

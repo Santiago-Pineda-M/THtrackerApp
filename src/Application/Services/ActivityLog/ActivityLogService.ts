@@ -1,8 +1,4 @@
-/**
- * INFRASTRUCTURE LAYER - Implementación del servicio de ActivityLogs
- */
-
-import type { IHttpClient } from '../../Domain/IPatterns'
+import type { IHttpClient } from '../../../Domain/IPatterns'
 import type {
   ActivityLogResponse,
   StartActivityLogRequest,
@@ -11,8 +7,8 @@ import type {
   LogValueResponse,
   IGetActivityLogsRequest,
   ApiErrorResponse,
-} from '../../Domain'
-import type { IActivityLogService } from '../../Application/Services/ActivityLog/IActivityLogService'
+} from '../../../Domain'
+import type { IActivityLogService } from './IActivityLogService'
 
 export class ActivityLogService implements IActivityLogService {
   private readonly httpClient: IHttpClient

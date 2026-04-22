@@ -13,4 +13,3 @@ const ListActiveActivityLogs = () => {
 }
 
 export default ListActiveActivityLogs
-

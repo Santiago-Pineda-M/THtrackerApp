@@ -3,7 +3,7 @@
  * Maneja la lógica específica de parsing de la API para corregir desfases UTC-Local.
  */
 
-import type { IDateProvider } from '../../Domain'
+import type { IDateProvider } from '../../../Domain'
 
 export class DateProvider implements IDateProvider {
   /**

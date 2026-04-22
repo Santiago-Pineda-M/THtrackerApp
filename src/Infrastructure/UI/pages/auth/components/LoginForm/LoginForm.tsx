@@ -1,10 +1,10 @@
 import { useMemo, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import type { ILoginState } from '../../../../../Domain/IStates'
-import { useDependencies } from '../../../../Context/useDependencies'
-import { usePlocState } from '../../../../Hooks/usePlocState'
-import { Input, Button, Text, Icon } from '../../../components'
-import FormField from '../../molecules/Form/FormField'
+import type { ILoginState } from '../../../../../../Domain/IStates'
+import { useDependencies } from '../../../../../Context/useDependencies'
+import { usePlocState } from '../../../../../Hooks/usePlocState'
+import { Input, Button, Text, Icon } from '../../../../components'
+import { FormField } from '../../../../components'
 import styles from './LoginForm.module.css'
 
 type LoginFormProps = React.HTMLAttributes<HTMLFormElement>
@@ -73,7 +73,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           name='email'
           type='email'
           value={state.email}
-          onChange={(e) => providerLoginPloc.updateEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            providerLoginPloc.updateEmail(e.target.value)
+          }
           placeholder='tu@correo.com'
           disabled={state.isLoading}
         />
@@ -92,7 +94,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             name='password'
             type={showPassword ? 'text' : 'password'}
             value={state.password}
-            onChange={(e) => providerLoginPloc.updatePassword(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              providerLoginPloc.updatePassword(e.target.value)
+            }
             placeholder='••••••••'
             disabled={state.isLoading}
             className={styles.passwordInput} // 2. Clase para padding extra
