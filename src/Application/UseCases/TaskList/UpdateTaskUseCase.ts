@@ -9,7 +9,10 @@ export type UpdateTaskOutput =
   | { success: true; task: IUpdateTaskResponse['task'] }
   | { success: false; error: ApiErrorResponse }
 
-export class UpdateTaskUseCase implements IUseCase<IUpdateTaskRequest, UpdateTaskOutput> {
+export class UpdateTaskUseCase implements IUseCase<
+  IUpdateTaskRequest,
+  UpdateTaskOutput
+> {
   private readonly taskListService: ITaskListService
 
   constructor(taskListService: ITaskListService) {

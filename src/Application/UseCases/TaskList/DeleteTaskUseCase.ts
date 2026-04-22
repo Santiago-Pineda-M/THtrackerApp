@@ -9,7 +9,10 @@ export type DeleteTaskOutput =
   | { success: true }
   | { success: false; error: ApiErrorResponse }
 
-export class DeleteTaskUseCase implements IUseCase<IDeleteTaskRequest, DeleteTaskOutput> {
+export class DeleteTaskUseCase implements IUseCase<
+  IDeleteTaskRequest,
+  DeleteTaskOutput
+> {
   private readonly taskListService: ITaskListService
 
   constructor(taskListService: ITaskListService) {

@@ -1,4 +1,4 @@
-import { LoginForm } from '../../components/organisms/LoginForm/LoginForm'
+import { LoginForm } from './components/LoginForm/LoginForm'
 import { AuthLayout } from '../../components/layouts'
 
 export const LoginPage = () => {

@@ -9,7 +9,10 @@ export type CreateTaskOutput =
   | { success: true; task: ICreateTaskResponse['task'] }
   | { success: false; error: ApiErrorResponse }
 
-export class CreateTaskUseCase implements IUseCase<ICreateTaskRequest, CreateTaskOutput> {
+export class CreateTaskUseCase implements IUseCase<
+  ICreateTaskRequest,
+  CreateTaskOutput
+> {
   private readonly taskListService: ITaskListService
 
   constructor(taskListService: ITaskListService) {

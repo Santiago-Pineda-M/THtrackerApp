@@ -1,124 +1,115 @@
+﻿// ============================================
+// DependenciesLocator — Orquestador de DI
+// Cada propiedad es un getter lazy (Singleton
+// garantizado por cada módulo).
 // ============================================
-// 1. IMPORTACIONES
-// ============================================
 
-// Application - Casos de Uso
+// ── Core ──────────────────────────────────────────────────────────────────────
+export { authSessionRepository } from './core/storage.config'
+
+// ── Auth module ───────────────────────────────────────────────────────────────
 import {
-  LoginUserUseCase,
-  RefreshTokenUseCases,
-  RegisterUseCases,
-  LogoutUseCase,
-  CheckAuthSessionUseCase,
-  GetSessionUseCase,
-} from '../../Application/UseCases/Auth'
+  getAuthPloc,
+  getLoginPloc,
+  getRegisterPloc,
+  getRefreshTokenPloc,
+  getLogoutPloc,
+} from './modules/auth.module'
 
-// Application - Casos de Uso User
+// ── Sidebar module ────────────────────────────────────────────────────────────
+import { getSidebarPloc } from './modules/sidebar.module'
+
+// ── User module ───────────────────────────────────────────────────────────────
 import {
-  GetUserProfileUseCase,
-  UpdateUserProfileUseCase,
-} from '../../Application/UseCases/User'
+  getUserProfileDisplayPloc,
+  getUserProfileFormPloc,
+} from './modules/user.module'
 
-// Application - Casos de Uso Category
+// ── Category module ───────────────────────────────────────────────────────────
 import {
-  GetCategoriesUseCase,
-  GetCategoryByIdUseCase,
-  CreateCategoryUseCase,
-  UpdateCategoryUseCase,
-  DeleteCategoryUseCase,
-} from '../../Application/UseCases/Category'
+  getCategoriesListPloc,
+  getCategoryDetailPloc,
+  getCategoryCreateFormPloc,
+  getCategoryEditFormPloc,
+  getCategoryDeletePloc,
+} from './modules/category.module'
 
-// Application - Casos de Uso Sidebar
+// ── Activity module ───────────────────────────────────────────────────────────
 import {
-  GetSidebarStateUseCase,
-  SaveSidebarStateUseCase,
-} from '../../Application/UseCases/Sidebar'
+  getActivitiesListPloc,
+  getActivityDetailPloc,
+  getActivityCreateFormPloc,
+  getActivityEditFormPloc,
+  getActivityDeletePloc,
+  getActivityValueDefinitionsListPloc,
+  getValueDefinitionCreateFormPloc,
+  getValueDefinitionEditFormPloc,
+  getValueDefinitionDeletePloc,
+  createValueDefinitionDeletePloc,
+} from './modules/activity.module'
 
-// Application - Casos de Uso Activity
+// ── ActivityLog module ────────────────────────────────────────────────────────
 import {
-  GetActivitiesUseCase,
-  GetActivityByIdUseCase,
-  CreateActivityUseCase,
-  UpdateActivityUseCase,
-  DeleteActivityUseCase,
-} from '../../Application/UseCases/Activity'
+  getActivityLogsListPloc,
+  getActivityLogDetailPloc,
+  getActiveActivityLogsPloc,
+  getActivityLogStartPloc,
+  getActivityLogStopPloc,
+  getCalendarLogsPloc,
+} from './modules/activityLog.module'
 
-// Application - Casos de Uso ActivityValueDefinition
+// ── UserSession module ────────────────────────────────────────────────────────
 import {
-  GetListActivityValueDefinitionUseCase,
-  GetByIdActivityValueDefinitionUseCase,
-  CreateActivityValueDefinitionUseCase,
-  UpdateActivityValueDefinitionUseCase,
-  DeleteActivityValueDefinitionUseCase,
-} from '../../Application/UseCases/ActivityValueDefinition'
+  getUserSessionsListPloc,
+  getSessionRevokePloc,
+} from './modules/userSession.module'
 
-// Application - Casos de Uso ActivityLog
+// ── TaskList module ───────────────────────────────────────────────────────────
 import {
-  GetActivityLogsUseCase,
-  GetActivityLogByIdUseCase,
-  StartActivityLogUseCase,
-  StopActivityLogUseCase,
-  UpdateActivityLogUseCase,
-  SaveActivityLogValuesUseCase,
-  GetActivityLogValuesUseCase,
-  GetActiveActivityLogsUseCase,
-  GetCalendarLogsUseCase,
-} from '../../Application/UseCases/ActivityLog'
+  getTaskListsPloc,
+  getTaskListDetailPloc,
+  getTaskListCreateFormPloc,
+  getTaskListEditFormPloc,
+  getTaskListDeletePloc,
+  getTasksPloc,
+  getTaskCreateFormPloc,
+  getTaskEditFormPloc,
+  getTaskDeletePloc,
+  getTaskTogglePloc,
+} from './modules/taskList.module'
 
-// Application - Casos de Uso UserSession
-import {
-  GetUserSessionsUseCase,
-  RevokeSessionUseCase,
-} from '../../Application/UseCases/UserSession'
+// ── Date module ───────────────────────────────────────────────────────────────
+import { getDateProvider } from './core/date.config'
+import { authSessionRepository } from './core/storage.config'
 
-// Application - Casos de Uso TaskList
-import {
-  GetTaskListsUseCase,
-  GetTaskListByIdUseCase,
-  CreateTaskListUseCase,
-  UpdateTaskListUseCase,
-  DeleteTaskListUseCase,
-  GetTasksByListUseCase,
-  GetTaskByIdUseCase,
-  CreateTaskUseCase,
-  UpdateTaskUseCase,
-  DeleteTaskUseCase,
-  ToggleTaskUseCase,
-} from '../../Application/UseCases/TaskList'
-
-// Controllers - Plocs
-import { AuthPloc } from '../../Controllers/Auth/AuthPloc'
-import { LoginPloc } from '../../Controllers/Auth/LoginPloc'
-import { RegisterPloc } from '../../Controllers/Auth/RegisterPloc'
-import { RefreshTokenPloc } from '../../Controllers/Auth/RefreshTokenPloc'
-import { LogoutPloc } from '../../Controllers/Auth/LogoutPloc'
-import { SidebarPloc } from '../../Controllers/Sidebar/SidebarPloc'
-import { UserProfileDisplayPloc } from '../../Controllers/User/UserProfileDisplayPloc'
-import { UserProfileFormPloc } from '../../Controllers/User/UserProfileFormPloc'
-import { CategoriesListPloc } from '../../Controllers/Category/CategoriesListPloc'
-import { CategoryDetailPloc } from '../../Controllers/Category/CategoryDetailPloc'
-import { CategoryCreateFormPloc } from '../../Controllers/Category/CategoryCreateFormPloc'
-import { CategoryEditFormPloc } from '../../Controllers/Category/CategoryEditFormPloc'
-import { CategoryDeletePloc } from '../../Controllers/Category/CategoryDeletePloc'
-
-// Controllers - Activity Plocs
-import {
+// ── Tipos exportados para compatibilidad ──────────────────────────────────────
+import type { AuthPloc } from '../../Controllers/Auth/AuthPloc'
+import type { LoginPloc } from '../../Controllers/Auth/LoginPloc'
+import type { RegisterPloc } from '../../Controllers/Auth/RegisterPloc'
+import type { RefreshTokenPloc } from '../../Controllers/Auth/RefreshTokenPloc'
+import type { LogoutPloc } from '../../Controllers/Auth/LogoutPloc'
+import type { SidebarPloc } from '../../Controllers/Sidebar/SidebarPloc'
+import type { UserProfileDisplayPloc } from '../../Controllers/User/UserProfileDisplayPloc'
+import type { UserProfileFormPloc } from '../../Controllers/User/UserProfileFormPloc'
+import type { CategoriesListPloc } from '../../Controllers/Category/CategoriesListPloc'
+import type { CategoryDetailPloc } from '../../Controllers/Category/CategoryDetailPloc'
+import type { CategoryCreateFormPloc } from '../../Controllers/Category/CategoryCreateFormPloc'
+import type { CategoryEditFormPloc } from '../../Controllers/Category/CategoryEditFormPloc'
+import type { CategoryDeletePloc } from '../../Controllers/Category/CategoryDeletePloc'
+import type {
   ActivitiesListPloc,
   ActivityCreateFormPloc,
   ActivityDetailPloc,
   ActivityEditFormPloc,
   ActivityDeletePloc,
 } from '../../Controllers/Activity'
-
-// Controllers - ActivityValueDefinition Plocs
-import {
+import type {
   ActivityValueDefinitionListPloc,
   ActivityValueDefinitionCreateFormPloc,
   ActivityValueDefinitionEditFormPloc,
   ActivityValueDefinitionDeletePloc,
 } from '../../Controllers/ActivityValueDefinition'
-
-// Controllers - ActivityLog Plocs
-import {
+import type {
   ActivityLogsListPloc,
   ActivityLogDetailPloc,
   ActiveActivityLogsPloc,
@@ -126,15 +117,11 @@ import {
   ActivityLogStopPloc,
   CalendarLogsPloc,
 } from '../../Controllers/ActivityLog'
-
-// Controllers - UserSession Plocs
-import {
+import type {
   UserSessionsListPloc,
   SessionRevokePloc,
 } from '../../Controllers/UserSession'
-
-// Controllers - TaskList Plocs
-import {
+import type {
   TaskListsPloc,
   TaskListDetailPloc,
   TaskListCreateFormPloc,
@@ -146,338 +133,11 @@ import {
   TaskDeletePloc,
   TaskTogglePloc,
 } from '../../Controllers/TaskList'
-
-// Domain
-import { isoToExpiresInSeconds } from '../../Domain'
-
-// Infrastructure - Adaptadores y Servicios
-import { TokenRefreshStrategy } from '../Adapters/http/TokenRefreshStrategy'
-import { FetchHttpClient } from '../Adapters/http/FetchHttpClient'
-import { RequestCache } from '../Adapters/http/RequestCache'
-import { InflightDeduplicator } from '../Adapters/http/InflightDeduplicator'
-import { SecureStorageAdapter, LocalStorageAdapter } from '../Adapters/storage'
-import { AuthSessionRepository } from '../Repositories/AuthSessionRepository'
-import { SidebarRepository } from '../Repositories/SidebarRepository'
-import { AuthService } from '../Services/AuthService'
-import { UserService } from '../Services/UserService'
-import { CategoryService } from '../Services/CategoryService'
-import { ActivityService } from '../Services/ActivityService'
-import { ActivityValueDefinitionService } from '../Services/ActivityValueDefinition'
-import { ActivityLogService } from '../Services/ActivityLogService'
-import { UserSessionService } from '../Services/UserSessionService'
-import { TaskListService } from '../Services/TaskListService'
-import { DateProvider } from '../Services/DateProvider'
+import type { AuthSessionRepository } from '../Repositories/AuthSessionRepository'
+import type { DateProvider } from '../Services/DateProvider'
 
 // ============================================
-// 2. CONSTANTES Y CONFIGURACIÓN
-// ============================================
-
-const API_URL =
-  import.meta.env.VITE_API_URL || 'https://thtracker-api.onrender.com'
-
-// ============================================
-// 3. ADAPTADORES (Storage)
-// ============================================
-
-const secureStorageAdapter = new SecureStorageAdapter()
-const localStorageAdapter = new LocalStorageAdapter('sidebar')
-
-// ============================================
-// 4. REPOSITORIOS
-// ============================================
-
-const authSessionRepository = new AuthSessionRepository(secureStorageAdapter)
-const sidebarRepository = new SidebarRepository(localStorageAdapter)
-
-// ============================================
-// 5. FUNCIONES AUXILIARES PARA HTTP CLIENT
-// ============================================
-
-const getAccessToken = () =>
-  authSessionRepository.getSession().then((s) => s?.accessToken ?? null)
-
-const getRefreshToken = () =>
-  authSessionRepository.getSession().then((s) => s?.refreshToken ?? null)
-
-const onSessionRefreshed = async (
-  newAccessToken: string,
-  response: import('../../Domain').IRefreshTokenResponse
-) => {
-  const currentSession = await authSessionRepository.getSession()
-  if (!currentSession) return
-
-  const updatedSession = currentSession.updateTokens(
-    newAccessToken,
-    response.refreshToken,
-    isoToExpiresInSeconds(response.refreshTokenExpiry)
-  )
-
-  await authSessionRepository.saveSession(updatedSession)
-}
-
-// ============================================
-// 6. HTTP CLIENT (con estrategia de refresh)
-// ============================================
-
-const refreshStrategy = new TokenRefreshStrategy(
-  API_URL,
-  getRefreshToken,
-  onSessionRefreshed
-)
-const requestCache = new RequestCache()
-const inflightDeduplicator = new InflightDeduplicator()
-
-const httpClient = new FetchHttpClient(
-  API_URL,
-  getAccessToken,
-  refreshStrategy,
-  requestCache,
-  inflightDeduplicator
-)
-
-// ============================================
-// 7. SERVICIOS
-// ============================================
-
-const authService = new AuthService(httpClient)
-const userService = new UserService(httpClient)
-const categoryService = new CategoryService(httpClient)
-const activityService = new ActivityService(httpClient)
-const activityValueDefinitionService = new ActivityValueDefinitionService(
-  httpClient
-)
-const activityLogService = new ActivityLogService(httpClient)
-const userSessionService = new UserSessionService(httpClient)
-const taskListService = new TaskListService(httpClient)
-const dateProvider = new DateProvider()
-
-// ============================================
-// 8. CASOS DE USO (Use Cases)
-// ============================================
-
-// Sidebar Use Cases
-const getSidebarStateUseCase = new GetSidebarStateUseCase(sidebarRepository)
-const saveSidebarStateUseCase = new SaveSidebarStateUseCase(sidebarRepository)
-
-// User Use Cases
-const getUserProfileUseCase = new GetUserProfileUseCase(userService)
-const updateUserProfileUseCase = new UpdateUserProfileUseCase(userService)
-
-// Category Use Cases
-const getCategoriesUseCase = new GetCategoriesUseCase(categoryService)
-const getCategoryByIdUseCase = new GetCategoryByIdUseCase(categoryService)
-const createCategoryUseCase = new CreateCategoryUseCase(categoryService)
-const updateCategoryUseCase = new UpdateCategoryUseCase(categoryService)
-const deleteCategoryUseCase = new DeleteCategoryUseCase(categoryService)
-
-// Activity Use Cases
-const getActivitiesUseCase = new GetActivitiesUseCase(activityService)
-const getActivityByIdUseCase = new GetActivityByIdUseCase(activityService)
-const createActivityUseCase = new CreateActivityUseCase(activityService)
-const updateActivityUseCase = new UpdateActivityUseCase(activityService)
-const deleteActivityUseCase = new DeleteActivityUseCase(activityService)
-
-// ActivityValueDefinition Use Cases
-const getValueDefinitionsUseCase = new GetListActivityValueDefinitionUseCase(
-  activityValueDefinitionService
-)
-const createValueDefinitionUseCase = new CreateActivityValueDefinitionUseCase(
-  activityValueDefinitionService
-)
-const updateValueDefinitionUseCase = new UpdateActivityValueDefinitionUseCase(
-  activityValueDefinitionService
-)
-const deleteValueDefinitionUseCase = new DeleteActivityValueDefinitionUseCase(
-  activityValueDefinitionService
-)
-const getValueDefinitionByIdUseCase = new GetByIdActivityValueDefinitionUseCase(
-  activityValueDefinitionService
-)
-
-// ActivityLog Use Cases
-const getActivityLogsUseCase = new GetActivityLogsUseCase(activityLogService)
-const getActivityLogByIdUseCase = new GetActivityLogByIdUseCase(
-  activityLogService
-)
-const startActivityLogUseCase = new StartActivityLogUseCase(activityLogService)
-const stopActivityLogUseCase = new StopActivityLogUseCase(activityLogService)
-const updateActivityLogUseCase = new UpdateActivityLogUseCase(
-  activityLogService
-)
-const saveActivityLogValuesUseCase = new SaveActivityLogValuesUseCase(
-  activityLogService
-)
-const getActivityLogValuesUseCase = new GetActivityLogValuesUseCase(
-  activityLogService
-)
-const getActiveActivityLogsUseCase = new GetActiveActivityLogsUseCase(
-  activityLogService
-)
-const getCalendarLogsUseCase = new GetCalendarLogsUseCase(activityLogService)
-
-// UserSession Use Cases
-const getUserSessionsUseCase = new GetUserSessionsUseCase(userSessionService)
-const revokeSessionUseCase = new RevokeSessionUseCase(userSessionService)
-
-// TaskList Use Cases
-const getTaskListsUseCase = new GetTaskListsUseCase(taskListService)
-const getTaskListByIdUseCase = new GetTaskListByIdUseCase(taskListService)
-const createTaskListUseCase = new CreateTaskListUseCase(taskListService)
-const updateTaskListUseCase = new UpdateTaskListUseCase(taskListService)
-const deleteTaskListUseCase = new DeleteTaskListUseCase(taskListService)
-const getTasksByListUseCase = new GetTasksByListUseCase(taskListService)
-const getTaskByIdUseCase = new GetTaskByIdUseCase(taskListService)
-const createTaskUseCase = new CreateTaskUseCase(taskListService)
-const updateTaskUseCase = new UpdateTaskUseCase(taskListService)
-const deleteTaskUseCase = new DeleteTaskUseCase(taskListService)
-const toggleTaskUseCase = new ToggleTaskUseCase(taskListService)
-
-// Auth Use Cases
-const loginUserUseCase = new LoginUserUseCase(
-  authService,
-  authSessionRepository
-)
-const registerUseCases = new RegisterUseCases(authService)
-const refreshTokenUseCases = new RefreshTokenUseCases(
-  authService,
-  authSessionRepository
-)
-const logoutUseCase = new LogoutUseCase(
-  authSessionRepository,
-  httpClient,
-  userSessionService
-)
-const checkAuthSessionUseCase = new CheckAuthSessionUseCase(
-  authSessionRepository,
-  authService
-)
-const getSessionUseCase = new GetSessionUseCase(authSessionRepository)
-
-// ============================================
-// 9. CONTROLLERS / PLOCS
-// ============================================
-
-// AuthPloc principal - maneja el estado global de autenticación
-const authPloc = new AuthPloc(
-  checkAuthSessionUseCase,
-  getSessionUseCase,
-  authSessionRepository
-)
-
-// LoginPloc - maneja el flujo de inicio de sesión
-const loginPloc = new LoginPloc(loginUserUseCase, authPloc)
-
-// RegisterPloc - maneja el flujo de registro
-const registerPloc = new RegisterPloc(registerUseCases)
-
-// RefreshTokenPloc - maneja la renovación de tokens
-const refreshTokenPloc = new RefreshTokenPloc(
-  refreshTokenUseCases,
-  getSessionUseCase
-)
-
-// LogoutPloc - maneja el cierre de sesión
-const logoutPloc = new LogoutPloc(logoutUseCase, authPloc)
-
-// SidebarPloc - maneja el estado del Sidebar con persistencia
-const sidebarPloc = new SidebarPloc(
-  getSidebarStateUseCase,
-  saveSidebarStateUseCase
-)
-
-// UserProfilePloc - maneja el perfil del usuario
-const userProfileDisplayPloc = new UserProfileDisplayPloc(
-  getUserProfileUseCase,
-  authPloc
-)
-const userProfileFormPloc = new UserProfileFormPloc(
-  updateUserProfileUseCase,
-  getUserProfileUseCase,
-  authPloc
-)
-
-// CategoriesPloc - maneja las categorías
-const categoriesListPloc = new CategoriesListPloc(getCategoriesUseCase)
-const categoryDetailPloc = new CategoryDetailPloc(getCategoryByIdUseCase)
-const categoryCreateFormPloc = new CategoryCreateFormPloc(createCategoryUseCase)
-const categoryEditFormPloc = new CategoryEditFormPloc(
-  updateCategoryUseCase,
-  getCategoryByIdUseCase
-)
-const categoryDeletePloc = new CategoryDeletePloc(deleteCategoryUseCase)
-
-// Activity Plocs
-const activitiesListPloc = new ActivitiesListPloc(getActivitiesUseCase)
-const activityDetailPloc = new ActivityDetailPloc(getActivityByIdUseCase)
-const activityCreateFormPloc = new ActivityCreateFormPloc(createActivityUseCase)
-const activityEditFormPloc = new ActivityEditFormPloc(
-  updateActivityUseCase,
-  getActivityByIdUseCase
-)
-const activityDeletePloc = new ActivityDeletePloc(deleteActivityUseCase)
-
-// ActivityValueDefinition Plocs
-const activityValueDefinitionsListPloc = new ActivityValueDefinitionListPloc(
-  getValueDefinitionsUseCase
-)
-const valueDefinitionCreateFormPloc = new ActivityValueDefinitionCreateFormPloc(
-  createValueDefinitionUseCase
-)
-const valueDefinitionEditFormPloc = new ActivityValueDefinitionEditFormPloc(
-  getValueDefinitionByIdUseCase,
-  updateValueDefinitionUseCase
-)
-const valueDefinitionDeletePloc = new ActivityValueDefinitionDeletePloc(
-  deleteValueDefinitionUseCase
-)
-
-// ActivityLog Plocs
-const activityLogsListPloc = new ActivityLogsListPloc(
-  getActivityLogsUseCase,
-  startActivityLogUseCase,
-  stopActivityLogUseCase
-)
-const activityLogDetailPloc = new ActivityLogDetailPloc(
-  getActivityLogByIdUseCase,
-  updateActivityLogUseCase,
-  saveActivityLogValuesUseCase,
-  getActivityLogValuesUseCase
-)
-const activeActivityLogsPloc = new ActiveActivityLogsPloc(
-  getActiveActivityLogsUseCase
-)
-const activityLogStartPloc = new ActivityLogStartPloc(startActivityLogUseCase)
-const activityLogStopPloc = new ActivityLogStopPloc(
-  stopActivityLogUseCase,
-  getValueDefinitionsUseCase,
-  saveActivityLogValuesUseCase
-)
-const calendarLogsPloc = new CalendarLogsPloc(getCalendarLogsUseCase)
-
-// UserSession Plocs
-const userSessionsListPloc = new UserSessionsListPloc(getUserSessionsUseCase)
-const sessionRevokePloc = new SessionRevokePloc(revokeSessionUseCase)
-
-// TaskList Plocs
-const taskListsPloc = new TaskListsPloc(getTaskListsUseCase)
-const taskListDetailPloc = new TaskListDetailPloc(getTaskListByIdUseCase)
-const taskListCreateFormPloc = new TaskListCreateFormPloc(createTaskListUseCase)
-const taskListEditFormPloc = new TaskListEditFormPloc(
-  getTaskListByIdUseCase,
-  updateTaskListUseCase
-)
-const taskListDeletePloc = new TaskListDeletePloc(deleteTaskListUseCase)
-const tasksPloc = new TasksPloc(getTasksByListUseCase)
-const taskCreateFormPloc = new TaskCreateFormPloc(createTaskUseCase)
-const taskEditFormPloc = new TaskEditFormPloc(
-  getTaskByIdUseCase,
-  updateTaskUseCase
-)
-const taskDeletePloc = new TaskDeletePloc(deleteTaskUseCase)
-const taskTogglePloc = new TaskTogglePloc(toggleTaskUseCase)
-
-// ============================================
-// 10. INTERFAZ DE DEPENDENCIAS
+// INTERFAZ DE DEPENDENCIAS
 // ============================================
 
 export interface Dependencies {
@@ -531,233 +191,135 @@ export interface Dependencies {
 }
 
 // ============================================
-// 11. FUNCIONES PROVIDER
-// ============================================
-
-function provideLoginPloc(): LoginPloc {
-  return loginPloc
-}
-
-function provideAuthPloc(): AuthPloc {
-  return authPloc
-}
-
-function provideRegisterPloc(): RegisterPloc {
-  return registerPloc
-}
-
-function provideRefreshTokenPloc(): RefreshTokenPloc {
-  return refreshTokenPloc
-}
-
-function provideLogoutPloc(): LogoutPloc {
-  return logoutPloc
-}
-
-function provideAuthSessionRepository(): AuthSessionRepository {
-  return authSessionRepository
-}
-
-function provideSidebarPloc(): SidebarPloc {
-  return sidebarPloc
-}
-
-function provideUserProfileDisplayPloc(): UserProfileDisplayPloc {
-  return userProfileDisplayPloc
-}
-
-function provideUserProfileFormPloc(): UserProfileFormPloc {
-  return userProfileFormPloc
-}
-
-function provideCategoriesListPloc(): CategoriesListPloc {
-  return categoriesListPloc
-}
-
-function provideCategoryDetailPloc(): CategoryDetailPloc {
-  return categoryDetailPloc
-}
-
-function provideCategoryCreateFormPloc(): CategoryCreateFormPloc {
-  return categoryCreateFormPloc
-}
-
-function provideCategoryEditFormPloc(): CategoryEditFormPloc {
-  return categoryEditFormPloc
-}
-
-function provideCategoryDeletePloc(): CategoryDeletePloc {
-  return categoryDeletePloc
-}
-
-// Activity Providers
-function provideActivitiesListPloc(): ActivitiesListPloc {
-  return activitiesListPloc
-}
-
-function provideActivityDetailPloc(): ActivityDetailPloc {
-  return activityDetailPloc
-}
-
-function provideActivityCreateFormPloc(): ActivityCreateFormPloc {
-  return activityCreateFormPloc
-}
-
-function provideActivityEditFormPloc(): ActivityEditFormPloc {
-  return activityEditFormPloc
-}
-
-function provideActivityDeletePloc(): ActivityDeletePloc {
-  return activityDeletePloc
-}
-
-function provideActivityValueDefinitionsListPloc(): ActivityValueDefinitionListPloc {
-  return activityValueDefinitionsListPloc
-}
-
-function provideValueDefinitionCreateFormPloc(): ActivityValueDefinitionCreateFormPloc {
-  return valueDefinitionCreateFormPloc
-}
-
-function provideValueDefinitionEditFormPloc(): ActivityValueDefinitionEditFormPloc {
-  return valueDefinitionEditFormPloc
-}
-
-function provideValueDefinitionDeletePloc(): ActivityValueDefinitionDeletePloc {
-  return valueDefinitionDeletePloc
-}
-
-// ActivityLog Providers
-function provideActivityLogsListPloc(): ActivityLogsListPloc {
-  return activityLogsListPloc
-}
-
-function provideActivityLogDetailPloc(): ActivityLogDetailPloc {
-  return activityLogDetailPloc
-}
-
-function provideActiveActivityLogsPloc(): ActiveActivityLogsPloc {
-  return activeActivityLogsPloc
-}
-
-function provideActivityLogStartPloc(): ActivityLogStartPloc {
-  return activityLogStartPloc
-}
-
-function provideActivityLogStopPloc(): ActivityLogStopPloc {
-  return activityLogStopPloc
-}
-
-function provideCalendarLogsPloc(): CalendarLogsPloc {
-  return calendarLogsPloc
-}
-
-// UserSession Providers
-function provideUserSessionsListPloc(): UserSessionsListPloc {
-  return userSessionsListPloc
-}
-
-function provideSessionRevokePloc(): SessionRevokePloc {
-  return sessionRevokePloc
-}
-
-function provideDateProvider(): DateProvider {
-  return dateProvider
-}
-
-// TaskList Providers
-function provideTaskListsPloc(): TaskListsPloc {
-  return taskListsPloc
-}
-
-function provideTaskListDetailPloc(): TaskListDetailPloc {
-  return taskListDetailPloc
-}
-
-function provideTaskListCreateFormPloc(): TaskListCreateFormPloc {
-  return taskListCreateFormPloc
-}
-
-function provideTaskListEditFormPloc(): TaskListEditFormPloc {
-  return taskListEditFormPloc
-}
-
-function provideTaskListDeletePloc(): TaskListDeletePloc {
-  return taskListDeletePloc
-}
-
-function provideTasksPloc(): TasksPloc {
-  return tasksPloc
-}
-
-function provideTaskCreateFormPloc(): TaskCreateFormPloc {
-  return taskCreateFormPloc
-}
-
-function provideTaskEditFormPloc(): TaskEditFormPloc {
-  return taskEditFormPloc
-}
-
-function provideTaskDeletePloc(): TaskDeletePloc {
-  return taskDeletePloc
-}
-
-function provideTaskTogglePloc(): TaskTogglePloc {
-  return taskTogglePloc
-}
-
-// Factory functions
-function createValueDefinitionDeletePloc(): ActivityValueDefinitionDeletePloc {
-  return new ActivityValueDefinitionDeletePloc(deleteValueDefinitionUseCase)
-}
-
-// ============================================
-// 12. LOCATOR PÚBLICO
+// LOCATOR PÚBLICO — solo getters (lazy)
 // ============================================
 
 export const dependenciesLocator: Dependencies = {
-  providerLoginPloc: provideLoginPloc(),
-  providerAuthPloc: provideAuthPloc(),
-  providerRegisterPloc: provideRegisterPloc(),
-  providerRefreshTokenPloc: provideRefreshTokenPloc(),
-  providerLogoutPloc: provideLogoutPloc(),
-  providerAuthSessionRepository: provideAuthSessionRepository(),
-  providerSidebarPloc: provideSidebarPloc(),
-  providerUserProfileDisplayPloc: provideUserProfileDisplayPloc(),
-  providerUserProfileFormPloc: provideUserProfileFormPloc(),
-  providerCategoriesListPloc: provideCategoriesListPloc(),
-  providerCategoryDetailPloc: provideCategoryDetailPloc(),
-  providerCategoryCreateFormPloc: provideCategoryCreateFormPloc(),
-  providerCategoryEditFormPloc: provideCategoryEditFormPloc(),
-  providerCategoryDeletePloc: provideCategoryDeletePloc(),
-  providerActivitiesListPloc: provideActivitiesListPloc(),
-  providerActivityDetailPloc: provideActivityDetailPloc(),
-  providerActivityCreateFormPloc: provideActivityCreateFormPloc(),
-  providerActivityEditFormPloc: provideActivityEditFormPloc(),
-  providerActivityDeletePloc: provideActivityDeletePloc(),
-  providerActivityValueDefinitionsListPloc:
-    provideActivityValueDefinitionsListPloc(),
-  providerValueDefinitionCreateFormPloc: provideValueDefinitionCreateFormPloc(),
-  providerValueDefinitionEditFormPloc: provideValueDefinitionEditFormPloc(),
-  providerValueDefinitionDeletePloc: provideValueDefinitionDeletePloc(),
-  providerActivityLogsListPloc: provideActivityLogsListPloc(),
-  providerActivityLogDetailPloc: provideActivityLogDetailPloc(),
-  providerActiveActivityLogsPloc: provideActiveActivityLogsPloc(),
-  providerActivityLogStartPloc: provideActivityLogStartPloc(),
-  providerActivityLogStopPloc: provideActivityLogStopPloc(),
-  providerCalendarLogsPloc: provideCalendarLogsPloc(),
-  providerUserSessionsListPloc: provideUserSessionsListPloc(),
-  providerSessionRevokePloc: provideSessionRevokePloc(),
-  providerDateProvider: provideDateProvider(),
-  providerTaskListsPloc: provideTaskListsPloc(),
-  providerTaskListDetailPloc: provideTaskListDetailPloc(),
-  providerTaskListCreateFormPloc: provideTaskListCreateFormPloc(),
-  providerTaskListEditFormPloc: provideTaskListEditFormPloc(),
-  providerTaskListDeletePloc: provideTaskListDeletePloc(),
-  providerTasksPloc: provideTasksPloc(),
-  providerTaskCreateFormPloc: provideTaskCreateFormPloc(),
-  providerTaskEditFormPloc: provideTaskEditFormPloc(),
-  providerTaskDeletePloc: provideTaskDeletePloc(),
-  providerTaskTogglePloc: provideTaskTogglePloc(),
-  createValueDefinitionDeletePloc: createValueDefinitionDeletePloc,
+  get providerLoginPloc() {
+    return getLoginPloc()
+  },
+  get providerAuthPloc() {
+    return getAuthPloc()
+  },
+  get providerRegisterPloc() {
+    return getRegisterPloc()
+  },
+  get providerRefreshTokenPloc() {
+    return getRefreshTokenPloc()
+  },
+  get providerLogoutPloc() {
+    return getLogoutPloc()
+  },
+  get providerAuthSessionRepository() {
+    return authSessionRepository
+  },
+  get providerSidebarPloc() {
+    return getSidebarPloc()
+  },
+  get providerUserProfileDisplayPloc() {
+    return getUserProfileDisplayPloc()
+  },
+  get providerUserProfileFormPloc() {
+    return getUserProfileFormPloc()
+  },
+  get providerCategoriesListPloc() {
+    return getCategoriesListPloc()
+  },
+  get providerCategoryDetailPloc() {
+    return getCategoryDetailPloc()
+  },
+  get providerCategoryCreateFormPloc() {
+    return getCategoryCreateFormPloc()
+  },
+  get providerCategoryEditFormPloc() {
+    return getCategoryEditFormPloc()
+  },
+  get providerCategoryDeletePloc() {
+    return getCategoryDeletePloc()
+  },
+  get providerActivitiesListPloc() {
+    return getActivitiesListPloc()
+  },
+  get providerActivityDetailPloc() {
+    return getActivityDetailPloc()
+  },
+  get providerActivityCreateFormPloc() {
+    return getActivityCreateFormPloc()
+  },
+  get providerActivityEditFormPloc() {
+    return getActivityEditFormPloc()
+  },
+  get providerActivityDeletePloc() {
+    return getActivityDeletePloc()
+  },
+  get providerActivityValueDefinitionsListPloc() {
+    return getActivityValueDefinitionsListPloc()
+  },
+  get providerValueDefinitionCreateFormPloc() {
+    return getValueDefinitionCreateFormPloc()
+  },
+  get providerValueDefinitionEditFormPloc() {
+    return getValueDefinitionEditFormPloc()
+  },
+  get providerValueDefinitionDeletePloc() {
+    return getValueDefinitionDeletePloc()
+  },
+  get providerActivityLogsListPloc() {
+    return getActivityLogsListPloc()
+  },
+  get providerActivityLogDetailPloc() {
+    return getActivityLogDetailPloc()
+  },
+  get providerActiveActivityLogsPloc() {
+    return getActiveActivityLogsPloc()
+  },
+  get providerActivityLogStartPloc() {
+    return getActivityLogStartPloc()
+  },
+  get providerActivityLogStopPloc() {
+    return getActivityLogStopPloc()
+  },
+  get providerCalendarLogsPloc() {
+    return getCalendarLogsPloc()
+  },
+  get providerUserSessionsListPloc() {
+    return getUserSessionsListPloc()
+  },
+  get providerSessionRevokePloc() {
+    return getSessionRevokePloc()
+  },
+  get providerDateProvider() {
+    return getDateProvider()
+  },
+  get providerTaskListsPloc() {
+    return getTaskListsPloc()
+  },
+  get providerTaskListDetailPloc() {
+    return getTaskListDetailPloc()
+  },
+  get providerTaskListCreateFormPloc() {
+    return getTaskListCreateFormPloc()
+  },
+  get providerTaskListEditFormPloc() {
+    return getTaskListEditFormPloc()
+  },
+  get providerTaskListDeletePloc() {
+    return getTaskListDeletePloc()
+  },
+  get providerTasksPloc() {
+    return getTasksPloc()
+  },
+  get providerTaskCreateFormPloc() {
+    return getTaskCreateFormPloc()
+  },
+  get providerTaskEditFormPloc() {
+    return getTaskEditFormPloc()
+  },
+  get providerTaskDeletePloc() {
+    return getTaskDeletePloc()
+  },
+  get providerTaskTogglePloc() {
+    return getTaskTogglePloc()
+  },
+  createValueDefinitionDeletePloc,
 }

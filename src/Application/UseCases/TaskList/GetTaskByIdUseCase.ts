@@ -9,7 +9,10 @@ export type GetTaskByIdOutput =
   | { success: true; task: IGetTaskByIdResponse['task'] }
   | { success: false; error: ApiErrorResponse }
 
-export class GetTaskByIdUseCase implements IUseCase<IGetTaskByIdRequest, GetTaskByIdOutput> {
+export class GetTaskByIdUseCase implements IUseCase<
+  IGetTaskByIdRequest,
+  GetTaskByIdOutput
+> {
   private readonly taskListService: ITaskListService
 
   constructor(taskListService: ITaskListService) {

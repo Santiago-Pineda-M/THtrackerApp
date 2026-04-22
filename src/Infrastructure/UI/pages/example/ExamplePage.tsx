@@ -9,7 +9,7 @@ import {
   SpinnersExample,
   AvatarsIconsExample,
   AuthSessionExample,
-} from '../../components/organisms'
+} from '../../components'
 import { MainLayout } from '../../components/layouts'
 
 const ExamplePage: React.FC = () => {

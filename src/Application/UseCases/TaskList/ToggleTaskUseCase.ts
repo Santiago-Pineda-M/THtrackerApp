@@ -9,7 +9,10 @@ export type ToggleTaskOutput =
   | { success: true }
   | { success: false; error: ApiErrorResponse }
 
-export class ToggleTaskUseCase implements IUseCase<IToggleTaskRequest, ToggleTaskOutput> {
+export class ToggleTaskUseCase implements IUseCase<
+  IToggleTaskRequest,
+  ToggleTaskOutput
+> {
   private readonly taskListService: ITaskListService
 
   constructor(taskListService: ITaskListService) {
