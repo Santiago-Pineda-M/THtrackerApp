@@ -15,6 +15,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { path: '/dashboard', label: 'Inicio', icon: 'Home' },
   { path: '/activities', label: 'Actividades', icon: 'Activity' },
+  { path: '/task-lists', label: 'Listas de Tareas', icon: 'List' },
   { path: '/example', label: 'Ejemplos', icon: 'FileText' },
   { path: '/user-profile', label: 'Perfil', icon: 'User' },
 ]

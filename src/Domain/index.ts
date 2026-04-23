@@ -69,6 +69,7 @@ export { Ploc } from './Ploc'
 // Common Types
 export type { ApiErrorResponse } from './Common/IApiErrorResponse'
 export type { ProblemDetails } from './Common/ProblemDetails'
+export { isApiError } from './Common/isApiError'
 
 // User Domain Types
 export type { UserProfileResponse } from './User/IUserResponses'

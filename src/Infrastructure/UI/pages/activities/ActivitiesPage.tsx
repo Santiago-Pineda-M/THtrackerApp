@@ -4,8 +4,8 @@ import {
   Calendar,
   ActionsRecordLogs,
   ListActiveActivityLogs,
+  CategoriesList,
 } from './components'
-import { CategoriesList } from '../categories/components'
 import { MainLayout } from '../../components/layouts'
 
 export const ActivitiesPage: React.FC = () => {

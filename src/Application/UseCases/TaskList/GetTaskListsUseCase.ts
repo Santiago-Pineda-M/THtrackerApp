@@ -4,6 +4,7 @@ import type {
   IGetTaskListsRequest,
   IGetTaskListsResponse,
 } from '../../../Domain/TaskList'
+import { isApiError } from '../../../Domain'
 
 export type GetTaskListsOutput =
   | { success: true; taskLists: IGetTaskListsResponse['taskLists'] }
@@ -21,17 +22,7 @@ export class GetTaskListsUseCase implements IUseCase<
 
   async execute(request: IGetTaskListsRequest): Promise<GetTaskListsOutput> {
     const result = await this.taskListService.getTaskLists(request)
-
-    if (this.isError(result)) {
-      return { success: false, error: result }
-    }
-
+    if (isApiError(result)) return { success: false, error: result }
     return { success: true, taskLists: result.taskLists }
-  }
-
-  private isError(
-    result: IGetTaskListsResponse | ApiErrorResponse
-  ): result is ApiErrorResponse {
-    return 'title' in result || 'detail' in result || 'status' in result
   }
 }

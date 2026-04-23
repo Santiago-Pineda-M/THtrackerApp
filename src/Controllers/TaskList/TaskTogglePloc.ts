@@ -1,33 +1,65 @@
+/**
+ * CONTROLLER LAYER - TaskTogglePloc
+ * PLOC para alternar el estado de completado de una tarea.
+ */
+
 import { Ploc } from '../../Domain/Ploc'
-import type { ITaskToggleState } from '../../Domain'
-import type { ToggleTaskUseCase } from '../../Application/UseCases/TaskList/ToggleTaskUseCase'
+import { type ITaskToggleState, initialTaskToggleState } from '../../Domain'
+import type { ToggleTaskUseCase } from '../../Application/UseCases/Task/ToggleTaskUseCase'
 
 export class TaskTogglePloc extends Ploc<ITaskToggleState> {
   private readonly toggleTaskUseCase: ToggleTaskUseCase
 
   constructor(toggleTaskUseCase: ToggleTaskUseCase) {
-    super({ kind: 'idle' })
+    super(initialTaskToggleState)
     this.toggleTaskUseCase = toggleTaskUseCase
   }
 
+  /**
+   * Alterna el estado de completado de una tarea.
+   */
   async toggle(id: string): Promise<void> {
-    this.changeState({ kind: 'toggling', taskId: id })
-
-    const result = await this.toggleTaskUseCase.execute({ id })
-
-    if (result.success) {
-      // Note: We don't have the new completion state in the response,
-      // but the UI can usually infer it or reload the list.
-      // I'll set a default or dummy value if needed, but the state definition says isCompleted: boolean.
-      // Since IToggleTaskResponse is { success: true }, I'll have to assume success means it toggled.
-      this.changeState({ kind: 'toggleSuccess', taskId: id, isCompleted: true })
-      return
-    }
-
     this.changeState({
-      kind: 'toggleError',
+      ...this.state,
       taskId: id,
-      error: result.error.detail || 'Error toggling task',
+      isLoading: true,
+      success: false,
+      error: null,
     })
+
+    try {
+      const result = await this.toggleTaskUseCase.execute({ id })
+
+      if (result.success) {
+        this.changeState({
+          ...this.state,
+          isLoading: false,
+          success: true,
+        })
+        return
+      }
+
+      this.changeState({
+        ...this.state,
+        isLoading: false,
+        success: false,
+        error: result.error,
+      })
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
+      this.changeState({
+        ...this.state,
+        isLoading: false,
+        success: false,
+        error: { title: 'Error', detail: message },
+      })
+    }
+  }
+
+  /**
+   * Resetea el estado.
+   */
+  reset(): void {
+    this.changeState(initialTaskToggleState)
   }
 }

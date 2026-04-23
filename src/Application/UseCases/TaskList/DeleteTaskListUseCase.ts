@@ -1,9 +1,7 @@
 import type { IUseCase, ApiErrorResponse } from '../../../Domain'
 import type { ITaskListService } from '../../Services/TaskList/ITaskListService'
-import type {
-  IDeleteTaskListRequest,
-  IDeleteTaskListResponse,
-} from '../../../Domain/TaskList'
+import type { IDeleteTaskListRequest } from '../../../Domain/TaskList'
+import { isApiError } from '../../../Domain'
 
 export type DeleteTaskListOutput =
   | { success: true }
@@ -23,17 +21,7 @@ export class DeleteTaskListUseCase implements IUseCase<
     request: IDeleteTaskListRequest
   ): Promise<DeleteTaskListOutput> {
     const result = await this.taskListService.deleteTaskList(request)
-
-    if (this.isError(result)) {
-      return { success: false, error: result }
-    }
-
+    if (isApiError(result)) return { success: false, error: result }
     return { success: true }
-  }
-
-  private isError(
-    result: IDeleteTaskListResponse | ApiErrorResponse
-  ): result is ApiErrorResponse {
-    return 'title' in result || 'detail' in result || 'status' in result
   }
 }

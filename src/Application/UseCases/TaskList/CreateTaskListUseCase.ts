@@ -4,6 +4,7 @@ import type {
   ICreateTaskListRequest,
   ICreateTaskListResponse,
 } from '../../../Domain/TaskList'
+import { isApiError } from '../../../Domain'
 
 export type CreateTaskListOutput =
   | { success: true; taskList: ICreateTaskListResponse['taskList'] }
@@ -23,17 +24,7 @@ export class CreateTaskListUseCase implements IUseCase<
     request: ICreateTaskListRequest
   ): Promise<CreateTaskListOutput> {
     const result = await this.taskListService.createTaskList(request)
-
-    if (this.isError(result)) {
-      return { success: false, error: result }
-    }
-
+    if (isApiError(result)) return { success: false, error: result }
     return { success: true, taskList: result.taskList }
-  }
-
-  private isError(
-    result: ICreateTaskListResponse | ApiErrorResponse
-  ): result is ApiErrorResponse {
-    return 'title' in result || 'detail' in result || 'status' in result
   }
 }

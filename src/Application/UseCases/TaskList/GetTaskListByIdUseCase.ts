@@ -4,6 +4,7 @@ import type {
   IGetTaskListByIdRequest,
   IGetTaskListByIdResponse,
 } from '../../../Domain/TaskList'
+import { isApiError } from '../../../Domain'
 
 export type GetTaskListByIdOutput =
   | { success: true; taskList: IGetTaskListByIdResponse['taskList'] }
@@ -23,17 +24,7 @@ export class GetTaskListByIdUseCase implements IUseCase<
     request: IGetTaskListByIdRequest
   ): Promise<GetTaskListByIdOutput> {
     const result = await this.taskListService.getTaskListById(request)
-
-    if (this.isError(result)) {
-      return { success: false, error: result }
-    }
-
+    if (isApiError(result)) return { success: false, error: result }
     return { success: true, taskList: result.taskList }
-  }
-
-  private isError(
-    result: IGetTaskListByIdResponse | ApiErrorResponse
-  ): result is ApiErrorResponse {
-    return 'title' in result || 'detail' in result || 'status' in result
   }
 }

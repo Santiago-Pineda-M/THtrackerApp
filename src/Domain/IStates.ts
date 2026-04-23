@@ -801,70 +801,222 @@ export const initialCalendarLogsState: ICalendarLogsState = {
   error: null,
 }
 
-export type ITaskListsState =
-  | { kind: 'initial' }
-  | { kind: 'loading' }
-  | { kind: 'empty' }
-  | { kind: 'loadSuccess'; taskLists: ITaskListItem[] }
-  | { kind: 'loadError'; error: string }
+/**
+ * ==========================================
+ * TASK LISTS STATE
+ * ==========================================
+ */
 
-export type ITaskListDetailState =
-  | { kind: 'initial' }
-  | { kind: 'loading' }
-  | { kind: 'loadSuccess'; taskList: ITaskListItem }
-  | { kind: 'loadError'; error: string }
+/**
+ * Estado para la lista de listas de tareas del usuario autenticado
+ */
+export interface ITaskListsState {
+  taskLists: ITaskListItem[]
+  error: ApiErrorResponse | null
+  isLoading: boolean
+}
 
-export type ITaskListCreateState =
-  | { kind: 'idle' }
-  | { kind: 'submitting' }
-  | { kind: 'submitSuccess'; taskList: ITaskListItem }
-  | { kind: 'submitError'; error: string }
+export const initialTaskListsState: ITaskListsState = {
+  taskLists: [],
+  error: null,
+  isLoading: false,
+}
 
-export type ITaskListEditState =
-  | { kind: 'idle' }
-  | { kind: 'loading' }
-  | { kind: 'submitting' }
-  | { kind: 'loadSuccess'; taskList: ITaskListItem }
-  | { kind: 'submitSuccess'; taskList: ITaskListItem }
-  | { kind: 'loadError'; error: string }
-  | { kind: 'submitError'; error: string }
+/**
+ * ==========================================
+ * TASKS STATE
+ * ==========================================
+ */
 
-export type ITaskListDeleteState =
-  | { kind: 'idle' }
-  | { kind: 'deleting' }
-  | { kind: 'deleteSuccess' }
-  | { kind: 'deleteError'; error: string }
+/**
+ * Estado para la lista de tareas dentro de una lista de tareas
+ */
+export interface ITasksState {
+  tasks: ITaskItem[]
+  error: ApiErrorResponse | null
+  isLoading: boolean
+}
 
-export type ITasksState =
-  | { kind: 'initial' }
-  | { kind: 'loading' }
-  | { kind: 'empty' }
-  | { kind: 'loadSuccess'; tasks: ITaskItem[] }
-  | { kind: 'loadError'; error: string }
+export const initialTasksState: ITasksState = {
+  tasks: [],
+  error: null,
+  isLoading: false,
+}
 
-export type ITaskCreateState =
-  | { kind: 'idle' }
-  | { kind: 'submitting' }
-  | { kind: 'submitSuccess'; task: ITaskItem }
-  | { kind: 'submitError'; error: string }
+/**
+ * ==========================================
+ * TASK LIST DETAIL STATE
+ * ==========================================
+ */
 
-export type ITaskEditState =
-  | { kind: 'idle' }
-  | { kind: 'loading' }
-  | { kind: 'submitting' }
-  | { kind: 'loadSuccess'; task: ITaskItem }
-  | { kind: 'submitSuccess'; task: ITaskItem }
-  | { kind: 'loadError'; error: string }
-  | { kind: 'submitError'; error: string }
+export interface ITaskListDetailState {
+  taskList: ITaskListItem | null
+  error: ApiErrorResponse | null
+  isLoading: boolean
+}
 
-export type ITaskDeleteState =
-  | { kind: 'idle' }
-  | { kind: 'deleting' }
-  | { kind: 'deleteSuccess' }
-  | { kind: 'deleteError'; error: string }
+export const initialTaskListDetailState: ITaskListDetailState = {
+  taskList: null,
+  error: null,
+  isLoading: false,
+}
 
-export type ITaskToggleState =
-  | { kind: 'idle' }
-  | { kind: 'toggling'; taskId: string }
-  | { kind: 'toggleSuccess'; taskId: string; isCompleted: boolean }
-  | { kind: 'toggleError'; taskId: string; error: string }
+/**
+ * ==========================================
+ * TASK LIST CREATE FORM STATE
+ * ==========================================
+ */
+
+export interface ITaskListCreateFormState {
+  name: string
+  description: string | null
+  errors: Record<string, string[]>
+  isLoading: boolean
+  success: boolean
+  message: string
+}
+
+export const initialTaskListCreateFormState: ITaskListCreateFormState = {
+  name: '',
+  description: null,
+  errors: {},
+  isLoading: false,
+  success: false,
+  message: '',
+}
+
+/**
+ * ==========================================
+ * TASK LIST EDIT FORM STATE
+ * ==========================================
+ */
+
+export interface ITaskListEditFormState {
+  id: string
+  name: string
+  description: string | null
+  errors: Record<string, string[]>
+  isLoading: boolean
+  success: boolean
+  message: string
+}
+
+export const initialTaskListEditFormState: ITaskListEditFormState = {
+  id: '',
+  name: '',
+  description: null,
+  errors: {},
+  isLoading: false,
+  success: false,
+  message: '',
+}
+
+/**
+ * ==========================================
+ * TASK LIST DELETE STATE
+ * ==========================================
+ */
+
+export interface ITaskListDeleteState {
+  isLoading: boolean
+  success: boolean
+  error: ApiErrorResponse | null
+}
+
+export const initialTaskListDeleteState: ITaskListDeleteState = {
+  isLoading: false,
+  success: false,
+  error: null,
+}
+
+/**
+ * ==========================================
+ * TASK CREATE FORM STATE
+ * ==========================================
+ */
+
+export interface ITaskCreateFormState {
+  taskListId: string
+  title: string
+  description: string | null
+  errors: Record<string, string[]>
+  isLoading: boolean
+  success: boolean
+  message: string
+}
+
+export const initialTaskCreateFormState: ITaskCreateFormState = {
+  taskListId: '',
+  title: '',
+  description: null,
+  errors: {},
+  isLoading: false,
+  success: false,
+  message: '',
+}
+
+/**
+ * ==========================================
+ * TASK EDIT FORM STATE
+ * ==========================================
+ */
+
+export interface ITaskEditFormState {
+  id: string
+  taskListId: string
+  title: string
+  description: string | null
+  errors: Record<string, string[]>
+  isLoading: boolean
+  success: boolean
+  message: string
+}
+
+export const initialTaskEditFormState: ITaskEditFormState = {
+  id: '',
+  taskListId: '',
+  title: '',
+  description: null,
+  errors: {},
+  isLoading: false,
+  success: false,
+  message: '',
+}
+
+/**
+ * ==========================================
+ * TASK DELETE STATE
+ * ==========================================
+ */
+
+export interface ITaskDeleteState {
+  isLoading: boolean
+  success: boolean
+  error: ApiErrorResponse | null
+}
+
+export const initialTaskDeleteState: ITaskDeleteState = {
+  isLoading: false,
+  success: false,
+  error: null,
+}
+
+/**
+ * ==========================================
+ * TASK TOGGLE STATE
+ * ==========================================
+ */
+
+export interface ITaskToggleState {
+  taskId: string
+  isLoading: boolean
+  success: boolean
+  error: ApiErrorResponse | null
+}
+
+export const initialTaskToggleState: ITaskToggleState = {
+  taskId: '',
+  isLoading: false,
+  success: false,
+  error: null,
+}

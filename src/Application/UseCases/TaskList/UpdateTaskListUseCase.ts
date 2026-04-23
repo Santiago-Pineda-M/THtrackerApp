@@ -4,6 +4,7 @@ import type {
   IUpdateTaskListRequest,
   IUpdateTaskListResponse,
 } from '../../../Domain/TaskList'
+import { isApiError } from '../../../Domain'
 
 export type UpdateTaskListOutput =
   | { success: true; taskList: IUpdateTaskListResponse['taskList'] }
@@ -23,17 +24,7 @@ export class UpdateTaskListUseCase implements IUseCase<
     request: IUpdateTaskListRequest
   ): Promise<UpdateTaskListOutput> {
     const result = await this.taskListService.updateTaskList(request)
-
-    if (this.isError(result)) {
-      return { success: false, error: result }
-    }
-
+    if (isApiError(result)) return { success: false, error: result }
     return { success: true, taskList: result.taskList }
-  }
-
-  private isError(
-    result: IUpdateTaskListResponse | ApiErrorResponse
-  ): result is ApiErrorResponse {
-    return 'title' in result || 'detail' in result || 'status' in result
   }
 }

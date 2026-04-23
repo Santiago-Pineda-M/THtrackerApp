@@ -5,12 +5,12 @@ export interface IGetTaskListByIdRequest {
 }
 export interface ICreateTaskListRequest {
   name: string
-  description?: string
+  description?: string | null
 }
 export interface IUpdateTaskListRequest {
   id: string
   name: string
-  description?: string
+  description?: string | null
 }
 export interface IDeleteTaskListRequest {
   id: string
@@ -24,17 +24,19 @@ export interface IGetTaskByIdRequest {
 export interface ICreateTaskRequest {
   taskListId: string
   title: string
-  description?: string
+  description?: string | null
   dueDate?: string
 }
 export interface IUpdateTaskRequest {
   id: string
+  taskListId: string
   title: string
-  description?: string
+  description?: string | null
   dueDate?: string
 }
 export interface IDeleteTaskRequest {
   id: string
+  taskListId: string
 }
 export interface IToggleTaskRequest {
   id: string
