@@ -1,5 +1,7 @@
-﻿import React from 'react'
+import React from 'react'
 import styles from './CalendarEvent.module.css'
+
+import type { ActivityLogResponse } from '../../../../../../../Domain'
 
 export interface LogEventView {
   id: string
@@ -14,10 +16,12 @@ export interface LogEventView {
   height: number
   left: number // Percentage 0-100
   width: number // Percentage 0-100
+  rawLog: ActivityLogResponse
 }
 
 interface Props {
   event: LogEventView
+  onClick?: (event: LogEventView) => void
 }
 
 // Convert RGB/Hex to rgba for soft background
@@ -35,7 +39,7 @@ const getBorderColor = (color: string | null) => {
   return color
 }
 
-export const CalendarEvent: React.FC<Props> = ({ event }) => {
+export const CalendarEvent: React.FC<Props> = ({ event, onClick }) => {
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }
@@ -46,6 +50,7 @@ export const CalendarEvent: React.FC<Props> = ({ event }) => {
   return (
     <div
       className={styles.eventBlock}
+      onClick={() => onClick?.(event)}
       style={{
         top: `${event.top}px`,
         height: `${Math.max(event.height, 24)}px`,

@@ -1,5 +1,6 @@
-﻿import { useState, useEffect, useMemo, useRef } from 'react'
-import { Card, Button, Icon } from '../../../../../components'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { Card, Button, Icon, Text, Badge } from '../../../../../components'
+import { Modal } from '../../../../../components/molecules'
 import styles from './Calendar.module.css'
 import { CalendarHeader } from './CalendarHeader'
 import { CalendarGrid } from './CalendarGrid'
@@ -7,6 +8,7 @@ import type { LogEventView } from './CalendarEvent'
 import { useDependencies } from '../../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../../Hooks/usePlocState'
 import { calculateOverlap } from './utils/overlap'
+import { splitEventByDay } from './utils/eventSplitter'
 
 export const Calendar = () => {
   const {
@@ -22,6 +24,9 @@ export const Calendar = () => {
   // Zoom State
   const [pixelsPerHour, setPixelsPerHour] = useState<number>(30)
   const calendarRef = useRef<HTMLDivElement>(null)
+
+  // Modal State
+  const [selectedEvent, setSelectedEvent] = useState<LogEventView | null>(null)
 
   // Handle Zoom Scroll (Non-passive listener to prevent browser zoom)
   useEffect(() => {
@@ -70,9 +75,9 @@ export const Calendar = () => {
     })
   }, [calendarState.currentWeekDate])
 
-  // Map Logs -> Events
+  // Map Logs -> Events (splitting those that cross midnight)
   const events: LogEventView[] = useMemo(() => {
-    const eventViews = calendarState.logs.map((log) => {
+    const eventViews = calendarState.logs.flatMap((log) => {
       const activity = activitiesState.activities.find(
         (a) => a.id === log.activityId
       )
@@ -80,33 +85,14 @@ export const Calendar = () => {
         activity &&
         categoriesState.categories.find((c) => c.id === activity.categoryId)
 
-      const startedAt = providerDateProvider.parse(log.startedAt)
-      let endedAt = log.endedAt ? providerDateProvider.parse(log.endedAt) : null
-
-      if (!endedAt) {
-        endedAt = providerDateProvider.now()
-      }
-      const duration = (endedAt.getTime() - startedAt.getTime()) / 60000
-
-      // Position logic based on dynamic pixelsPerHour
-      const startHour = startedAt.getHours()
-      const startMin = startedAt.getMinutes()
-      const top = startHour * pixelsPerHour + startMin * (pixelsPerHour / 60)
-      const height = Math.max(duration * (pixelsPerHour / 60), 10)
-
-      return {
-        id: log.id,
-        title: activity ? activity.name || 'Actividad' : 'Desconocido',
-        startedAt,
-        endedAt,
-        durationMinutes: duration,
-        activityColor: activity?.color || null,
-        categoryColor: category?.color || null,
-        top,
-        height,
-        left: 0,
-        width: 100,
-      }
+      return splitEventByDay({
+        log,
+        activity,
+        category,
+        pixelsPerHour,
+        parseDate: providerDateProvider.parse,
+        now: providerDateProvider.now,
+      })
     })
 
     // Grouping events per day to calculate overlaps
@@ -130,6 +116,32 @@ export const Calendar = () => {
     providerDateProvider,
     pixelsPerHour,
   ])
+
+  const handleEventClick = (event: LogEventView) => {
+    setSelectedEvent(event)
+  }
+
+  const formatDuration = (minutes: number | null): string => {
+    if (!minutes) return '-'
+    const totalSeconds = Math.round(minutes * 60)
+    const hours = Math.floor(totalSeconds / 3600)
+    const mins = Math.floor((totalSeconds % 3600) / 60)
+    const secs = totalSeconds % 60
+    const pad = (n: number) => n.toString().padStart(2, '0')
+    if (hours > 0) return `${pad(hours)}:${pad(mins)}:${pad(secs)}`
+    return `${pad(mins)}:${pad(secs)}`
+  }
+
+  const parseDurationToUnits = (
+    minutes: number | null
+  ): { hours: number; minutes: number; seconds: number } | null => {
+    if (!minutes) return null
+    const totalSeconds = Math.round(minutes * 60)
+    const hours = Math.floor(totalSeconds / 3600)
+    const mins = Math.floor((totalSeconds % 3600) / 60)
+    const secs = totalSeconds % 60
+    return { hours, minutes: mins, seconds: secs }
+  }
 
   return (
     <Card
@@ -205,7 +217,97 @@ export const Calendar = () => {
           weekDates={weekDates}
           events={events}
           pixelsPerHour={pixelsPerHour}
+          onEventClick={handleEventClick}
         />
+
+        <Modal
+          isOpen={!!selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+          title='Detalle del Registro'
+        >
+          {selectedEvent && (
+            <div className={styles.modalContent}>
+              <div className={styles.detailRow}>
+                <Text weight='medium'>Actividad:</Text>
+                <Text>{selectedEvent.title}</Text>
+              </div>
+              <div className={styles.detailRow}>
+                <Text weight='medium'>Fecha:</Text>
+                <Text>
+                  {providerDateProvider.formatDate(selectedEvent.startedAt)}
+                </Text>
+              </div>
+              <div className={styles.detailRow}>
+                <Text weight='medium'>Hora de inicio:</Text>
+                <Text>
+                  {providerDateProvider.formatTime(selectedEvent.startedAt)}
+                </Text>
+              </div>
+              <div className={styles.detailRow}>
+                <Text weight='medium'>Hora de fin:</Text>
+                <Text>
+                  {selectedEvent.rawLog.endedAt
+                    ? providerDateProvider.formatTime(
+                        providerDateProvider.parse(selectedEvent.rawLog.endedAt)
+                      )
+                    : 'En curso'}
+                </Text>
+              </div>
+              <div className={styles.detailRow}>
+                <Text weight='medium'>Duración:</Text>
+                <Badge
+                  variant={
+                    selectedEvent.rawLog.durationMinutes ? 'default' : 'success'
+                  }
+                >
+                  {selectedEvent.rawLog.durationMinutes
+                    ? (() => {
+                        const d = parseDurationToUnits(
+                          selectedEvent.rawLog.durationMinutes
+                        )
+                        if (!d)
+                          return formatDuration(
+                            selectedEvent.rawLog.durationMinutes
+                          )
+                        const pad = (n: number) => n.toString().padStart(2, '0')
+                        return `${pad(d.hours)}:${pad(d.minutes)}:${pad(d.seconds)}`
+                      })()
+                    : 'En curso'}
+                </Badge>
+              </div>
+
+              {selectedEvent.rawLog.values &&
+                selectedEvent.rawLog.values.length > 0 && (
+                  <div className={styles.valuesSection}>
+                    <Text
+                      weight='medium'
+                      className={styles.valuesTitle}
+                    >
+                      Valores registrados:
+                    </Text>
+                    <div className={styles.valuesList}>
+                      {selectedEvent.rawLog.values.map((value) => (
+                        <div
+                          key={value.id}
+                          className={styles.valueItem}
+                        >
+                          <Text
+                            size='sm'
+                            color='secondary'
+                          >
+                            ID: {value.valueDefinitionId}
+                          </Text>
+                          <Text size='sm'>
+                            Valor: {value.value || 'Sin valor'}
+                          </Text>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+            </div>
+          )}
+        </Modal>
       </div>
     </Card>
   )

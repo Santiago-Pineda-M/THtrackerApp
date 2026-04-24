@@ -88,81 +88,77 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
         h={3}
         w={3}
       >
-        <div className={styles.container}>
-          {state.isLoading ? (
-            <div className={styles.loadingContainer}>
-              <Spinner size='md' />
-            </div>
-          ) : state.logs.length === 0 ? (
-            <div className={styles.emptyState}>
-              <Text>Aún no hay registros para esta actividad.</Text>
-            </div>
-          ) : (
-            <div className={styles.tableWrap}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    {columns.map((c) => (
-                      <th
-                        key={c.key}
-                        style={c.width ? { width: c.width } : undefined}
-                      >
-                        {c.label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {state.logs.map((log) => {
-                    const startDate = providerDateProvider.parse(log.startedAt)
-                    const endDate = log.endedAt
-                      ? providerDateProvider.parse(log.endedAt)
-                      : null
+        {state.isLoading ? (
+          <div className={styles.loadingContainer}>
+            <Spinner size='md' />
+          </div>
+        ) : state.logs.length === 0 ? (
+          <div className={styles.emptyState}>
+            <Text>Aún no hay registros para esta actividad.</Text>
+          </div>
+        ) : (
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  {columns.map((c) => (
+                    <th
+                      key={c.key}
+                      style={c.width ? { width: c.width } : undefined}
+                    >
+                      {c.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {state.logs.map((log) => {
+                  const startDate = providerDateProvider.parse(log.startedAt)
+                  const endDate = log.endedAt
+                    ? providerDateProvider.parse(log.endedAt)
+                    : null
 
-                    return (
-                      <tr
-                        key={log.id}
-                        onClick={() => handleLogClick(log)}
-                      >
-                        <td>
-                          <Text size='sm'>
-                            {providerDateProvider.formatDate(startDate)}
-                          </Text>
-                        </td>
-                        <td>
-                          <Text size='sm'>
-                            {providerDateProvider.formatTime(startDate)}
-                          </Text>
-                        </td>
-                        <td>
-                          <Text size='sm'>
-                            {endDate
-                              ? providerDateProvider.formatTime(endDate)
-                              : '-'}
-                          </Text>
-                        </td>
-                        <td>
-                          <Text size='sm'>
-                            {formatDuration(log.durationMinutes)}
-                          </Text>
-                        </td>
-                        <td>
-                          <Badge
-                            variant={
-                              log.durationMinutes ? 'default' : 'success'
-                            }
-                          >
-                            {log.durationMinutes ? 'Completado' : 'En curso'}
-                          </Badge>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                  return (
+                    <tr
+                      key={log.id}
+                      onClick={() => handleLogClick(log)}
+                    >
+                      <td>
+                        <Text size='sm'>
+                          {providerDateProvider.formatDate(startDate)}
+                        </Text>
+                      </td>
+                      <td>
+                        <Text size='sm'>
+                          {providerDateProvider.formatTime(startDate)}
+                        </Text>
+                      </td>
+                      <td>
+                        <Text size='sm'>
+                          {endDate
+                            ? providerDateProvider.formatTime(endDate)
+                            : '-'}
+                        </Text>
+                      </td>
+                      <td>
+                        <Text size='sm'>
+                          {formatDuration(log.durationMinutes)}
+                        </Text>
+                      </td>
+                      <td>
+                        <Badge
+                          variant={log.durationMinutes ? 'default' : 'success'}
+                        >
+                          {log.durationMinutes ? 'Completado' : 'En curso'}
+                        </Badge>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
 
       <Modal

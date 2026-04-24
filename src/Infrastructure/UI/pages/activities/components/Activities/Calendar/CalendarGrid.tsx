@@ -1,4 +1,4 @@
-﻿import React from 'react'
+import React from 'react'
 import styles from './CalendarGrid.module.css'
 import { CalendarEvent, type LogEventView } from './CalendarEvent'
 import { CurrentTimeIndicator } from './CurrentTimeIndicator'
@@ -7,6 +7,7 @@ interface Props {
   weekDates: Date[]
   events: LogEventView[]
   pixelsPerHour: number
+  onEventClick?: (event: LogEventView) => void
 }
 
 const hours = Array.from({ length: 24 }, (_, i) => i)
@@ -15,6 +16,7 @@ export const CalendarGrid: React.FC<Props> = ({
   weekDates,
   events,
   pixelsPerHour,
+  onEventClick,
 }) => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -67,6 +69,7 @@ export const CalendarGrid: React.FC<Props> = ({
                 <CalendarEvent
                   key={event.id}
                   event={event}
+                  onClick={onEventClick}
                 />
               ))}
             </div>
