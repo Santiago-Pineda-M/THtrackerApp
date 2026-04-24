@@ -7,7 +7,7 @@ interface Props {
 
 /**
  * COMPONENT - CurrentTimeIndicator
- * Renderiza una lÃ­nea roja con un punto que indica la hora actual.
+ * Renderiza una línea roja con un punto que indica la hora actual.
  */
 export const CurrentTimeIndicator: React.FC<Props> = ({ pixelsPerHour }) => {
   const [now, setNow] = useState(new Date())

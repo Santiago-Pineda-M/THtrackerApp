@@ -52,7 +52,7 @@ export const CategoryCreate: React.FC = () => {
     <>
       <Button
         variant='ghost'
-        title='Agregar CategorÃ­a'
+        title='Agregar Categoría'
         size='md'
         onClick={handleOpen}
       >

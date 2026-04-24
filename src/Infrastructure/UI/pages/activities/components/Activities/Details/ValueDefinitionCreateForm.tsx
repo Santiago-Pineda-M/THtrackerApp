@@ -91,11 +91,11 @@ export const ValueDefinitionCreateForm: React.FC<
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? 'Â¡Ã‰xito!' : 'Nueva Propiedad'}
+        title={state.success ? 'Â¡Éxito!' : 'Nueva Propiedad'}
       >
         {state.success ? (
           <div className={styles.successContainer}>
-            <Text>La propiedad se ha creado con Ã©xito.</Text>
+            <Text>La propiedad se ha creado con éxito.</Text>
             <div className={styles.successActions}>
               <Button onClick={handleClose}>Cerrar</Button>
             </div>
@@ -126,7 +126,7 @@ export const ValueDefinitionCreateForm: React.FC<
                 type='text'
                 value={state.name}
                 onChange={handleNameChange}
-                placeholder='Ej: DuraciÃ³n, Cantidad'
+                placeholder='Ej: Duración, Cantidad'
                 disabled={state.isLoading}
               />
             </FormField>
@@ -141,10 +141,10 @@ export const ValueDefinitionCreateForm: React.FC<
                 disabled={state.isLoading}
                 className={styles.select}
               >
-                <option value='Number'>NÃºmero</option>
+                <option value='Number'>Número</option>
                 <option value='Text'>Texto</option>
                 <option value='Boolean'>Booleano</option>
-                <option value='Duration'>DuraciÃ³n</option>
+                <option value='Duration'>Duración</option>
               </select>
             </FormField>
 
@@ -175,7 +175,7 @@ export const ValueDefinitionCreateForm: React.FC<
               />
             </FormField>
 
-            <FormField label='Valor MÃ­nimo'>
+            <FormField label='Valor Mínimo'>
               <Input
                 type='text'
                 value={state.minValue}
@@ -185,7 +185,7 @@ export const ValueDefinitionCreateForm: React.FC<
               />
             </FormField>
 
-            <FormField label='Valor MÃ¡ximo'>
+            <FormField label='Valor Máximo'>
               <Input
                 type='text'
                 value={state.maxValue}

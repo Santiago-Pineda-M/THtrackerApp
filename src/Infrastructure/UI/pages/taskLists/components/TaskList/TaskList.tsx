@@ -64,6 +64,7 @@ const TaskListItem: React.FC<TaskListItemProps> = ({
   const taskTextClass = [
     styles.taskText,
     task.isCompleted ? styles.taskTextCompleted : '',
+    isExpanded ? styles.taskTextVisible : '',
   ]
     .filter(Boolean)
     .join(' ')
@@ -245,15 +246,16 @@ export const TaskList: React.FC<TaskListProps> = ({
       )}
 
       {/* Descripción */}
-      <Text
-        muted
-        size='sm'
-        className={styles.description}
-      >
-        {taskList.description}
-      </Text>
-
-      <Divider />
+      {isExpanded && taskList.description && (
+        <Text
+          muted
+          size='sm'
+          className={styles.description}
+        >
+          {taskList.description}
+        </Text>
+      )}
+      <Divider className={styles.dividerTop} />
 
       {/* Lista de tareas */}
       <div className={styles.taskListContainer}>
@@ -306,7 +308,7 @@ export const TaskList: React.FC<TaskListProps> = ({
         )}
       </div>
 
-      <Divider />
+      <Divider className={styles.dividerBottom} />
 
       {/* Footer */}
       <div className={styles.footer}>

@@ -21,7 +21,7 @@ export const CategoriesList: React.FC = () => {
     <Card
       h={2}
       w={2}
-      title='CategorÃ­as'
+      title='Categorías'
       className={styles.card}
     >
       <Divider spacing='none' />

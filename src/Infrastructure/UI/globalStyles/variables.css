@@ -87,6 +87,8 @@
   /* Layout Spacing (mapped to new tokens for consistency) */
   --spacing-page-padding: var(--space-lg);
   --spacing-card-padding: var(--space-lg);
+  --spacing-grid-gap-x: var(--space-lg);
+  --spacing-grid-gap-y: 20px;
   --spacing-grid-gap: var(--space-lg);
 
   /* Grid Layout Constants */

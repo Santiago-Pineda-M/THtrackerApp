@@ -62,11 +62,11 @@ export const ValueDefinitionDelete: React.FC<ValueDefinitionDeleteProps> = ({
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? 'Â¡Ã‰xito!' : 'Eliminar Propiedad'}
+        title={state.success ? 'Â¡Éxito!' : 'Eliminar Propiedad'}
       >
         {state.success ? (
           <div className={styles.successContainer}>
-            <Text>La propiedad se ha eliminado con Ã©xito.</Text>
+            <Text>La propiedad se ha eliminado con éxito.</Text>
             <div className={styles.successActions}>
               <Button onClick={handleClose}>Cerrar</Button>
             </div>
@@ -86,8 +86,8 @@ export const ValueDefinitionDelete: React.FC<ValueDefinitionDeleteProps> = ({
             )}
 
             <Text className={styles.modalText}>
-              Â¿EstÃ¡s seguro de que deseas eliminar la propiedad{' '}
-              <strong>{definitionName}</strong>? Esta acciÃ³n no se puede
+              Â¿Estás seguro de que deseas eliminar la propiedad{' '}
+              <strong>{definitionName}</strong>? Esta acción no se puede
               deshacer.
             </Text>
 

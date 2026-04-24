@@ -17,7 +17,7 @@ export const TaskSummaryWidget: React.FC = () => {
 
   return (
     <Card
-      h={2}
+      h={1}
       w={2}
     >
       <div className={styles.header}>
@@ -32,8 +32,15 @@ export const TaskSummaryWidget: React.FC = () => {
         <TaskListCreateForm />
       </div>
       <div>
-        {/* numero de listas */}
-        <Text>Numero de Listas: {taskListsState.taskLists.length}</Text>
+        {!taskListsState.isLoading && !taskListsState.error && (
+          <Text size='lg'>
+            Numero de Listas: {taskListsState.taskLists.length}
+          </Text>
+        )}
+        {taskListsState.isLoading && <Text size='lg'>Cargando...</Text>}
+        {!taskListsState.isLoading && taskListsState.error && (
+          <Text size='lg'>Error al cargar las listas de tareas</Text>
+        )}
       </div>
     </Card>
   )

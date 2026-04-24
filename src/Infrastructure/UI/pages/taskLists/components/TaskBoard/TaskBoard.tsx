@@ -18,11 +18,11 @@ export const TaskBoard: React.FC = () => {
   }, [])
 
   if (taskListsState.isLoading) {
-    return <div>Cargando listas de tareas...</div>
+    return null
   }
 
   if (taskListsState.error) {
-    return <div>Error al cargar las listas de tareas</div>
+    return null
   }
 
   return (

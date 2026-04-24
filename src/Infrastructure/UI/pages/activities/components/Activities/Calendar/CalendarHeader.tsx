@@ -5,7 +5,7 @@ interface Props {
   weekDates: Date[]
 }
 
-const dayNames = ['Dom', 'Lun', 'Mar', 'MiÃ©', 'Jue', 'Vie', 'SÃ¡b']
+const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 
 export const CalendarHeader: React.FC<Props> = ({ weekDates }) => {
   const today = new Date()

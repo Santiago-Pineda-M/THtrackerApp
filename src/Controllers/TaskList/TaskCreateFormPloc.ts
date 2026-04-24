@@ -50,6 +50,33 @@ export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
   }
 
   /**
+   * Alterna la visualización de la fecha de vencimiento.
+   * Si se activa, establece por defecto una hora después de la actual.
+   */
+  toggleShowDueDate(): void {
+    const newShowDueDate = !this.state.showDueDate
+    let newDueDate = this.state.dueDate
+
+    if (newShowDueDate && !newDueDate) {
+      const now = new Date()
+      // Añadir 1 hora
+      const defaultDate = new Date(now.getTime() + 60 * 60 * 1000)
+      // Formato YYYY-MM-DDTHH:mm para datetime-local
+      newDueDate = new Date(
+        defaultDate.getTime() - defaultDate.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .slice(0, 16)
+    }
+
+    this.changeState({
+      ...this.state,
+      showDueDate: newShowDueDate,
+      dueDate: newDueDate,
+    })
+  }
+
+  /**
    * Envía el formulario de creación.
    */
   async submitCreate(request: ICreateTaskRequest): Promise<void> {
@@ -61,9 +88,18 @@ export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
     })
 
     try {
+      let dueDate: string | undefined = undefined
+      if (this.state.showDueDate && this.state.dueDate) {
+        try {
+          dueDate = new Date(this.state.dueDate).toISOString()
+        } catch {
+          // Si la fecha es inválida
+        }
+      }
+
       const result = await this.createTaskUseCase.execute({
         ...request,
-        dueDate: this.state.dueDate || undefined,
+        dueDate,
       })
 
       if (result.success) {

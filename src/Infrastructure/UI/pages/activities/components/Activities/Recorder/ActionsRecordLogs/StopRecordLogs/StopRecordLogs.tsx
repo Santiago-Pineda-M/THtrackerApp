@@ -173,11 +173,11 @@ export const StopRecordLogs = () => {
       <Modal
         isOpen={isConfirmationModalOpen}
         onClose={() => setIsConfirmationModalOpen(false)}
-        title='Confirmar DetenciÃ³n'
+        title='Confirmar Detención'
       >
         <div className={styles.confirmationBox}>
           <Text size='lg'>
-            Â¿EstÃ¡s seguro de que quieres detener{' '}
+            Â¿Estás seguro de que quieres detener{' '}
             <Text
               as='span'
               weight='bold'

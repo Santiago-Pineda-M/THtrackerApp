@@ -77,7 +77,7 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
     { key: 'date', label: 'Fecha', width: '120px' },
     { key: 'startTime', label: 'Inicio', width: '80px' },
     { key: 'endTime', label: 'Fin', width: '80px' },
-    { key: 'duration', label: 'DuraciÃ³n', width: '100px' },
+    { key: 'duration', label: 'Duración', width: '100px' },
     { key: 'status', label: 'Estado', width: '100px' },
   ]
 
@@ -95,7 +95,7 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
             </div>
           ) : state.logs.length === 0 ? (
             <div className={styles.emptyState}>
-              <Text>AÃºn no hay registros para esta actividad.</Text>
+              <Text>Aún no hay registros para esta actividad.</Text>
             </div>
           ) : (
             <div className={styles.tableWrap}>
@@ -185,7 +185,7 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
               <Text>{selectedLog.formattedEndTime || 'En curso'}</Text>
             </div>
             <div className={styles.detailRow}>
-              <Text weight='medium'>DuraciÃ³n:</Text>
+              <Text weight='medium'>Duración:</Text>
               <Badge
                 variant={
                   selectedLog.log.durationMinutes ? 'default' : 'success'

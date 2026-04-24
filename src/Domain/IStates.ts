@@ -939,6 +939,7 @@ export interface ITaskCreateFormState {
   taskListId: string
   content: string
   dueDate: string
+  showDueDate: boolean
   errors: Record<string, string[]>
   isLoading: boolean
   success: boolean
@@ -949,6 +950,7 @@ export const initialTaskCreateFormState: ITaskCreateFormState = {
   taskListId: '',
   content: '',
   dueDate: '',
+  showDueDate: false,
   errors: {},
   isLoading: false,
   success: false,
@@ -966,6 +968,7 @@ export interface ITaskEditFormState {
   taskListId: string
   content: string
   dueDate: string
+  showDueDate: boolean
   errors: Record<string, string[]>
   isLoading: boolean
   success: boolean
@@ -977,6 +980,7 @@ export const initialTaskEditFormState: ITaskEditFormState = {
   taskListId: '',
   content: '',
   dueDate: '',
+  showDueDate: false,
   errors: {},
   isLoading: false,
   success: false,

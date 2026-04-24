@@ -44,7 +44,7 @@ export const ActivitiesList: React.FC = () => {
                 ) || {
                   userId: '',
                   id: '',
-                  name: 'Sin categorÃ­a',
+                  name: 'Sin categoría',
                   color: null,
                 }
               }

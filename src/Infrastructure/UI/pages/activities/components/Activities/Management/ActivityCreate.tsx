@@ -90,11 +90,11 @@ export const ActivityCreate: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? 'Â¡Ã‰xito!' : 'Nueva Actividad'}
+        title={state.success ? 'Â¡Éxito!' : 'Nueva Actividad'}
       >
         {state.success ? (
           <div className={styles.successContainer}>
-            <Text>La actividad se ha creado con Ã©xito.</Text>
+            <Text>La actividad se ha creado con éxito.</Text>
             <div className={styles.successActions}>
               <Button onClick={handleClose}>Cerrar</Button>
             </div>
@@ -117,7 +117,7 @@ export const ActivityCreate: React.FC = () => {
             )}
 
             <FormField
-              label='CategorÃ­a'
+              label='Categoría'
               required
               error={state.errors.categoryId?.[0]}
             >
@@ -127,7 +127,7 @@ export const ActivityCreate: React.FC = () => {
                 disabled={state.isLoading}
                 className={styles.select}
               >
-                <option value=''>Selecciona una categorÃ­a</option>
+                <option value=''>Selecciona una categoría</option>
                 {categoriesState.categories.map((cat) => (
                   <option
                     key={cat.id}

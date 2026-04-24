@@ -49,7 +49,7 @@ export const ActivityGeneralInfo: React.FC<ActivityGeneralInfoProps> = ({
 
   return (
     <Card
-      title='InformaciÃ³n General'
+      title='Información General'
       h={3}
       w={3}
     >
@@ -84,7 +84,7 @@ export const ActivityGeneralInfo: React.FC<ActivityGeneralInfoProps> = ({
               weight='bold'
               size='lg'
             >
-              CategorÃ­a:
+              Categoría:
             </Text>
             {category ? (
               <Text
@@ -99,7 +99,7 @@ export const ActivityGeneralInfo: React.FC<ActivityGeneralInfoProps> = ({
                 size='lg'
                 color='var(--color-text-primary)'
               >
-                CategorÃ­a no encontrada
+                Categoría no encontrada
               </Text>
             )}
           </div>
@@ -120,7 +120,7 @@ export const ActivityGeneralInfo: React.FC<ActivityGeneralInfoProps> = ({
               weight='normal'
               size='lg'
             >
-              {activity.allowOverlap ? 'SÃ­' : 'No'}
+              {activity.allowOverlap ? 'Sí' : 'No'}
             </Text>
           </div>
         </div>

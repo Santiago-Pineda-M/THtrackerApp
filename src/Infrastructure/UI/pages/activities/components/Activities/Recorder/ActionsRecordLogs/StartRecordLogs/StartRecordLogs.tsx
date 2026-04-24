@@ -149,7 +149,7 @@ export const StartRecordLogs = () => {
       >
         <div className={styles.confirmationBox}>
           <Text size='lg'>
-            Â¿EstÃ¡s seguro de que quieres iniciar{' '}
+            Â¿Estás seguro de que quieres iniciar{' '}
             <Text
               as='span'
               weight='bold'

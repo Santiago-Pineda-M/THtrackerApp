@@ -74,11 +74,11 @@ export const ActivityEdit: React.FC<ActivityEditProps> = ({ activityId }) => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? 'Â¡Ã‰xito!' : 'Editar Actividad'}
+        title={state.success ? 'Â¡Éxito!' : 'Editar Actividad'}
       >
         {state.success ? (
           <div className={styles.successContainer}>
-            <Text>La actividad se ha actualizado con Ã©xito.</Text>
+            <Text>La actividad se ha actualizado con éxito.</Text>
             <div className={styles.successActions}>
               <Button
                 variant='primary'

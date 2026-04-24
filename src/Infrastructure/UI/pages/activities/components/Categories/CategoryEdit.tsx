@@ -67,12 +67,12 @@ export const CategoryEdit: React.FC<CategoryEditProps> = ({ category }) => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? 'Â¡Ã‰xito!' : `Editar ${category.name}`}
+        title={state.success ? 'Â¡Éxito!' : `Editar ${category.name}`}
       >
         {state.success ? (
           <div className={styles['success-container']}>
             <Text>
-              {state.message || 'La categorÃ­a se ha actualizado con Ã©xito.'}
+              {state.message || 'La categoría se ha actualizado con éxito.'}
             </Text>
             <div className={styles['success-actions']}>
               <Button onClick={handleClose}>Cerrar</Button>

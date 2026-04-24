@@ -32,11 +32,11 @@
 }
 
 .progressWrapper {
-  margin-bottom: 0px;
+  margin-bottom: var(--space-sm);
 }
 
 .description {
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
 }
 
 .taskListContainer {
@@ -45,7 +45,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  margin: var(--space-md) 0;
+  margin: 0;
+  padding-top: var(--space-sm);
 }
 
 .taskItem {
@@ -68,6 +69,7 @@
   align-items: center;
   gap: var(--space-sm);
   flex: 1;
+  min-width: 0; /* Crucial para que el truncado funcione en flexbox */
 }
 
 .toggleButton {
@@ -77,13 +79,23 @@
   display: flex;
   align-items: center;
   color: var(--color-icon-default);
-  padding: 4px;
 }
 
 .taskText {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+  transition: color var(--transition-fast) ease;
+}
+
+/* Clase para mostrar texto completo (cuando la lista está expandida) */
+.taskTextVisible {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: initial !important;
+  word-break: break-word;
 }
 
 .taskTextCompleted {
@@ -92,11 +104,16 @@
 
 .taskActions {
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-sm);
+}
+
+.taskActions > * {
+  padding: 8px !important;
+  border-radius: 100% !important;
 }
 
 .footer {
-  margin-top: var(--space-md);
+  margin-top: var(--space-sm);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -113,4 +130,12 @@
   display: flex;
   gap: var(--space-md);
   align-items: center;
+}
+
+.dividerTop {
+  margin-bottom: 1px !important;
+}
+
+.dividerBottom {
+  margin-top: 1px !important;
 }

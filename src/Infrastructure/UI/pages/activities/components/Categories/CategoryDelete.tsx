@@ -49,12 +49,12 @@ export const CategoryDelete: React.FC<CategoryDeleteProps> = ({ category }) => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? 'Â¡Ã‰xito!' : 'Eliminar CategorÃ­a'}
+        title={state.success ? 'Â¡Éxito!' : 'Eliminar Categoría'}
       >
         {state.success ? (
           <div className={styles['success-container']}>
             <Text>
-              {state.message || 'La categorÃ­a se ha eliminado con Ã©xito.'}
+              {state.message || 'La categoría se ha eliminado con éxito.'}
             </Text>
             <div className={styles['success-actions']}>
               <Button onClick={handleClose}>Cerrar</Button>
@@ -78,7 +78,7 @@ export const CategoryDelete: React.FC<CategoryDeleteProps> = ({ category }) => {
             )}
 
             <Text className={styles['modal-text']}>
-              Â¿EstÃ¡s seguro de que deseas eliminar la categorÃ­a{' '}
+              Â¿Estás seguro de que deseas eliminar la categoría{' '}
               <strong>{category.name}</strong>?
             </Text>
 

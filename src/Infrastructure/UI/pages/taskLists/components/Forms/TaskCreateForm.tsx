@@ -6,6 +6,8 @@ import {
   Input,
   FormField,
   Icon,
+  ToggleSwitch,
+  DateTimePicker,
 } from '../../../../components'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
@@ -43,15 +45,15 @@ export const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
     providerTaskCreateFormPloc.updateContent(e.target.value)
   }
 
-  const handleDueDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerTaskCreateFormPloc.updateDueDate(e.target.value)
+  const handleToggleShowDueDate = () => {
+    providerTaskCreateFormPloc.toggleShowDueDate()
   }
 
   const handleSubmit = async () => {
     await providerTaskCreateFormPloc.submitCreate({
       taskListId,
       content: state.content,
-      dueDate: state.dueDate || undefined,
+      dueDate: state.showDueDate ? state.dueDate : undefined,
     })
   }
 
@@ -114,17 +116,33 @@ export const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
               />
             </FormField>
 
-            <FormField
-              label='Fecha de vencimiento'
-              error={state.errors.dueDate?.[0]}
-            >
-              <Input
-                type='datetime-local'
-                value={state.dueDate}
-                onChange={handleDueDateChange}
-                disabled={state.isLoading}
-              />
+            <FormField label='Establecer fecha de vencimiento'>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
+                <ToggleSwitch
+                  checked={state.showDueDate}
+                  onChange={handleToggleShowDueDate}
+                  disabled={state.isLoading}
+                />
+                <Text size='sm'>{state.showDueDate ? 'Sí' : 'No'}</Text>
+              </div>
             </FormField>
+
+            {state.showDueDate && (
+              <FormField
+                label='Fecha de vencimiento'
+                error={state.errors.dueDate?.[0]}
+              >
+                <DateTimePicker
+                  value={state.dueDate}
+                  onChange={(val) =>
+                    providerTaskCreateFormPloc.updateDueDate(val)
+                  }
+                  disabled={state.isLoading}
+                />
+              </FormField>
+            )}
 
             <div className={styles['modal-actions']}>
               <Button

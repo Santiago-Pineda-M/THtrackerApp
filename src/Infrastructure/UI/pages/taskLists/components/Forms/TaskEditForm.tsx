@@ -6,6 +6,8 @@ import {
   Input,
   FormField,
   Icon,
+  ToggleSwitch,
+  DateTimePicker,
 } from '../../../../components'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
@@ -44,11 +46,16 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
     providerTaskEditFormPloc.updateContent(e.target.value)
   }
 
+  const handleToggleShowDueDate = () => {
+    providerTaskEditFormPloc.toggleShowDueDate()
+  }
+
   const handleSubmit = async () => {
     await providerTaskEditFormPloc.submitEdit({
       id: task.id,
       taskListId: task.taskListId,
       content: state.content,
+      dueDate: state.showDueDate ? state.dueDate : undefined,
     })
   }
 
@@ -110,6 +117,30 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
                 disabled={state.isLoading}
               />
             </FormField>
+
+            <FormField label='Establecer fecha de vencimiento'>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ToggleSwitch
+                  checked={state.showDueDate}
+                  onChange={handleToggleShowDueDate}
+                  disabled={state.isLoading}
+                />
+                <Text size='sm'>{state.showDueDate ? 'Sí' : 'No'}</Text>
+              </div>
+            </FormField>
+
+            {state.showDueDate && (
+              <FormField
+                label='Fecha de vencimiento'
+                error={state.errors.dueDate?.[0]}
+              >
+                <DateTimePicker
+                  value={state.dueDate}
+                  onChange={(val) => providerTaskEditFormPloc.updateDueDate(val)}
+                  disabled={state.isLoading}
+                />
+              </FormField>
+            )}
 
             <div className={styles['modal-actions']}>
               <Button

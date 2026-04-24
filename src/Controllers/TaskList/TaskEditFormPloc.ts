@@ -36,12 +36,28 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
       const result = await this.getTaskByIdUseCase.execute({ id })
 
       if (result.success) {
+        let formattedDueDate = ''
+        if (result.task.dueDate) {
+          try {
+            const date = new Date(result.task.dueDate)
+            // Formato YYYY-MM-DDTHH:mm para input datetime-local
+            formattedDueDate = new Date(
+              date.getTime() - date.getTimezoneOffset() * 60000
+            )
+              .toISOString()
+              .slice(0, 16)
+          } catch {
+            formattedDueDate = ''
+          }
+        }
+
         this.changeState({
           ...this.state,
           id: result.task.id,
           taskListId: result.task.taskListId,
           content: result.task.content,
-          dueDate: result.task.dueDate || '',
+          dueDate: formattedDueDate,
+          showDueDate: !!result.task.dueDate,
           isLoading: false,
         })
         return
@@ -95,6 +111,30 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
   }
 
   /**
+   * Alterna la visualización de la fecha de vencimiento.
+   */
+  toggleShowDueDate(): void {
+    const newShowDueDate = !this.state.showDueDate
+    let newDueDate = this.state.dueDate
+
+    if (newShowDueDate && !newDueDate) {
+      const now = new Date()
+      const defaultDate = new Date(now.getTime() + 60 * 60 * 1000)
+      newDueDate = new Date(
+        defaultDate.getTime() - defaultDate.getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .slice(0, 16)
+    }
+
+    this.changeState({
+      ...this.state,
+      showDueDate: newShowDueDate,
+      dueDate: newDueDate,
+    })
+  }
+
+  /**
    * Envía el formulario de edición.
    */
   async submitEdit(request: IUpdateTaskRequest): Promise<void> {
@@ -106,9 +146,18 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
     })
 
     try {
+      let dueDate: string | undefined = undefined
+      if (this.state.showDueDate && this.state.dueDate) {
+        try {
+          dueDate = new Date(this.state.dueDate).toISOString()
+        } catch {
+          // Si la fecha es inválida
+        }
+      }
+
       const result = await this.updateTaskUseCase.execute({
         ...request,
-        dueDate: this.state.dueDate || undefined,
+        dueDate,
       })
 
       if (result.success) {

@@ -49,7 +49,7 @@ export const CalendarGrid: React.FC<Props> = ({
           dateCopy.setHours(0, 0, 0, 0)
           const isToday = dateCopy.getTime() === today.getTime()
 
-          // Filtrar los eventos correspondientes a este dÃ­a
+          // Filtrar los eventos correspondientes a este día
           const dayEvents = events.filter((e) => {
             return (
               e.startedAt.getDate() === date.getDate() &&
