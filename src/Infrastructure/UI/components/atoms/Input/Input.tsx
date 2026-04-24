@@ -8,6 +8,11 @@ export type InputType =
   | 'search'
   | 'email'
   | 'color'
+  | 'date'
+  | 'datetime-local'
+  | 'time'
+  | 'checkbox'
+  | 'radio'
 
 export type InputElement = React.ElementRef<'input'>
 

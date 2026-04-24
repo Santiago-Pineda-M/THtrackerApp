@@ -76,7 +76,7 @@ export const TaskDelete: React.FC<TaskDeleteProps> = ({ task, onSuccess }) => {
 
             <Text className={styles['modal-text']}>
               ¿Estás seguro de que deseas eliminar la tarea{' '}
-              <strong>{task.title}</strong>?
+              <strong>{task.content}</strong>?
             </Text>
 
             <div className={styles['modal-actions']}>

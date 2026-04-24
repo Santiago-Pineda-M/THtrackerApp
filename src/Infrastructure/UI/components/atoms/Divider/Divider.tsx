@@ -8,7 +8,7 @@ export interface DividerProps {
 
 export const Divider: React.FC<DividerProps> = ({
   vertical,
-  spacing = 'md',
+  spacing = 'sm',
   className,
 }) => {
   return (

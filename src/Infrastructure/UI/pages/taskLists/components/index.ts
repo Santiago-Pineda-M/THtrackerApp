@@ -1,3 +1,4 @@
-export { TaskBoard } from './TaskBoard/TaskBoard'
-export { TaskSummaryWidget } from './TaskSummaryWidget/TaskSummaryWidget'
 export * from './Forms'
+export { TaskBoard } from './TaskBoard/TaskBoard'
+export { TaskFilterBar } from './TaskFilterBar/TaskFilterBar'
+export { TaskSummaryWidget } from './TaskSummaryWidget/TaskSummaryWidget'

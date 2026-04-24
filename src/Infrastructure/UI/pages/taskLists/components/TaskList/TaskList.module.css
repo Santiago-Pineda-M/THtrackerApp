@@ -1,0 +1,116 @@
+.cardContainer {
+  transition: var(--transition-default);
+}
+
+.expandedCard {
+  z-index: 20;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+  gap: var(--space-sm);
+}
+
+.headerActions {
+  display: flex;
+  gap: var(--space-xs);
+  animation: fadeIn var(--transition-fast) ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.progressWrapper {
+  margin-bottom: 0px;
+}
+
+.description {
+  margin-bottom: var(--space-md);
+}
+
+.taskListContainer {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: var(--space-md) 0;
+}
+
+.taskItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-soft);
+  transition: opacity var(--transition-fast) ease;
+}
+
+.taskItemCompleted {
+  opacity: 0.6;
+}
+
+.taskItemContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--color-icon-default);
+  padding: 4px;
+}
+
+.taskText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskTextCompleted {
+  text-decoration: line-through;
+}
+
+.taskActions {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.footer {
+  margin-top: var(--space-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerTitle {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.footerActions {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+}

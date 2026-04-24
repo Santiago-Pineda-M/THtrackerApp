@@ -15,7 +15,6 @@ import {
   ActivitiesPage,
   ActivityDetailsPage,
   TaskListsPage,
-  TaskListDetailsPage,
 } from '../pages'
 import { Guard } from './Gard'
 
@@ -150,17 +149,6 @@ const AppRoutes = () => {
               fallback={<Navigate to='/login' />}
             >
               <TaskListsPage />
-            </Guard>
-          ),
-        },
-        {
-          path: '/task-lists/:id',
-          element: (
-            <Guard
-              isAccess={isAuthenticated}
-              fallback={<Navigate to='/login' />}
-            >
-              <TaskListDetailsPage />
             </Guard>
           ),
         },

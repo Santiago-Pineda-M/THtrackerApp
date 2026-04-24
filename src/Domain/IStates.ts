@@ -937,8 +937,8 @@ export const initialTaskListDeleteState: ITaskListDeleteState = {
 
 export interface ITaskCreateFormState {
   taskListId: string
-  title: string
-  description: string | null
+  content: string
+  dueDate: string
   errors: Record<string, string[]>
   isLoading: boolean
   success: boolean
@@ -947,8 +947,8 @@ export interface ITaskCreateFormState {
 
 export const initialTaskCreateFormState: ITaskCreateFormState = {
   taskListId: '',
-  title: '',
-  description: null,
+  content: '',
+  dueDate: '',
   errors: {},
   isLoading: false,
   success: false,
@@ -964,8 +964,8 @@ export const initialTaskCreateFormState: ITaskCreateFormState = {
 export interface ITaskEditFormState {
   id: string
   taskListId: string
-  title: string
-  description: string | null
+  content: string
+  dueDate: string
   errors: Record<string, string[]>
   isLoading: boolean
   success: boolean
@@ -975,8 +975,8 @@ export interface ITaskEditFormState {
 export const initialTaskEditFormState: ITaskEditFormState = {
   id: '',
   taskListId: '',
-  title: '',
-  description: null,
+  content: '',
+  dueDate: '',
   errors: {},
   isLoading: false,
   success: false,

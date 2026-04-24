@@ -40,20 +40,15 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
     providerTaskEditFormPloc.reset()
   }
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerTaskEditFormPloc.updateTitle(e.target.value)
-  }
-
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerTaskEditFormPloc.updateDescription(e.target.value || null)
+  const handleContentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    providerTaskEditFormPloc.updateContent(e.target.value)
   }
 
   const handleSubmit = async () => {
     await providerTaskEditFormPloc.submitEdit({
       id: task.id,
       taskListId: task.taskListId,
-      title: state.title,
-      description: state.description,
+      content: state.content,
     })
   }
 
@@ -103,28 +98,15 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
             )}
 
             <FormField
-              label='Título'
+              label='Contenido'
               required
-              error={state.errors.title?.[0]}
+              error={state.errors.content?.[0]}
             >
               <Input
                 type='text'
-                value={state.title}
-                onChange={handleTitleChange}
+                value={state.content}
+                onChange={handleContentChange}
                 placeholder='Ej: Comprar leche'
-                disabled={state.isLoading}
-              />
-            </FormField>
-
-            <FormField
-              label='Descripción'
-              error={state.errors.description?.[0]}
-            >
-              <Input
-                type='text'
-                value={state.description || ''}
-                onChange={handleDescriptionChange}
-                placeholder='Ej: En el supermercado de la esquina'
                 disabled={state.isLoading}
               />
             </FormField>

@@ -39,19 +39,19 @@ export const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
     providerTaskCreateFormPloc.reset()
   }
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerTaskCreateFormPloc.updateTitle(e.target.value)
+  const handleContentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    providerTaskCreateFormPloc.updateContent(e.target.value)
   }
 
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerTaskCreateFormPloc.updateDescription(e.target.value)
+  const handleDueDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    providerTaskCreateFormPloc.updateDueDate(e.target.value)
   }
 
   const handleSubmit = async () => {
     await providerTaskCreateFormPloc.submitCreate({
       taskListId,
-      title: state.title,
-      description: state.description,
+      content: state.content,
+      dueDate: state.dueDate || undefined,
     })
   }
 
@@ -101,28 +101,27 @@ export const TaskCreateForm: React.FC<TaskCreateFormProps> = ({
             )}
 
             <FormField
-              label='Título'
+              label='Contenido'
               required
-              error={state.errors.title?.[0]}
+              error={state.errors.content?.[0]}
             >
               <Input
                 type='text'
-                value={state.title}
-                onChange={handleTitleChange}
+                value={state.content}
+                onChange={handleContentChange}
                 placeholder='Ej: Comprar leche'
                 disabled={state.isLoading}
               />
             </FormField>
 
             <FormField
-              label='Descripción'
-              error={state.errors.description?.[0]}
+              label='Fecha de vencimiento'
+              error={state.errors.dueDate?.[0]}
             >
               <Input
-                type='text'
-                value={state.description || ''}
-                onChange={handleDescriptionChange}
-                placeholder='Ej: En el supermercado de la esquina'
+                type='datetime-local'
+                value={state.dueDate}
+                onChange={handleDueDateChange}
                 disabled={state.isLoading}
               />
             </FormField>

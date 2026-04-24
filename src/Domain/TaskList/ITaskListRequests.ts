@@ -23,15 +23,13 @@ export interface IGetTaskByIdRequest {
 }
 export interface ICreateTaskRequest {
   taskListId: string
-  title: string
-  description?: string | null
+  content: string
   dueDate?: string
 }
 export interface IUpdateTaskRequest {
   id: string
   taskListId: string
-  title: string
-  description?: string | null
+  content: string
   dueDate?: string
 }
 export interface IDeleteTaskRequest {

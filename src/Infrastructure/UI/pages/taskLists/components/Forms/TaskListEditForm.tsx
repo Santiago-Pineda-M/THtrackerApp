@@ -15,10 +15,12 @@ import styles from './TaskListEditForm.module.css'
 
 interface TaskListEditFormProps {
   taskList: ITaskListItem
+  onSuccess?: () => void
 }
 
 export const TaskListEditForm: React.FC<TaskListEditFormProps> = ({
   taskList,
+  onSuccess,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { providerTaskListEditFormPloc, providerTaskListsPloc } =
@@ -37,6 +39,7 @@ export const TaskListEditForm: React.FC<TaskListEditFormProps> = ({
     setIsModalOpen(false)
     if (state.success) {
       providerTaskListsPloc.loadTaskLists()
+      if (onSuccess) onSuccess()
     }
     providerTaskListEditFormPloc.reset()
   }

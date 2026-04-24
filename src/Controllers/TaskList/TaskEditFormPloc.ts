@@ -40,8 +40,8 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
           ...this.state,
           id: result.task.id,
           taskListId: result.task.taskListId,
-          title: result.task.title,
-          description: result.task.description,
+          content: result.task.content,
+          dueDate: result.task.dueDate || '',
           isLoading: false,
         })
         return
@@ -65,14 +65,14 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
   }
 
   /**
-   * Actualiza el título en el estado.
+   * Actualiza el contenido en el estado.
    */
-  updateTitle(title: string): void {
+  updateContent(content: string): void {
     const newErrors = { ...this.state.errors }
-    delete newErrors.title
+    delete newErrors.content
     this.changeState({
       ...this.state,
-      title,
+      content,
       errors: newErrors,
       success: false,
       message: '',
@@ -80,12 +80,15 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
   }
 
   /**
-   * Actualiza la descripción en el estado.
+   * Actualiza la fecha de vencimiento en el estado.
    */
-  updateDescription(description: string | null): void {
+  updateDueDate(dueDate: string): void {
+    const newErrors = { ...this.state.errors }
+    delete newErrors.dueDate
     this.changeState({
       ...this.state,
-      description,
+      dueDate,
+      errors: newErrors,
       success: false,
       message: '',
     })
@@ -103,7 +106,10 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
     })
 
     try {
-      const result = await this.updateTaskUseCase.execute(request)
+      const result = await this.updateTaskUseCase.execute({
+        ...request,
+        dueDate: this.state.dueDate || undefined,
+      })
 
       if (result.success) {
         this.changeState({

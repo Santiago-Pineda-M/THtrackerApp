@@ -8,9 +8,13 @@ import styles from './TaskListDelete.module.css'
 
 interface TaskListDeleteProps {
   taskList: ITaskListItem
+  onSuccess?: () => void
 }
 
-export const TaskListDelete: React.FC<TaskListDeleteProps> = ({ taskList }) => {
+export const TaskListDelete: React.FC<TaskListDeleteProps> = ({
+  taskList,
+  onSuccess,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { providerTaskListDeletePloc, providerTaskListsPloc } =
     useDependencies()
@@ -25,6 +29,7 @@ export const TaskListDelete: React.FC<TaskListDeleteProps> = ({ taskList }) => {
     setIsModalOpen(false)
     if (state.success) {
       providerTaskListsPloc.loadTaskLists()
+      if (onSuccess) onSuccess()
     }
     providerTaskListDeletePloc.reset()
   }

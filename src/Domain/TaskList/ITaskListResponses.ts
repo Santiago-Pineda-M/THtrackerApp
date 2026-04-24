@@ -9,8 +9,7 @@ export interface ITaskListItem {
 export interface ITaskItem {
   id: string
   taskListId: string
-  title: string
-  description: string | null
+  content: string
   isCompleted: boolean
   dueDate: string | null
   createdAt: string

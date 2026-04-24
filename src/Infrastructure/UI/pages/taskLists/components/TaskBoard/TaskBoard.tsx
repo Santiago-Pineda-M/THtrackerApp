@@ -1,18 +1,21 @@
-// componente que consulta las listas de tareas y muestra un tablero con las tareas organizadas por listas
-import { useEffect } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { ITaskListsState } from '../../../../../../Domain/IStates'
-
-import { Text, Card } from '../../../../components'
+import { TaskList } from '../TaskList/TaskList'
 
 export const TaskBoard: React.FC = () => {
   const { providerTaskListsPloc } = useDependencies()
   const taskListsState = usePlocState<ITaskListsState>(providerTaskListsPloc)
-  // cargar las listas de tareas al montar el componente
+  const [expandedListId, setExpandedListId] = useState<string | null>(null)
+
   useEffect(() => {
     providerTaskListsPloc.loadTaskLists()
   }, [providerTaskListsPloc])
+
+  const handleToggleExpand = useCallback((id: string) => {
+    setExpandedListId((prev) => (prev === id ? null : id))
+  }, [])
 
   if (taskListsState.isLoading) {
     return <div>Cargando listas de tareas...</div>
@@ -25,10 +28,12 @@ export const TaskBoard: React.FC = () => {
   return (
     <>
       {taskListsState.taskLists.map((taskList) => (
-        <Card key={taskList.id}>
-          <Text>{taskList.name}</Text>
-          {/* Aquí se podrían renderizar las tareas de cada lista */}
-        </Card>
+        <TaskList
+          key={taskList.id}
+          taskList={taskList}
+          isExpanded={expandedListId === taskList.id}
+          onToggleExpand={() => handleToggleExpand(taskList.id)}
+        />
       ))}
     </>
   )

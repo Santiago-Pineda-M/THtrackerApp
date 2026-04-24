@@ -8,6 +8,7 @@ export interface CardProps {
   title?: string
   children?: React.ReactNode
   className?: string
+  style?: React.CSSProperties
 }
 
 const Card = ({
@@ -17,6 +18,7 @@ const Card = ({
   title,
   children,
   className = '',
+  style = {},
 }: CardProps) => {
   const isTopRight = gridTopRight
   return (
@@ -24,6 +26,7 @@ const Card = ({
       className={`${styles.card} ${isTopRight ? styles.gridTopRight : ''} ${className}`}
       style={
         {
+          ...style,
           '--w': w,
           '--h': h,
         } as React.CSSProperties

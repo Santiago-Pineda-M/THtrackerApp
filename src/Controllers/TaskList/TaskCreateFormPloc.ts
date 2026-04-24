@@ -20,14 +20,14 @@ export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
   }
 
   /**
-   * Actualiza el título en el estado.
+   * Actualiza el contenido en el estado.
    */
-  updateTitle(title: string): void {
+  updateContent(content: string): void {
     const newErrors = { ...this.state.errors }
-    delete newErrors.title
+    delete newErrors.content
     this.changeState({
       ...this.state,
-      title,
+      content,
       errors: newErrors,
       success: false,
       message: '',
@@ -35,12 +35,15 @@ export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
   }
 
   /**
-   * Actualiza la descripción en el estado.
+   * Actualiza la fecha de vencimiento en el estado.
    */
-  updateDescription(description: string): void {
+  updateDueDate(dueDate: string): void {
+    const newErrors = { ...this.state.errors }
+    delete newErrors.dueDate
     this.changeState({
       ...this.state,
-      description,
+      dueDate,
+      errors: newErrors,
       success: false,
       message: '',
     })
@@ -58,7 +61,10 @@ export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
     })
 
     try {
-      const result = await this.createTaskUseCase.execute(request)
+      const result = await this.createTaskUseCase.execute({
+        ...request,
+        dueDate: this.state.dueDate || undefined,
+      })
 
       if (result.success) {
         this.changeState({
