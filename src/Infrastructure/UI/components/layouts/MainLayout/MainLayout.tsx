@@ -21,7 +21,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   return (
     <main className={styles.main}>
       <Sidebar />
-      <div>
+      <div className={styles.mainContainer}>
         {breadcrumbs && <BreadcrumbNavigation breadcrumbs={breadcrumbs} />}
         <div className={styles.content}>{children}</div>
       </div>

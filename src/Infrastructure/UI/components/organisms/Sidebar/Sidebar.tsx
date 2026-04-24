@@ -49,14 +49,14 @@ export const Sidebar: React.FC = () => {
 
   return (
     <Card className={sidebarClass}>
-      <div className={styles.header}>
+      <div className={`${styles.header} ${isOpen ? styles.headerOpen : ''}`}>
         <Text
           as='h2'
           size='lg'
           weight='bold'
           className={styles.logo}
         >
-          {isOpen ? 'THtracke' : 'TH'}
+          {isOpen ? 'THtracker' : 'TH'}
         </Text>
         <Button
           variant='ghost'
@@ -65,11 +65,11 @@ export const Sidebar: React.FC = () => {
         >
           <Icon
             name={isOpen ? 'X' : 'Menu'}
-            size={16}
+            size={24}
           />
         </Button>
       </div>
-      <Divider />
+      <Divider spacing='md' />
       <nav className={`${styles.nav} ${!isOpen ? styles.navMenuClosed : ''}`}>
         {NAV_ITEMS.map((item) => (
           <Link
@@ -86,12 +86,12 @@ export const Sidebar: React.FC = () => {
           </Link>
         ))}
       </nav>
-      <Divider />
+      <Divider spacing='md' />
       <div className={styles.footer}>
         {userEmail && isOpen && (
           <Text
             size='xs'
-            className={styles.email}
+            className={`${styles.email} ${!isOpen ? styles.hidden : ''}`}
             title={userEmail}
           >
             {userEmail}
