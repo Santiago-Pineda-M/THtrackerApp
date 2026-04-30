@@ -1,0 +1,205 @@
+@use '../../../globalStyles/tokens' as *;
+
+.sidebar {
+  min-width: 64px;
+  max-height: 94vh;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  position: sticky;
+  padding: $spacing-page-padding;
+  padding-top: 32px;
+  padding-left: 24px;
+  padding-right: 0;
+  border-radius: 0;
+}
+
+.sidebarClosed {
+  --icon-size: 18px;
+  --link-padding: $space-sm;
+  --button-size: sm;
+}
+
+.sidebarOpen {
+  --icon-size: 20px;
+  --link-padding: $space-sm $space-md;
+  --button-size: md;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+  width: 100%;
+}
+
+.header > .logo {
+  color: $color-text-primary;
+  text-decoration: none;
+  border-radius: $radius-md;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.header > button {
+  border: 0 !important;
+  margin: 0;
+  padding: 0;
+  transition: $transition-fast;
+}
+
+.headerOpen {
+  flex-direction: row;
+  padding-left: $space-md;
+  padding-right: $space-md;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  color: $color-text-primary;
+  text-decoration: none;
+  border-radius: $radius-md;
+  transition: $transition-fast;
+  padding: var(--link-padding, $space-md $space-md);
+  gap: $space-md;
+  width: 100%;
+}
+
+.linkIcon {
+  width: var(--icon-size, 20px);
+  height: var(--icon-size, 20px);
+  flex-shrink: 0;
+  transition: $transition-default;
+}
+
+.link:hover {
+  background-color: $color-accent-soft;
+}
+
+.link span {
+  transition:
+    opacity $transition-default,
+    transform $transition-default;
+  opacity: 1;
+}
+
+.navMenuClosed .link span {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.navMenuClosed .link {
+  justify-content: center;
+}
+
+.active {
+  background-color: $color-accent-hover;
+  color: $color-text-primary;
+  border: 1px solid $color-accent-hover;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-lg;
+  width: 100%;
+  overflow-y: auto;
+  background-color: transparent;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+  width: 100%;
+}
+
+.footer button {
+  width: 100%;
+  justify-content: left;
+  padding: var(--link-padding, $space-sm);
+}
+
+.footer button span {
+  transition: opacity $transition-default;
+  opacity: 1;
+}
+
+.sidebarClosed .footer button span {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.logoutButton {
+  padding: $space-sm !important;
+  justify-content: center !important;
+}
+
+.email {
+  color: $color-text-secondary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  max-width: 100%;
+}
+
+@media screen and (max-width: 640px) {
+  .sidebar {
+    flex-direction: row;
+    justify-content: center;
+    padding: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    margin: $space-md;
+    background-color: transparent;
+    border: 0;
+  }
+
+  .header {
+    display: none;
+  }
+
+  .nav {
+    flex-direction: row;
+    justify-content: center;
+    gap: $space-md;
+    padding: 0;
+    background-color: $color-bg-card;
+    width: 100%;
+    height: 100%;
+    padding: $space-sm;
+    border: 2px solid $color-border-focus;
+    border-radius: $radius-card;
+  }
+
+  hr {
+    display: none;
+  }
+
+  .link {
+    padding: $space-sm;
+    justify-content: center;
+    border-radius: $radius-full;
+  }
+
+  .link span {
+    display: none;
+  }
+
+  .footer {
+    display: none;
+  }
+}

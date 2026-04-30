@@ -1,0 +1,25 @@
+@use '../../../../globalStyles/tokens' as *;
+
+.success-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.success-actions {
+  margin-top: 20px;
+}
+
+.modal-content {
+  padding: 16px;
+}
+
+.modal-text {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

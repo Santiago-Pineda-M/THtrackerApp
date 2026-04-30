@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './CalendarGrid.module.css'
+import styles from './CalendarGrid.module.scss'
 import { CalendarEvent, type LogEventView } from './CalendarEvent'
 import { CurrentTimeIndicator } from './CurrentTimeIndicator'
 

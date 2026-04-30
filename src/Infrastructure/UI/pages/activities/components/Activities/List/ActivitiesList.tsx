@@ -5,7 +5,7 @@ import { usePlocState } from '../../../../../../Hooks/usePlocState'
 import type { IActivitiesListState } from '../../../../../../../Domain/IStates'
 import { ActivitiesListItem } from './ActivitiesListItem'
 import { ActivityCreate } from '../Management/ActivityCreate'
-import styles from './ActivitiesList.module.css'
+import styles from './ActivitiesList.module.scss'
 
 export const ActivitiesList: React.FC = () => {
   const { providerActivitiesListPloc, providerCategoriesListPloc } =

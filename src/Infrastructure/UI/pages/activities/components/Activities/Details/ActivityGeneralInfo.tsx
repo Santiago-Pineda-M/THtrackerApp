@@ -8,7 +8,7 @@ import type {
   IActivityDetailState,
   ICategoriesListState,
 } from '../../../../../../../Domain/IStates'
-import styles from './ActivityGeneralInfo.module.css'
+import styles from './ActivityGeneralInfo.module.scss'
 
 interface ActivityGeneralInfoProps {
   activityId: string

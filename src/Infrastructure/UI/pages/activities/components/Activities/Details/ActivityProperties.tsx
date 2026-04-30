@@ -8,7 +8,7 @@ import {
 import { useDependencies } from '../../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../../Hooks/usePlocState'
 import type { IActivityValueDefinitionsState } from '../../../../../../../Domain/IStates'
-import styles from './ActivityProperties.module.css'
+import styles from './ActivityProperties.module.scss'
 
 interface ActivityPropertiesProps {
   activityId: string

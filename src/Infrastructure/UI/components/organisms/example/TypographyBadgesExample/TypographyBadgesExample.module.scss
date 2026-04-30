@@ -1,0 +1,12 @@
+@use '../../../../globalStyles/tokens' as *;
+
+.header {
+  margin-bottom: $space-md;
+}
+
+.badgesRow {
+  display: flex;
+  gap: $space-sm;
+  flex-wrap: wrap;
+  margin-top: $space-sm;
+}

@@ -1,0 +1,43 @@
+@use '../../../../../../globalStyles/tokens' as *;
+
+.card {
+  overflow: hidden;
+  border-radius: $radius-full;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0;
+  gap: 1.5rem;
+}
+
+.stateContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  padding: 1rem;
+  gap: 0.5rem;
+}
+
+.loadingSpinner {
+  color: $color-primary;
+}
+
+.errorText {
+  color: $color-danger;
+}
+
+.emptyText {
+  display: flex;
+  color: $color-text-secondary;
+  font-style: italic;
+  width: 100%;
+  justify-content: center;
+}

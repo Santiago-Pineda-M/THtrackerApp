@@ -3,7 +3,7 @@ import { Button, Text, Modal, Icon } from '../../../../../components'
 import { useDependencies } from '../../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../../Hooks/usePlocState'
 import type { IActivityDeleteState } from '../../../../../../../Domain/IStates'
-import styles from './ActivityForm.module.css'
+import styles from './ActivityForm.module.scss'
 
 interface ActivityDeleteProps {
   activityId: string

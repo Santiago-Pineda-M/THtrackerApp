@@ -11,7 +11,7 @@ import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { ICategory } from '../../../../../../Domain'
 import type { ICategoryEditFormState } from '../../../../../../Domain/IStates'
-import styles from './CategoryEdit.module.css'
+import styles from './CategoryEdit.module.scss'
 
 interface CategoryEditProps {
   category: ICategory

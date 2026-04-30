@@ -4,7 +4,7 @@ import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { ICategory } from '../../../../../../Domain'
 import type { ICategoryDeleteState } from '../../../../../../Controllers/Category/CategoryDeletePloc'
-import styles from './CategoryDelete.module.css'
+import styles from './CategoryDelete.module.scss'
 
 interface CategoryDeleteProps {
   category: ICategory

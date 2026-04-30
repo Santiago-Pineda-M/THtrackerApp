@@ -1,4 +1,4 @@
-import s from './Avatar.module.css'
+import s from './Avatar.module.scss'
 
 export interface AvatarProps {
   src?: string

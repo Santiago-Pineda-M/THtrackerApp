@@ -1,5 +1,5 @@
 ﻿import React from 'react'
-import styles from './CalendarHeader.module.css'
+import styles from './CalendarHeader.module.scss'
 
 interface Props {
   weekDates: Date[]

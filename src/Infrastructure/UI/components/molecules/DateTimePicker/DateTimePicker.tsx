@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useRef } from 'react'
-import styles from './DateTimePicker.module.css'
+import styles from './DateTimePicker.module.scss'
 
 // ─── Static data (outside component to avoid recreation) ───────────────────
 const MONTHS = [

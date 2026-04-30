@@ -1,0 +1,79 @@
+@use '../../../../../globalStyles/tokens' as *;
+
+.modalContent {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: $color-bg-input;
+  border: 1px solid $color-border-soft;
+  border-radius: $radius-sm;
+  color: $color-text-primary;
+  font-family: inherit;
+  font-size: 0.875rem;
+  transition: $transition-fast;
+  cursor: pointer;
+  appearance: none;
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: $color-accent;
+  box-shadow: 0 0 0 2px $color-accent-soft;
+}
+
+.select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.select option {
+  background-color: $color-bg-primary;
+  color: $color-text-primary;
+}
+
+.successContainer {
+  padding: 24px;
+  text-align: center;
+}
+
+.successActions {
+  margin-top: 24px;
+}
+
+.errorMessage {
+  margin-bottom: 16px;
+  display: block;
+}
+
+.overlapOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modalText {
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+/* Specific to color picker */
+.colorInput {
+  padding: 0 4px !important;
+  height: 40px !important;
+}

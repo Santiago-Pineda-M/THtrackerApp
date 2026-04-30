@@ -1,0 +1,42 @@
+@use '../../../../../globalStyles/tokens' as *;
+
+.card > div {
+  padding-top: 14px;
+}
+
+.list {
+  list-style: none;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 0px;
+  padding-right: 6px;
+  margin: 0;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.emptyState {
+  padding: 32px;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.errorText {
+  color: $color-error;
+  margin: 16px;
+  display: block;
+}
+
+.footerActions {
+  padding: $space-md 0px 0px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* agrgar una altura maxima a la card para mviles de 360 px */
+
+@media (max-width: 640px) {
+  .card {
+    max-height: 310px;
+  }
+}

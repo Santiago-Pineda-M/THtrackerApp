@@ -1,5 +1,5 @@
 import React from 'react'
-import s from './Badge.module.css'
+import s from './Badge.module.scss'
 
 export type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info'
 

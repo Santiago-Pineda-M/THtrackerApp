@@ -1,0 +1,48 @@
+@use '../../../globalStyles/tokens' as *;
+
+.wrap {
+  width: 100%;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: $font-family-base;
+  font-size: 0.875rem; /* TODO: $font-size-sm */
+}
+
+.table th {
+  text-align: left;
+  padding: $space-sm $space-md;
+  color: $color-text-secondary;
+  font-weight: 600;
+  border-bottom: 1px solid $color-border-soft;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: $space-sm $space-md;
+  color: $color-text-primary;
+  border-bottom: 1px solid $color-border-soft;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.03); /* TODO: $color-bg-hover */
+}
+
+.clickable {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.clickable:hover td {
+  background: rgba(255, 255, 255, 0.06);
+}

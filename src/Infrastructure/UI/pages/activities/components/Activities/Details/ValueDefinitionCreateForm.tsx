@@ -10,7 +10,7 @@ import {
 import { useDependencies } from '../../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../../Hooks/usePlocState'
 import type { IValueDefinitionCreateFormState } from '../../../../../../../Domain/IStates'
-import styles from './ValueDefinitionForm.module.css'
+import styles from './ValueDefinitionForm.module.scss'
 
 interface ValueDefinitionCreateFormProps {
   activityId: string

@@ -1,0 +1,24 @@
+@use '../../../../../../../globalStyles/tokens' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.loadingRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.activityName {
+  font-size: clamp($font-size-xl, 3vw, $font-size-4xl);
+}
+
+.chronometerWrapper {
+  display: block;
+  margin-top: $space-xs;
+  font-size: clamp($font-size-lg, 5vw, $font-size-4xl);
+}

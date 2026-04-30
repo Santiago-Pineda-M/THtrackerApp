@@ -8,7 +8,7 @@ import { Card, Text, Spinner, Avatar } from '../../../../components'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { IUserProfileDisplayState } from '../../../../../../Domain/IStates'
-import styles from './UserProfileDisplay.module.css'
+import styles from './UserProfileDisplay.module.scss'
 
 /**
  * Obtiene las iniciales de un nombre o email.

@@ -1,0 +1,98 @@
+@use '../../../globalStyles/tokens' as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-sm;
+  border-radius: $radius-md;
+  font-family: $font-family-base;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  border: 1px solid transparent;
+  outline: 2px solid transparent;
+  transition:
+    transform $transition-fast,
+    opacity $transition-fast;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.button:focus-visible {
+  box-shadow:
+    0 0 0 2px $color-bg-primary,
+    0 0 0 4px $color-accent;
+}
+
+/* Sizes */
+.button[data-size='sm'] {
+  padding: $space-xs $space-sm;
+  font-size: 0.75rem; /* TODO: $font-size-xs */
+}
+
+.button[data-size='md'] {
+  padding: $space-sm $space-md;
+  font-size: 0.875rem; /* TODO: $font-size-sm */
+}
+
+.button[data-size='lg'] {
+  padding: $space-md $space-lg;
+  font-size: 1rem; /* TODO: $font-size-md */
+}
+
+/* Variants */
+.button[data-variant='primary'] {
+  background: $color-accent;
+  color: #fff; /* TODO: $color-on-accent */
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: $shadow-soft;
+}
+
+.button[data-variant='primary']:hover:not(:disabled) {
+  background: $color-accent-hover;
+  box-shadow: $shadow-elevated, $shadow-glow;
+  transform: translateY(-2px);
+}
+
+.button[data-variant='secondary'] {
+  background: rgba(255, 255, 255, 0.05); /* TODO: $color-bg-subtle */
+  color: $color-text-primary;
+  border-color: $color-border-soft;
+}
+
+.button[data-variant='secondary']:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1); /* TODO: $color-bg-hover */
+  border-color: rgba(255, 255, 255, 0.2); /* TODO: $color-border-hover */
+  transform: translateY(-1px);
+}
+
+.button[data-variant='ghost'] {
+  background: transparent;
+  color: $color-text-primary;
+  border-color: $color-border-soft;
+}
+
+.button[data-variant='ghost']:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05); /* TODO: $color-bg-subtle */
+  border-color: rgba(255, 255, 255, 0.2); /* TODO: $color-border-hover */
+}
+
+.button[data-variant='danger'] {
+  background: $color-error-soft;
+  color: #fca5a5; /* TODO: $color-danger-text */
+  border-color: rgba(239, 68, 68, 0.2); /* TODO: $color-danger-border */
+}
+
+.button[data-variant='danger']:hover:not(:disabled) {
+  background: $color-error;
+  color: #fff; /* TODO: $color-on-danger */
+  transform: translateY(-1px);
+}

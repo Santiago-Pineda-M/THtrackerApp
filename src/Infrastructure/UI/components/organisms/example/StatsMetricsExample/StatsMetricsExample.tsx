@@ -4,7 +4,7 @@ import { Divider } from '../../../atoms/Divider/Divider'
 import { Text } from '../../../atoms/Text/Text'
 import { StatCard } from '../../../molecules/StatCard/StatCard'
 import { MetricBlock } from '../../../molecules/MetricBlock/MetricBlock'
-import s from './StatsMetricsExample.module.css'
+import s from './StatsMetricsExample.module.scss'
 
 export const StatsMetricsExample: React.FC = () => (
   <Card

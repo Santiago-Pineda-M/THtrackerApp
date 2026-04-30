@@ -1,4 +1,4 @@
-import styles from './MetricBlock.module.css'
+import styles from './MetricBlock.module.scss'
 import { Text } from '../../atoms/Text/Text'
 import { Badge } from '../../atoms/Badge/Badge'
 

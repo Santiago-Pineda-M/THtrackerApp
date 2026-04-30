@@ -1,0 +1,48 @@
+@use '../../../globalStyles/tokens' as *;
+
+/* =========================
+   CARD BASE (RIGID BENTO)
+   ========================= */
+
+.card {
+  grid-column: span var(--w, 1);
+  grid-row: span var(--h, 1);
+  min-width: $grid-column-min;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  background: $color-bg-card;
+  border-radius: $radius-card;
+  padding-top: $spacing-grid-gap-y;
+  padding-right: $spacing-grid-gap-x;
+  padding-bottom: $spacing-grid-gap-y;
+  padding-left: $spacing-grid-gap-x;
+  border: 1px solid $color-border-soft;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  justify-content: space-around;
+}
+
+.cardContent > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .card {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+
+  .grid-top-right {
+    grid-column: span 1;
+    grid-row: auto; /* flujo normal en móvil */
+  }
+}

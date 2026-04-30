@@ -23,7 +23,7 @@ import {
   Icon,
   Spinner,
 } from '../../../../components'
-import styles from './TaskList.module.css'
+import styles from './TaskList.module.scss'
 
 // ---------------------------------------------------------------------------
 // TaskListItem

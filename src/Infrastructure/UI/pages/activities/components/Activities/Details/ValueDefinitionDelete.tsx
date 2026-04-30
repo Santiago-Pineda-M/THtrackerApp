@@ -3,7 +3,7 @@ import { Button, Text, Modal, Icon } from '../../../../../components'
 import { useDependencies } from '../../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../../Hooks/usePlocState'
 import type { IValueDefinitionDeleteState } from '../../../../../../../Domain'
-import styles from './ValueDefinitionForm.module.css'
+import styles from './ValueDefinitionForm.module.scss'
 
 interface ValueDefinitionDeleteProps {
   activityId: string

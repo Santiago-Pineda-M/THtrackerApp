@@ -6,7 +6,7 @@ import Card from '../../../atoms/Card/Card'
 import { Avatar } from '../../../atoms/Avatar/Avatar'
 import { Icon } from '../../../atoms/Icon/Icon'
 import { Text } from '../../../atoms/Text/Text'
-import s from './AvatarsIconsExample.module.css'
+import s from './AvatarsIconsExample.module.scss'
 
 export const AvatarsIconsExample: React.FC = () => (
   <Card

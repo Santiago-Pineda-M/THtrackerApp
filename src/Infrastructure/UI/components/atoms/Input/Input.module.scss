@@ -1,0 +1,58 @@
+@use '../../../globalStyles/tokens' as *;
+
+.input {
+  width: 100%;
+  background: $color-bg-input;
+  border: 1px solid $color-border-soft;
+  border-radius: $radius-md;
+  color: $color-text-primary;
+  font-family: $font-family-base;
+  outline: none;
+  transition: $transition-fast;
+}
+
+.input::placeholder {
+  color: $color-text-secondary;
+  opacity: 0.6;
+}
+
+.input:hover {
+  background: $color-bg-input-hover;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.input:focus-visible {
+  border-color: $color-border-focus;
+  background: $color-bg-input-hover;
+  box-shadow: 0 0 0 3px $color-accent-soft;
+}
+
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sizes */
+.input[data-size='sm'] {
+  padding: $space-xs $space-sm;
+  font-size: 0.8125rem; /* TODO: $font-size-xs */
+}
+
+.input[data-size='md'] {
+  padding: $space-sm $space-md;
+  font-size: 0.9375rem; /* TODO: $font-size-md */
+}
+
+.input[data-size='lg'] {
+  padding: $space-md $space-lg;
+  font-size: 1rem; /* TODO: $font-size-lg */
+}
+
+/* States */
+.input[data-state='error'] {
+  border-color: $color-error;
+}
+
+.input[data-state='success'] {
+  border-color: $color-success;
+}

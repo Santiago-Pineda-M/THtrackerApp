@@ -11,7 +11,7 @@ import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { ITaskListItem } from '../../../../../../Domain/TaskList/ITaskListResponses'
 import type { ITaskListEditFormState } from '../../../../../../Domain/IStates'
-import styles from './TaskListEditForm.module.css'
+import styles from './TaskListEditForm.module.scss'
 
 interface TaskListEditFormProps {
   taskList: ITaskListItem

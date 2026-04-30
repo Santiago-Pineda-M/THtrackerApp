@@ -5,7 +5,7 @@ import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import { Input, Button, Text, Icon } from '../../../../components'
 import { FormField } from '../../../../components'
-import styles from './LoginForm.module.css'
+import styles from './LoginForm.module.scss'
 
 type LoginFormProps = React.HTMLAttributes<HTMLFormElement>
 

@@ -3,7 +3,7 @@ import { Text } from '../../../../components'
 import type { ICategory } from '../../../../../../Domain'
 import { CategoryEdit } from './CategoryEdit'
 import { CategoryDelete } from './CategoryDelete'
-import styles from './CategoriesListItem.module.css'
+import styles from './CategoriesListItem.module.scss'
 
 interface CategoriesListItemProps {
   category: ICategory

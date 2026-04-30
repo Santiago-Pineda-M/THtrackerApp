@@ -13,7 +13,7 @@ import type {
   IActivityCreateFormState,
   ICategoriesListState,
 } from '../../../../../../../Domain/IStates'
-import styles from './ActivityForm.module.css'
+import styles from './ActivityForm.module.scss'
 
 export const ActivityCreate: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)

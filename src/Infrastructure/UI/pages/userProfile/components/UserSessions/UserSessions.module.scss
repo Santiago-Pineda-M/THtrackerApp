@@ -1,0 +1,78 @@
+@use '../../../../globalStyles/tokens' as *;
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: $space-xl;
+}
+
+.sessionsList {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  height: 100%;
+  overflow-y: auto;
+  justify-content: flex-start;
+}
+
+.sessionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $space-md;
+  border: 1px solid $color-border-soft;
+  border-radius: $radius-md;
+  background-color: transparent;
+  transition: $transition-fast;
+}
+
+.sessionRow:hover {
+  border-color: $color-border-focus;
+  background-color: $color-bg-secondary;
+}
+
+.sessionRow.active {
+  border-left: 6px solid $color-success;
+}
+
+.sessionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.sessionInfoText {
+  display: -webkit-box;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sessionMeta {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.revokeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-error;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-sm;
+  border-radius: $radius-sm;
+  transition: $transition-fast;
+}
+
+.revokeBtn:hover {
+  background-color: $color-error-soft;
+}
+
+.revokeBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

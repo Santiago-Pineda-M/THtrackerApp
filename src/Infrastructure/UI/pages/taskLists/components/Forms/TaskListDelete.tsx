@@ -4,7 +4,7 @@ import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { ITaskListItem } from '../../../../../../Domain/TaskList/ITaskListResponses'
 import type { ITaskListDeleteState } from '../../../../../../Domain/IStates'
-import styles from './TaskListDelete.module.css'
+import styles from './TaskListDelete.module.scss'
 
 interface TaskListDeleteProps {
   taskList: ITaskListItem

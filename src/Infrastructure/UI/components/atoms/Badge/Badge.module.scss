@@ -1,0 +1,52 @@
+@use '../../../globalStyles/tokens' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: $space-xs $space-sm;
+  border-radius: $radius-full;
+  font-size: 0.75rem; /* TODO: $font-size-xs */
+  font-weight: 600;
+  border: 1px solid $color-border-soft;
+  transition: $transition-fast;
+}
+
+.badge[data-variant='default'] {
+  background: rgba(255, 255, 255, 0.05); /* TODO: $color-bg-subtle */
+  color: $color-text-primary;
+}
+
+.badge[data-variant='success'] {
+  background: $color-success-soft;
+  border-color: rgba(16, 185, 129, 0.2); /* TODO: $color-success-border */
+  color: $color-success;
+}
+
+.badge[data-variant='warning'] {
+  background: $color-warning-soft;
+  border-color: rgba(245, 158, 11, 0.2); /* TODO: $color-warning-border */
+  color: $color-warning;
+}
+
+.badge[data-variant='danger'] {
+  background: $color-error-soft;
+  border-color: rgba(239, 68, 68, 0.2); /* TODO: $color-danger-border */
+  color: $color-error;
+}
+
+.badge[data-variant='info'] {
+  background: $color-accent-soft;
+  border-color: rgba(99, 102, 241, 0.2); /* TODO: $color-info-border */
+  color: $color-accent;
+}
+
+.badge[data-dot]::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: $radius-full;
+  background: currentColor;
+  flex-shrink: 0;
+}

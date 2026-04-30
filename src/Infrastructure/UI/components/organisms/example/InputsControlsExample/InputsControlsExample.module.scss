@@ -1,0 +1,7 @@
+@use '../../../../globalStyles/tokens' as *;
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}

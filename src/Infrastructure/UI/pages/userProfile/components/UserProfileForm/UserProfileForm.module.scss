@@ -1,0 +1,85 @@
+@use '../../../../globalStyles/tokens' as *;
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: $space-xl;
+}
+
+.messages {
+  margin-bottom: $space-md;
+}
+
+.success {
+  color: $color-success;
+}
+
+.error {
+  color: $color-error;
+}
+
+.fieldList {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.fieldRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $space-md;
+  border: 1px solid $color-border-soft;
+  border-radius: $radius-md;
+  background-color: transparent;
+  transition: $transition-fast;
+}
+
+.fieldRow:hover {
+  border-color: $color-border-focus;
+  background-color: $color-bg-secondary;
+}
+
+.fieldInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+}
+
+.editBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-sm;
+  border-radius: $radius-sm;
+  transition: $transition-fast;
+}
+
+.editBtn:hover {
+  background-color: $color-accent-soft;
+  color: $color-accent;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  min-width: 320px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-md;
+  margin-top: $space-md;
+}

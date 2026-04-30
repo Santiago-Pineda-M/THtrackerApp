@@ -1,7 +1,7 @@
 import React from 'react'
 import { Sidebar } from '../../organisms/Sidebar/Sidebar'
 import { BreadcrumbNavigation } from '../../molecules/BreadcrumbNavigation/BreadcrumbNavigation'
-import styles from './MainLayout.module.css'
+import styles from './MainLayout.module.scss'
 
 interface Breadcrumb {
   label: string

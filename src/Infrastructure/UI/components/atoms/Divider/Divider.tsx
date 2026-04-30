@@ -1,4 +1,4 @@
-import s from './Divider.module.css'
+import s from './Divider.module.scss'
 
 export interface DividerProps {
   vertical?: boolean

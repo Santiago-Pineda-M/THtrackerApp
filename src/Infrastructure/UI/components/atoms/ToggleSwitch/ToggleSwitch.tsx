@@ -1,4 +1,4 @@
-import s from './ToggleSwitch.module.css'
+import s from './ToggleSwitch.module.scss'
 
 export type ToggleSwitchSize = 'sm' | 'md'
 

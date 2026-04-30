@@ -1,0 +1,7 @@
+@use '../../../globalStyles/tokens' as *;
+
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  color: inherit;
+}

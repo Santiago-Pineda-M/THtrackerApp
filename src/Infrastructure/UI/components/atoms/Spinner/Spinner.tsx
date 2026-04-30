@@ -1,4 +1,4 @@
-import s from './Spinner.module.css'
+import s from './Spinner.module.scss'
 
 export interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg'

@@ -1,4 +1,4 @@
-import s from './ProgressBar.module.css'
+import s from './ProgressBar.module.scss'
 import { Text } from '../../atoms/Text/Text'
 
 interface ProgressBarProps {

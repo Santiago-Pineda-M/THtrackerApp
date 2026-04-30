@@ -1,4 +1,4 @@
-import styles from './ActionsRecordLogs.module.css'
+import styles from './ActionsRecordLogs.module.scss'
 import { ChronometerRecordLogs } from './ChronometerRecordLogs/ChronometerRecordLogs'
 import { StartRecordLogs } from './StartRecordLogs/StartRecordLogs'
 import { StopRecordLogs } from './StopRecordLogs/StopRecordLogs'

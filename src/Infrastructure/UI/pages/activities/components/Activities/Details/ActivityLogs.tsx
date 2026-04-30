@@ -5,7 +5,7 @@ import { useDependencies } from '../../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../../Hooks/usePlocState'
 import type { IActivityLogsListState } from '../../../../../../../Domain/IStates'
 import type { ActivityLogResponse } from '../../../../../../../Domain'
-import styles from './ActivityLogs.module.css'
+import styles from './ActivityLogs.module.scss'
 
 interface ActivityLogsProps {
   activityId: string

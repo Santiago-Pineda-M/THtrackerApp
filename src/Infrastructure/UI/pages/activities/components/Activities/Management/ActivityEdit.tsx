@@ -10,7 +10,7 @@ import {
 import { useDependencies } from '../../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../../Hooks/usePlocState'
 import type { IActivityEditFormState } from '../../../../../../../Domain/IStates'
-import styles from './ActivityForm.module.css'
+import styles from './ActivityForm.module.scss'
 
 interface ActivityEditProps {
   activityId: string

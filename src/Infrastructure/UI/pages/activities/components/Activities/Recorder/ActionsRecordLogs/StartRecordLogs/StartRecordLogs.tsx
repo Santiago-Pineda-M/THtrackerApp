@@ -13,7 +13,7 @@ import type {
   IActiveActivityLogsState,
   IActivityLogStartState,
 } from '../../../../../../../../../Domain/IStates'
-import styles from './StartRecordLogs.module.css'
+import styles from './StartRecordLogs.module.scss'
 
 export const StartRecordLogs = () => {
   const {

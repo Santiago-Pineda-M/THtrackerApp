@@ -1,4 +1,4 @@
-import styles from './ListActiveActivityLogs.module.css'
+import styles from './ListActiveActivityLogs.module.scss'
 import { Card } from '../../../../../../components'
 
 const ListActiveActivityLogs = () => {

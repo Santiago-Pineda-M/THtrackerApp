@@ -6,7 +6,7 @@ import type {
   ActivityLogResponse,
 } from '../../../../../../../../../Domain'
 import { Chronometer, Text, Spinner } from '../../../../../../../components'
-import styles from './ChronometerRecordLogs.module.css'
+import styles from './ChronometerRecordLogs.module.scss'
 
 export const ChronometerRecordLogs = ({
   log,

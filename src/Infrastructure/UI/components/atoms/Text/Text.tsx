@@ -1,5 +1,5 @@
 import React from 'react'
-import s from './Text.module.css'
+import s from './Text.module.scss'
 
 export type TextAs =
   | 'p'

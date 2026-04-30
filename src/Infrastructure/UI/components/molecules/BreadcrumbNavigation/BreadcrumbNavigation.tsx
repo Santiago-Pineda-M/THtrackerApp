@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import styles from './BreadcrumbNavigation.module.css'
+import styles from './BreadcrumbNavigation.module.scss'
 import { Text } from '../../atoms/Text/Text'
 
 interface Breadcrumb {

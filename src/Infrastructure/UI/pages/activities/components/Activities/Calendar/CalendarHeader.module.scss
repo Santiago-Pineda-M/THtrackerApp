@@ -1,0 +1,59 @@
+@use '../../../../../globalStyles/tokens' as *;
+
+.calendarHeader {
+  display: grid;
+  /* 1 col para la hora, 7 para los días */
+  grid-template-columns: 50px repeat(7, 1fr);
+  border-bottom: 1px solid $color-border-soft;
+  background-color: $color-bg-secondary;
+  padding-right: $space-sm;
+}
+
+.timeGutterHeader {
+  width: 40px;
+}
+
+.dayColumnHeader {
+  text-align: center;
+  padding-top: $space-sm;
+  padding-bottom: $space-sm;
+  border-left: 1px solid $color-border-soft;
+  font-size: 0.9rem;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.dayColumnHeader:first-of-type {
+  border-left: none; /* No border for the time gutter */
+}
+
+.dayName {
+  display: block;
+  font-weight: 500;
+  color: $color-text-secondary;
+  text-transform: uppercase;
+  font-size: clamp($font-size-xxs, 3vw, $font-size-md);
+}
+
+.dayNumber {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: clamp($font-size-xxs, 3vw, $font-size-2xl);
+  margin: 8px 6px 2px 6px;
+  aspect-ratio: 1 / 1;
+  max-width: 48px;
+  max-height: 48px;
+  border-radius: $radius-full;
+}
+
+.dayNumber.isToday {
+  background-color: $color-accent;
+  color: white;
+}
+
+.isTodayHeader {
+  background-color: rgba(99, 102, 241, 0.05);
+}

@@ -4,7 +4,7 @@ import type { IRegisterState } from '../../../../../../Domain/IStates'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import { Input, Button, Text, FormField } from '../../../../components'
-import styles from './RegisterForm.module.css'
+import styles from './RegisterForm.module.scss'
 
 type RegisterFormProps = React.HTMLAttributes<HTMLFormElement>
 

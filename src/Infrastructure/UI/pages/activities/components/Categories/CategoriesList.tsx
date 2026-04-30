@@ -5,7 +5,7 @@ import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { ICategoriesListState } from '../../../../../../Domain'
 import { CategoriesListItem } from './CategoriesListItem'
 import { CategoryCreate } from './CategoryCreate'
-import styles from './CategoriesList.module.css'
+import styles from './CategoriesList.module.scss'
 
 export const CategoriesList: React.FC = () => {
   const { providerCategoriesListPloc } = useDependencies()

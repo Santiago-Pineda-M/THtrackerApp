@@ -13,7 +13,7 @@ import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { ITaskEditFormState } from '../../../../../../Domain/IStates'
 import type { ITaskItem } from '../../../../../../Domain/TaskList/ITaskListResponses'
-import styles from './TaskEditForm.module.css'
+import styles from './TaskEditForm.module.scss'
 
 interface TaskEditFormProps {
   task: ITaskItem

@@ -1,0 +1,80 @@
+@use '../../../globalStyles/tokens' as *;
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+  gap: $space-md;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  color: $color-text-secondary;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-sm;
+  background: $color-accent-soft;
+  color: $color-accent;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+}
+
+.value {
+  margin: 0 !important;
+  font-size: 2rem !important;
+  line-height: 1.1;
+  color: $color-text-primary;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: $font-family-base;
+}
+
+.trendValue {
+  font-weight: 600;
+}
+
+.trendLabel {
+  color: $color-text-secondary;
+  margin-left: 4px;
+  font-weight: 400;
+}
+
+.positive {
+  color: $color-success;
+}
+
+.negative {
+  color: $color-error;
+}
+
+.neutral {
+  color: $color-text-secondary;
+}

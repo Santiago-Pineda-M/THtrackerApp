@@ -1,0 +1,22 @@
+@use '../../../../globalStyles/tokens' as *;
+
+.card > div {
+  padding-top: 14px;
+}
+
+.list {
+  list-style: none;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 0px;
+  padding-right: 6px;
+  margin: 0;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.footerActions {
+  padding: $space-md 0px 0px;
+  display: flex;
+  justify-content: flex-end;
+}

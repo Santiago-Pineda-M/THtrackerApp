@@ -10,7 +10,7 @@ import {
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { ICategoryCreateFormState } from '../../../../../../Domain/IStates'
-import styles from './CategoryCreate.module.css'
+import styles from './CategoryCreate.module.scss'
 
 export const CategoryCreate: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)

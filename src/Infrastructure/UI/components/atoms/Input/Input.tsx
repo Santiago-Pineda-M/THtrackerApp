@@ -1,5 +1,5 @@
 import React from 'react'
-import s from './Input.module.css'
+import s from './Input.module.scss'
 
 export type InputType =
   | 'text'

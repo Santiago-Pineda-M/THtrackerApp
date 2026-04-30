@@ -1,0 +1,34 @@
+@use '../../../../globalStyles/tokens' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.footer {
+  margin-top: $space-sm;
+  color: $color-text-secondary;
+  text-align: center;
+}
+
+.footer a {
+  color: $color-accent;
+  text-decoration: none;
+  transition: $transition-fast;
+}
+
+.footer a:hover {
+  color: $color-accent-hover;
+  text-decoration: underline;
+}
+
+.error {
+  color: $color-error;
+  font-weight: 500;
+}
+
+.success {
+  color: $color-success;
+  font-weight: 500;
+}

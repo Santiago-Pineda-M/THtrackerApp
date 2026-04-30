@@ -1,0 +1,41 @@
+@use '../../../globalStyles/tokens' as *;
+
+.divider {
+  border: none;
+  background: $color-border-soft;
+  margin: 0;
+}
+
+.divider:not([data-vertical]) {
+  width: 100%;
+  height: 1px;
+}
+
+.divider[data-vertical] {
+  width: 1px;
+  height: 100%;
+  align-self: stretch;
+}
+
+.divider[data-spacing='sm'] {
+  margin-block: $space-xs;
+}
+.divider[data-spacing='md'] {
+  margin-block: $space-md;
+}
+.divider[data-spacing='lg'] {
+  margin-block: $space-lg;
+}
+
+.divider[data-vertical][data-spacing='sm'] {
+  margin-block: 0;
+  margin-inline: $space-xs;
+}
+.divider[data-vertical][data-spacing='md'] {
+  margin-block: 0;
+  margin-inline: $space-md;
+}
+.divider[data-vertical][data-spacing='lg'] {
+  margin-block: 0;
+  margin-inline: $space-lg;
+}

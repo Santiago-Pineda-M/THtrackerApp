@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './CalendarEvent.module.css'
+import styles from './CalendarEvent.module.scss'
 
 import type { ActivityLogResponse } from '../../../../../../../Domain'
 

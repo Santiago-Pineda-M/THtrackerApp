@@ -2,7 +2,7 @@ import React from 'react'
 import Card from '../../../atoms/Card/Card'
 import { Spinner } from '../../../atoms/Spinner/Spinner'
 import { Text } from '../../../atoms/Text/Text'
-import s from './SpinnersExample.module.css'
+import s from './SpinnersExample.module.scss'
 
 export const SpinnersExample: React.FC = () => (
   <Card

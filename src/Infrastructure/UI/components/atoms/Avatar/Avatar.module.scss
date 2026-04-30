@@ -1,0 +1,37 @@
+@use '../../../globalStyles/tokens' as *;
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-full;
+  background: $color-bg-card;
+  border: 1px solid $color-border-soft;
+  color: $color-text-primary;
+  overflow: hidden;
+  flex-shrink: 0;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.avatar[data-size='sm'] {
+  width: 32px;
+  height: 32px;
+  font-size: 0.75rem; /* TODO: $font-size-xs */
+}
+
+.avatar[data-size='md'] {
+  width: 48px;
+  height: 48px;
+  font-size: 1rem; /* TODO: $font-size-md */
+}
+
+.avatar[data-size='lg'] {
+  width: 64px;
+  height: 64px;
+  font-size: 1.25rem; /* TODO: $font-size-lg */
+}
+
+img.avatar {
+  object-fit: cover;
+}

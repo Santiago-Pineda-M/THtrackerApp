@@ -1,0 +1,26 @@
+@use '../../../../globalStyles/tokens' as *;
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  margin-bottom: $space-sm;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: $space-md;
+}
+
+.gridCompact {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: $space-md;
+}

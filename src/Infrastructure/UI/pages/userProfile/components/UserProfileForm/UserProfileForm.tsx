@@ -11,7 +11,7 @@ import {
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { IUserProfileFormState } from '../../../../../../Domain/IStates'
-import styles from './UserProfileForm.module.css'
+import styles from './UserProfileForm.module.scss'
 
 type EditField = 'name' | 'email' | null
 

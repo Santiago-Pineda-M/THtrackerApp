@@ -10,7 +10,7 @@ import {
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { ITaskListCreateFormState } from '../../../../../../Domain/IStates'
-import styles from './TaskListCreateForm.module.css'
+import styles from './TaskListCreateForm.module.scss'
 
 export const TaskListCreateForm: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)

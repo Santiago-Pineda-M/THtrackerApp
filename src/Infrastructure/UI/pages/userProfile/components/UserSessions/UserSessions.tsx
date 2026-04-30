@@ -14,7 +14,7 @@ import type {
   ISessionRevokeState,
   IAuthState,
 } from '../../../../../../Domain/IStates'
-import styles from './UserSessions.module.css'
+import styles from './UserSessions.module.scss'
 
 export const UserSessions: React.FC = () => {
   const {

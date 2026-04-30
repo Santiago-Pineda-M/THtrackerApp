@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Text, Icon } from '../../../../../components'
-import styles from './ActivitiesListItem.module.css'
+import styles from './ActivitiesListItem.module.scss'
 import type { ICategory } from '../../../../../../../Domain'
 
 interface ActivitiesListItemProps {

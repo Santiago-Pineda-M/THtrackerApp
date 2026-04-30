@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './StatCard.module.css'
+import styles from './StatCard.module.scss'
 import { Text } from '../../atoms'
 import { Icon, type IconName } from '../../atoms/Icon/Icon'
 

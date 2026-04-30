@@ -16,7 +16,7 @@ import type {
   IActivityLogStopState,
   IActivitiesListState,
 } from '../../../../../../../../../Domain/IStates'
-import styles from './StopRecordLogs.module.css'
+import styles from './StopRecordLogs.module.scss'
 
 export const StopRecordLogs = () => {
   const {

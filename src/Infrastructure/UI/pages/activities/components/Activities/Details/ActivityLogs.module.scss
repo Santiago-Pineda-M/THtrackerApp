@@ -1,0 +1,116 @@
+@use '../../../../../globalStyles/tokens' as *;
+
+.container {
+  padding: 16px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.loadingContainer {
+  text-align: center;
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 48px;
+  opacity: 0.5;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tableWrap {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 200px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: $font-family-base;
+  font-size: 0.875rem;
+}
+
+.table th {
+  text-align: left;
+  padding: $space-sm $space-md;
+  color: $color-text-secondary;
+  font-weight: 600;
+  border-bottom: 1px solid $color-border-soft;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: $space-sm $space-md;
+  color: $color-text-primary;
+  border-bottom: 1px solid $color-border-soft;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 300px;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid $color-border-soft;
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+}
+
+.valuesSection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid $color-border-soft;
+}
+
+.valuesTitle {
+  margin-bottom: 12px;
+}
+
+.valuesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.valueItem {
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

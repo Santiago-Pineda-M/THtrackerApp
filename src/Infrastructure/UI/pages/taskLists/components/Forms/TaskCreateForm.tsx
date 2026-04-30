@@ -12,7 +12,7 @@ import {
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { ITaskCreateFormState } from '../../../../../../Domain/IStates'
-import styles from './TaskCreateForm.module.css'
+import styles from './TaskCreateForm.module.scss'
 
 interface TaskCreateFormProps {
   taskListId: string

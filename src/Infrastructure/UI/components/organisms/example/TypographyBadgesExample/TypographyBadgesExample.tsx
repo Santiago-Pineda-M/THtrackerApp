@@ -3,7 +3,7 @@ import Card from '../../../atoms/Card/Card'
 import { Text } from '../../../atoms/Text/Text'
 import { Badge } from '../../../atoms/Badge/Badge'
 import { Divider } from '../../../atoms/Divider/Divider'
-import s from './TypographyBadgesExample.module.css'
+import s from './TypographyBadgesExample.module.scss'
 
 export const TypographyBadgesExample: React.FC = () => (
   <Card

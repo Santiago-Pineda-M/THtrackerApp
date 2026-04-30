@@ -1,5 +1,5 @@
 import React, { useId, cloneElement } from 'react'
-import s from './FormField.module.css'
+import s from './FormField.module.scss'
 import { Text } from '../../atoms/Text/Text'
 
 type FieldControlProps = {

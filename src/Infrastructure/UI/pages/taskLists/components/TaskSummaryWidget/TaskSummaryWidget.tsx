@@ -5,7 +5,7 @@ import type { ITaskListsState } from '../../../../../../Domain/IStates'
 
 import { Card, Text } from '../../../../components'
 import { TaskListCreateForm } from '../Forms/TaskListCreateForm'
-import styles from './TaskSummaryWidget.module.css'
+import styles from './TaskSummaryWidget.module.scss'
 
 export const TaskSummaryWidget: React.FC = () => {
   const { providerTaskListsPloc } = useDependencies()

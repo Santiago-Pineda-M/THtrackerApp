@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState } from 'react'
-import styles from './CurrentTimeIndicator.module.css'
+import styles from './CurrentTimeIndicator.module.scss'
 
 interface Props {
   pixelsPerHour: number

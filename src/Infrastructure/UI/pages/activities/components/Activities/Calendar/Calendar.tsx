@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { Card, Button, Icon, Text, Badge } from '../../../../../components'
 import { Modal } from '../../../../../components/molecules'
-import styles from './Calendar.module.css'
+import styles from './Calendar.module.scss'
 import { CalendarHeader } from './CalendarHeader'
 import { CalendarGrid } from './CalendarGrid'
 import type { LogEventView } from './CalendarEvent'

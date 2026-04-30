@@ -1,5 +1,5 @@
 import React from 'react'
-import s from './Table.module.css'
+import s from './Table.module.scss'
 import { Spinner } from '../../atoms/Spinner/Spinner'
 
 interface Column {

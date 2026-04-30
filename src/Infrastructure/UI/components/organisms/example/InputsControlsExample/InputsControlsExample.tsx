@@ -3,7 +3,7 @@ import Card from '../../../atoms/Card/Card'
 import { Input } from '../../../atoms/Input/Input'
 import { ToggleSwitch } from '../../../atoms/ToggleSwitch/ToggleSwitch'
 import FormField from '../../../molecules/Form/FormField'
-import s from './InputsControlsExample.module.css'
+import s from './InputsControlsExample.module.scss'
 
 export const InputsControlsExample: React.FC = () => {
   const [nombre, setNombre] = useState('')

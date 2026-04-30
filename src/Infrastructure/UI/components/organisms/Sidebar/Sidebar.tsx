@@ -4,7 +4,7 @@ import { Card, Button, Icon, Text, Divider, type IconProps } from '../../atoms'
 import { usePlocState } from '../../../../Hooks/usePlocState'
 import { useDependencies } from '../../../../Context/useDependencies'
 import type { IAuthState, ISidebarState } from '../../../../../Domain'
-import styles from './Sidebar.module.css'
+import styles from './Sidebar.module.scss'
 
 interface NavItem {
   path: string

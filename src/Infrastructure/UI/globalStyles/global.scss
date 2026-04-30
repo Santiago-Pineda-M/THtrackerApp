@@ -1,0 +1,37 @@
+@use './tokens' as *;
+
+body {
+  background-color: $color-bg-primary;
+  color: $color-text-primary;
+  font-family: $font-family-base;
+}
+
+/* 1. El track ocupa el ancho MÁXIMO que quieras (tamaño fijo siempre) */
+::-webkit-scrollbar {
+  width: $space-sm;
+  height: $space-sm;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* 2. El thumb parece delgado gracias al border transparente */
+::-webkit-scrollbar-thumb {
+  background-color: $color-text-secondary;
+  border-radius: $radius-full;
+  transition: $transition-slow;
+
+  /* Este border transparente "encoge" visualmente el thumb */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* 3. En hover: se quita el border → el thumb parece expandirse */
+::-webkit-scrollbar-thumb:hover {
+  background-color: $color-text-primary;
+  border: 0px solid transparent; /* o simplemente: border: none */
+  background-clip: padding-box;
+  transition: $transition-slow;
+}
