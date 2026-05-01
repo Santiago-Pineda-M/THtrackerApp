@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react'
+import React, { useState } from 'react'
 import { Button, Text, Modal, Icon } from '../../../../../components'
 import { useDependencies } from '../../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../../Hooks/usePlocState'
@@ -69,7 +69,7 @@ export const ActivityDelete: React.FC<ActivityDeleteProps> = ({
                 size='sm'
                 className={styles.errorMessage}
                 style={{
-                  color: 'var(--color-error)',
+                  color: '#ef4444',
                 }}
               >
                 {state.error.title || 'Error al eliminar la actividad.'}
@@ -91,8 +91,7 @@ export const ActivityDelete: React.FC<ActivityDeleteProps> = ({
                 Cancelar
               </Button>
               <Button
-                variant='primary'
-                style={{ backgroundColor: 'var(--color-error)' }}
+                variant='danger'
                 onClick={handleDelete}
                 loading={state.isLoading}
               >

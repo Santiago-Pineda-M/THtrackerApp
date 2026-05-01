@@ -30,7 +30,7 @@
   top: 2px;
   left: 2px;
   border-radius: $radius-full;
-  background: #fff; /* TODO: $color-toggle-thumb */
+  background: $color-text-primary; /* Thumb blanco \u2014 visible sobre bg negro y amarillo */
   transition: transform $transition-fast;
 }
 

@@ -8,7 +8,7 @@
 
 .sectionTitle {
   font-size: $font-size-xs;
-  color: var(--text-secondary);
+  color: $color-text-secondary;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 600;
@@ -30,12 +30,12 @@
   width: 32px;
   height: 32px;
   border-radius: $radius-sm;
-  background-color: var(--bg-hover);
+  background-color: $color-bg-hover;
   transition: background-color 0.2s ease;
 }
 
 .icon:hover {
-  background-color: var(--bg-active);
+  background-color: $color-bg-active;
 }
 
 .stacked {
@@ -45,7 +45,7 @@
 
 .stacked > * {
   margin-right: -10px;
-  border: 2px solid var(--bg-card);
+  border: 2px solid $color-bg-card;
   transition: transform 0.2s ease;
 }
 

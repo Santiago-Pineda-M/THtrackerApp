@@ -35,25 +35,26 @@
 /* Sizes */
 .button[data-size='sm'] {
   padding: $space-xs $space-sm;
-  font-size: 0.75rem; /* TODO: $font-size-xs */
+  font-size: $font-size-xs;
 }
 
 .button[data-size='md'] {
   padding: $space-sm $space-md;
-  font-size: 0.875rem; /* TODO: $font-size-sm */
+  font-size: $font-size-sm;
 }
 
 .button[data-size='lg'] {
   padding: $space-md $space-lg;
-  font-size: 1rem; /* TODO: $font-size-md */
+  font-size: $font-size-md;
 }
 
 /* Variants */
 .button[data-variant='primary'] {
   background: $color-accent;
-  color: #fff; /* TODO: $color-on-accent */
-  border-color: rgba(255, 255, 255, 0.1);
+  color: $color-text-on-accent; /* Texto sobre amarillo */
+  border-color: $color-border-soft;
   box-shadow: $shadow-soft;
+  font-weight: 700;
 }
 
 .button[data-variant='primary']:hover:not(:disabled) {
@@ -63,14 +64,15 @@
 }
 
 .button[data-variant='secondary'] {
-  background: rgba(255, 255, 255, 0.05); /* TODO: $color-bg-subtle */
+  background: $color-bg-secondary;
   color: $color-text-primary;
   border-color: $color-border-soft;
 }
 
 .button[data-variant='secondary']:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1); /* TODO: $color-bg-hover */
-  border-color: rgba(255, 255, 255, 0.2); /* TODO: $color-border-hover */
+  background: $color-bg-hover;
+  border-color: $color-accent;
+  color: $color-text-primary;
   transform: translateY(-1px);
 }
 
@@ -81,18 +83,19 @@
 }
 
 .button[data-variant='ghost']:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.05); /* TODO: $color-bg-subtle */
-  border-color: rgba(255, 255, 255, 0.2); /* TODO: $color-border-hover */
+  background: $color-bg-hover;
+  border-color: $color-accent;
+  color: $color-accent;
 }
 
 .button[data-variant='danger'] {
   background: $color-error-soft;
-  color: #fca5a5; /* TODO: $color-danger-text */
-  border-color: rgba(239, 68, 68, 0.2); /* TODO: $color-danger-border */
+  color: $color-error;
+  border-color: rgba($color-error, 0.2);
 }
 
 .button[data-variant='danger']:hover:not(:disabled) {
   background: $color-error;
-  color: #fff; /* TODO: $color-on-danger */
+  color: $color-text-primary;
   transform: translateY(-1px);
 }

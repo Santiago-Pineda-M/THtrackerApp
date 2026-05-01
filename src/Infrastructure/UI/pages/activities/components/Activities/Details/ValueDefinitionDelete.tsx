@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react'
+import React, { useState } from 'react'
 import { Button, Text, Modal, Icon } from '../../../../../components'
 import { useDependencies } from '../../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../../Hooks/usePlocState'
@@ -78,7 +78,7 @@ export const ValueDefinitionDelete: React.FC<ValueDefinitionDeleteProps> = ({
                 size='sm'
                 className={styles.errorMessage}
                 style={{
-                  color: 'var(--color-error)',
+                  color: '#ef4444',
                 }}
               >
                 {state.error.title || 'Error al eliminar la propiedad.'}
@@ -100,8 +100,7 @@ export const ValueDefinitionDelete: React.FC<ValueDefinitionDeleteProps> = ({
                 Cancelar
               </Button>
               <Button
-                variant='primary'
-                style={{ backgroundColor: 'var(--color-error)' }}
+                variant='danger'
                 onClick={handleDelete}
                 loading={state.isLoading}
               >

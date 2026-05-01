@@ -13,31 +13,31 @@
 }
 
 .badge[data-variant='default'] {
-  background: rgba(255, 255, 255, 0.05); /* TODO: $color-bg-subtle */
+  background: $color-bg-secondary;
   color: $color-text-primary;
 }
 
 .badge[data-variant='success'] {
   background: $color-success-soft;
-  border-color: rgba(16, 185, 129, 0.2); /* TODO: $color-success-border */
+  border-color: rgba($color-success, 0.2);
   color: $color-success;
 }
 
 .badge[data-variant='warning'] {
   background: $color-warning-soft;
-  border-color: rgba(245, 158, 11, 0.2); /* TODO: $color-warning-border */
+  border-color: rgba($color-warning, 0.2);
   color: $color-warning;
 }
 
 .badge[data-variant='danger'] {
   background: $color-error-soft;
-  border-color: rgba(239, 68, 68, 0.2); /* TODO: $color-danger-border */
+  border-color: rgba($color-error, 0.2);
   color: $color-error;
 }
 
 .badge[data-variant='info'] {
   background: $color-accent-soft;
-  border-color: rgba(99, 102, 241, 0.2); /* TODO: $color-info-border */
+  border-color: rgba($color-accent, 0.3);
   color: $color-accent;
 }
 

@@ -51,9 +51,10 @@
 
 .dayNumber.isToday {
   background-color: $color-accent;
-  color: white;
+  color: $color-text-on-accent; /* Texto sobre amarillo */
+  font-weight: 700;
 }
 
 .isTodayHeader {
-  background-color: rgba(99, 102, 241, 0.05);
+  background-color: $color-accent-soft; /* Token correcto, migrado desde indigo */
 }

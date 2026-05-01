@@ -16,13 +16,15 @@
 
 .sidebarClosed {
   --icon-size: 18px;
-  --link-padding: $space-sm;
+  /* 8px — $space-sm evaluado como literal para CSS custom property */
+  --link-padding: 8px;
   --button-size: sm;
 }
 
 .sidebarOpen {
   --icon-size: 20px;
-  --link-padding: $space-sm $space-md;
+  /* 8px 16px — $space-sm $space-md evaluados como literal */
+  --link-padding: 8px 16px;
   --button-size: md;
 }
 
@@ -42,8 +44,9 @@
   transition: background-color 0.2s ease-in-out;
 }
 
-.header > button {
-  border: 0 !important;
+/* Mayor especificidad para neutralizar el border del componente Button */
+.sidebar .header > button {
+  border: 0;
   margin: 0;
   padding: 0;
   transition: $transition-fast;
@@ -62,7 +65,8 @@
   text-decoration: none;
   border-radius: $radius-md;
   transition: $transition-fast;
-  padding: var(--link-padding, $space-md $space-md);
+  /* fallback: 16px 16px literal ($space-md $space-md) — CSS custom props no interpolan SCSS */
+  padding: var(--link-padding, 16px 16px);
   gap: $space-md;
   width: 100%;
 }
@@ -98,9 +102,17 @@
 }
 
 .active {
-  background-color: $color-accent-hover;
-  color: $color-text-primary;
-  border: 1px solid $color-accent-hover;
+  background-color: $color-accent;
+  color: $color-text-on-accent; /* Texto sobre amarillo */
+  border: 1px solid $color-accent;
+  font-weight: 600;
+
+  /* Anular el hover genérico: preservar contraste negro/amarillo */
+  &:hover {
+    background-color: $color-accent-hover;
+    color: $color-text-on-accent; /* Texto sobre hover amarillo */
+    box-shadow: $shadow-accent-sm;
+  }
 }
 
 .nav {
@@ -125,7 +137,8 @@
 .footer button {
   width: 100%;
   justify-content: left;
-  padding: var(--link-padding, $space-sm);
+  /* fallback: 8px literal ($space-sm) — CSS custom props no interpolan SCSS */
+  padding: var(--link-padding, 8px);
 }
 
 .footer button span {
@@ -140,6 +153,9 @@
   overflow: hidden;
 }
 
+/* Excepción: !important necesario para sobrescribir el padding del componente
+   Button cuando está en modo colapsado. Refactorizar Button para aceptar
+   prop size='icon' resolvería esto definitivamente. */
 .logoutButton {
   padding: $space-sm !important;
   justify-content: center !important;

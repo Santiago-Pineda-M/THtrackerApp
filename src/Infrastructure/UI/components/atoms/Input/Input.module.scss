@@ -2,8 +2,8 @@
 
 .input {
   width: 100%;
-  background: $color-bg-input;
-  border: 1px solid $color-border-soft;
+  background: $color-bg-input; /* Fondo semántico explícito para inputs */
+  border: 1px solid $color-border-soft; /* Borde visible en reposo (ratio ~3.4:1) */
   border-radius: $radius-md;
   color: $color-text-primary;
   font-family: $font-family-base;
@@ -13,18 +13,20 @@
 
 .input::placeholder {
   color: $color-text-secondary;
-  opacity: 0.6;
+  opacity: 0.75;
 }
 
 .input:hover {
-  background: $color-bg-input-hover;
-  border-color: rgba(255, 255, 255, 0.15);
+  background: $color-bg-input;
+  border-color: $color-text-secondary; /* Borde gris claro en hover: ratio ~8.9:1 */
 }
 
 .input:focus-visible {
-  border-color: $color-border-focus;
-  background: $color-bg-input-hover;
-  box-shadow: 0 0 0 3px $color-accent-soft;
+  border-color: $color-accent;
+  background: $color-bg-input;
+  box-shadow:
+    0 0 0 1px $color-accent,
+    0 0 0 4px $color-accent-soft; /* Doble anillo: borde neto + glow suave */
 }
 
 .input:disabled {
@@ -35,24 +37,46 @@
 /* Sizes */
 .input[data-size='sm'] {
   padding: $space-xs $space-sm;
-  font-size: 0.8125rem; /* TODO: $font-size-xs */
+  font-size: $font-size-xs;
 }
 
 .input[data-size='md'] {
   padding: $space-sm $space-md;
-  font-size: 0.9375rem; /* TODO: $font-size-md */
+  font-size: $font-size-sm;
 }
 
 .input[data-size='lg'] {
   padding: $space-md $space-lg;
-  font-size: 1rem; /* TODO: $font-size-lg */
+  font-size: $font-size-md;
 }
 
 /* States */
 .input[data-state='error'] {
   border-color: $color-error;
+  
+  &:hover {
+    border-color: $color-error;
+  }
+  
+  &:focus-visible {
+    border-color: $color-error;
+    box-shadow:
+      0 0 0 1px $color-error,
+      0 0 0 4px $color-error-soft;
+  }
 }
 
 .input[data-state='success'] {
   border-color: $color-success;
+  
+  &:hover {
+    border-color: $color-success;
+  }
+  
+  &:focus-visible {
+    border-color: $color-success;
+    box-shadow:
+      0 0 0 1px $color-success,
+      0 0 0 4px $color-success-soft;
+  }
 }

@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Card, Text } from '../../../../../components/atoms'
 import { ActivityEdit } from '../Management/ActivityEdit'
 import { ActivityDelete } from '../Management/ActivityDelete'
@@ -44,8 +44,8 @@ export const ActivityGeneralInfo: React.FC<ActivityGeneralInfoProps> = ({
   const category = categoriesState.categories.find(
     (c) => c.id === activity.categoryId
   )
-  const activityColor = activity.color || 'var(--color-text-primary)'
-  const categoryColor = category?.color || 'var(--color-text-primary)'
+  const activityColor = activity.color || '#c5c5c5'
+  const categoryColor = category?.color || '#c5c5c5'
 
   return (
     <Card
@@ -107,7 +107,7 @@ export const ActivityGeneralInfo: React.FC<ActivityGeneralInfoProps> = ({
         <div className={styles.body}>
           <div
             className={styles.colorStrip}
-            style={{ backgroundColor: 'var(--color-text-secondary)' }}
+            style={{ backgroundColor: '#c5c5c5' }}
           />
           <div className={styles.infoContent}>
             <Text
