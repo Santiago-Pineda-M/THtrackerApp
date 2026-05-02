@@ -2,11 +2,75 @@
 
 .container {
   display: flex;
+  min-height: 100vh;
+  background-color: $color-bg-primary;
+}
+
+.chevronDownContainer {
+  display: none;
+  @media (max-width: 1024px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: $space-xl;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-bottom: $space-xl;
+    animation: slideDown 1.5s ease-in-out infinite;
+  }
+}
+
+// ANUMACION DE ELEMENTO QUE SE MUEVE DE ARRIBA A ABAJO OSILANDO Y REPITIENDO
+@keyframes slideDown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.layoutWrapper {
+  display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
+
+  @media (min-width: 1024px) {
+    flex-direction: row; // Split 50/50 on desktop
+  }
+}
+
+.infoColumn {
+  display: flex;
+  background-color: rgba(
+    $color-bg-secondary,
+    0.15
+  ); // Slightly darker for separation on mobile
+
+  @media (min-width: 1024px) {
+    flex: 1;
+    background-color: rgba($color-bg-secondary, 0.3);
+    border-right: 1px solid $color-border-muted;
+  }
+}
+
+.formColumn {
+  display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  flex-direction: column;
   padding: $spacing-card-padding;
-  background-color: $color-bg-primary;
+  height: 100vh;
+
+  @media (min-width: 1024px) {
+    flex: 1;
+    height: 100vh;
+  }
 }
 
 .card {
@@ -14,8 +78,9 @@
   border-radius: $radius-card;
   box-shadow: $shadow-elevated;
   padding: $space-xl;
-  max-width: 400px;
+  max-width: 440px; // Slightly larger for better form layout
   width: 100%;
+  border: 1px solid $color-border-muted;
 }
 
 .header {
@@ -38,13 +103,16 @@
 }
 
 @media (max-width: 640px) {
-  .container {
+  .formColumn {
     padding: $space-md;
-    align-items: flex-start;
+    align-items: center;
     padding-top: $space-xl;
   }
 
   .card {
     padding: $space-lg;
+    box-shadow: none; // Flatter on mobile
+    border: none;
+    background-color: transparent; // Blend with background
   }
 }
