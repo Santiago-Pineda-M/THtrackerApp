@@ -42,10 +42,25 @@ export class TaskListCreateFormPloc extends Ploc<ITaskListCreateFormState> {
     })
   }
 
+  updateColor(color: string): void {
+    this.changeState({
+      ...this.state,
+      color,
+      success: false,
+      message: '',
+    })
+  }
+
   /**
    * Envía el formulario de creación.
    */
   async submitCreate(): Promise<void> {
+    // aplicamos la validacion antes de enviar el formulario:
+    this.validateForm()
+    if (Object.keys(this.state.errors).length > 0) {
+      return
+    }
+
     this.changeState({
       ...this.state,
       errors: {},
@@ -57,6 +72,7 @@ export class TaskListCreateFormPloc extends Ploc<ITaskListCreateFormState> {
       const result = await this.createTaskListUseCase.execute({
         name: this.state.name,
         description: this.state.description,
+        color: this.state.color,
       })
 
       if (result.success) {
@@ -88,6 +104,25 @@ export class TaskListCreateFormPloc extends Ploc<ITaskListCreateFormState> {
     }
   }
 
+  /**
+   * Valida el formulario de creación.
+   */
+  private validateForm(): void {
+    const errors: Record<string, string[]> = {}
+
+    if (!this.state.name) {
+      errors.name = ['El nombre es requerido.']
+    }
+
+    if (!this.state.description) {
+      errors.description = ['La descripción es requerida.']
+    }
+
+    this.changeState({
+      ...this.state,
+      errors,
+    })
+  }
   /**
    * Resetea el estado del formulario.
    */

@@ -32,8 +32,8 @@ export class GetCalendarLogsUseCase implements IUseCase<
     request: GetCalendarLogsRequest
   ): Promise<GetCalendarLogsResult> {
     const result = await this.activityLogService.getActivityLogs({
-      startDate: request.startDate.toISOString(),
-      endDate: request.endDate.toISOString(),
+      from: request.startDate.toISOString(),
+      to: request.endDate.toISOString(),
     })
 
     if (Array.isArray(result)) {

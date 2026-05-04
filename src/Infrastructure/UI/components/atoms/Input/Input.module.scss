@@ -53,11 +53,11 @@
 /* States */
 .input[data-state='error'] {
   border-color: $color-error;
-  
+
   &:hover {
     border-color: $color-error;
   }
-  
+
   &:focus-visible {
     border-color: $color-error;
     box-shadow:
@@ -68,15 +68,21 @@
 
 .input[data-state='success'] {
   border-color: $color-success;
-  
+
   &:hover {
     border-color: $color-success;
   }
-  
+
   &:focus-visible {
     border-color: $color-success;
     box-shadow:
       0 0 0 1px $color-success,
       0 0 0 4px $color-success-soft;
   }
+}
+
+.input[type='color'] {
+  padding: 0;
+  height: $space-xxl;
+  cursor: pointer;
 }

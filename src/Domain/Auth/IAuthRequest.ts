@@ -9,9 +9,10 @@
  * deviceInfo es requerido por la API para identificar el dispositivo.
  */
 export interface ILoginRequest {
+  IpAddress: string
+  deviceInfo: string // Requerido por la API — usar navigator.userAgent
   email: string
   password: string
-  deviceInfo: string // Requerido por la API — usar navigator.userAgent
 }
 
 /**

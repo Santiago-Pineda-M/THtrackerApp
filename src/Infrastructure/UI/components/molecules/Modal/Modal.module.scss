@@ -20,3 +20,10 @@
   max-height: 90vh;
   overflow-y: auto;
 }
+
+.card > div {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  padding: $space-xl;
+}

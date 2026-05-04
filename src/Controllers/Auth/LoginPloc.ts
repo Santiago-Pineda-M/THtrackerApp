@@ -18,17 +18,17 @@ export class LoginPloc extends Ploc<ILoginState> {
     this.authPloc = authPloc
   }
 
-  async login(
-    email: string,
-    password: string,
-    deviceInfo: string
-  ): Promise<void> {
-    const validationErrors = this.validateForm(email, password)
+  async login(): Promise<void> {
+    const validationErrors = this.validateForm(
+      this.state.email,
+      this.state.password,
+      this.state.deviceInfo
+    )
     if (Object.keys(validationErrors).length > 0) {
       this.changeState({
         ...this.state,
-        email,
-        password,
+        email: this.state.email,
+        password: this.state.password,
         errors: validationErrors,
         success: false,
         message: 'Corrige los errores del formulario.',
@@ -39,8 +39,8 @@ export class LoginPloc extends Ploc<ILoginState> {
 
     this.changeState({
       ...this.state,
-      email,
-      password,
+      email: this.state.email,
+      password: this.state.password,
       errors: {},
       message: '',
       isLoading: true,
@@ -48,9 +48,10 @@ export class LoginPloc extends Ploc<ILoginState> {
 
     try {
       const request: ILoginRequest = {
-        email: email.trim(),
-        password,
-        deviceInfo,
+        email: this.state.email.trim(),
+        password: this.state.password,
+        deviceInfo: this.state.deviceInfo,
+        IpAddress: this.state.IpAddress,
       }
       const result = await this.loginUserUseCase.execute(request)
 
@@ -59,8 +60,8 @@ export class LoginPloc extends Ploc<ILoginState> {
 
         this.changeState({
           ...this.state,
-          email,
-          password,
+          email: this.state.email,
+          password: this.state.password,
           errors: {},
           success: true,
           message: 'Sesión iniciada correctamente.',
@@ -75,8 +76,8 @@ export class LoginPloc extends Ploc<ILoginState> {
       const errors = this.normalizeErrorKeys(rawErrors)
       this.changeState({
         ...this.state,
-        email,
-        password,
+        email: this.state.email,
+        password: this.state.password,
         errors,
         success: false,
         message: errorResult.title,
@@ -87,8 +88,8 @@ export class LoginPloc extends Ploc<ILoginState> {
         err instanceof Error ? err.message : 'Error al iniciar sesión.'
       this.changeState({
         ...this.state,
-        email,
-        password,
+        email: this.state.email,
+        password: this.state.password,
         errors: { general: [message] },
         success: false,
         message,
@@ -110,6 +111,20 @@ export class LoginPloc extends Ploc<ILoginState> {
     this.changeState({ ...this.state, password, errors: newErrors })
   }
 
+  updateDeviceInfo(deviceInfo: string): void {
+    const newErrors = { ...this.state.errors }
+    delete newErrors.deviceInfo
+    delete newErrors.general
+    this.changeState({ ...this.state, deviceInfo, errors: newErrors })
+  }
+
+  updateIpAddress(IpAddress: string): void {
+    const newErrors = { ...this.state.errors }
+    delete newErrors.IpAddress
+    delete newErrors.general
+    this.changeState({ ...this.state, IpAddress, errors: newErrors })
+  }
+
   /**
    * Resetea el estado del formulario de login.
    * Se llama cuando el componente se monta para limpiar el estado anterior.
@@ -129,7 +144,8 @@ export class LoginPloc extends Ploc<ILoginState> {
 
   private validateForm(
     email: string,
-    password: string
+    password: string,
+    deviceInfo: string
   ): Record<string, string[]> {
     const errors: Record<string, string[]> = {}
     if (!email || email.trim() === '') {
@@ -139,6 +155,11 @@ export class LoginPloc extends Ploc<ILoginState> {
     }
     if (!password || password === '') {
       errors.password = ['La contraseña es requerida']
+    }
+    if (!deviceInfo || deviceInfo.trim() === '') {
+      errors.deviceInfo = ['El dispositivo es requerido']
+    } else {
+      return {}
     }
     return errors
   }

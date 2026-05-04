@@ -30,7 +30,12 @@ export const Modal: React.FC<ModalProps> = ({
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}
       >
-        <Card title={title}>{children}</Card>
+        <Card
+          title={title}
+          className={styles.card}
+        >
+          {children}
+        </Card>
       </div>
     </div>,
     document.body

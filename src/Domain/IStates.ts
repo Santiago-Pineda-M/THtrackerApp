@@ -56,6 +56,8 @@ export const initialAuthState: IAuthState = {
  * Usada por LoginPloc para gestionar el flujo de login.
  */
 export interface ILoginState {
+  IpAddress: string
+  deviceInfo: string
   email: string
   password: string
   errors: Record<string, string[]>
@@ -65,6 +67,8 @@ export interface ILoginState {
 }
 
 export const initialLoginState: ILoginState = {
+  IpAddress: '',
+  deviceInfo: '',
   email: '',
   password: '',
   errors: {},
@@ -870,6 +874,7 @@ export const initialTaskListDetailState: ITaskListDetailState = {
 export interface ITaskListCreateFormState {
   name: string
   description: string | null
+  color: string
   errors: Record<string, string[]>
   isLoading: boolean
   success: boolean
@@ -877,6 +882,7 @@ export interface ITaskListCreateFormState {
 }
 
 export const initialTaskListCreateFormState: ITaskListCreateFormState = {
+  color: '',
   name: '',
   description: null,
   errors: {},

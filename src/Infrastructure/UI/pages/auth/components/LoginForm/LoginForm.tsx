@@ -29,7 +29,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   useEffect(() => {
     providerLoginPloc.reset()
     hasNavigated.current = false
-  }, [providerLoginPloc])
+    providerLoginPloc.updateDeviceInfo(deviceInfo)
+  }, [providerLoginPloc, deviceInfo])
 
   // Redirect to dashboard after successful login
   useEffect(() => {
@@ -40,7 +41,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   }, [state.success, navigate])
 
   const handleLogin = async () => {
-    await providerLoginPloc.login(state.email, state.password, deviceInfo)
+    await providerLoginPloc.login()
   }
 
   const togglePasswordVisibility = () => {

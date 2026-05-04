@@ -44,6 +44,10 @@ export const TaskListCreateForm: React.FC = () => {
     providerTaskListCreateFormPloc.updateDescription(e.target.value || null)
   }
 
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    providerTaskListCreateFormPloc.updateColor(e.target.value || '#ff4d4f')
+  }
+
   const handleSubmit = async () => {
     await providerTaskListCreateFormPloc.submitCreate()
   }
@@ -76,7 +80,7 @@ export const TaskListCreateForm: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className={styles['modal-content']}>
+          <>
             {state.message && (
               <Text
                 size='sm'
@@ -124,6 +128,20 @@ export const TaskListCreateForm: React.FC = () => {
               />
             </FormField>
 
+            <FormField
+              label='Color'
+              error={state.errors.color?.[0]}
+            >
+              <Input
+                type='color'
+                id='color'
+                name='color'
+                value={state.color}
+                onChange={handleColorChange}
+                disabled={state.isLoading}
+              />
+            </FormField>
+
             <div className={styles['modal-actions']}>
               <Button
                 variant='secondary'
@@ -141,7 +159,7 @@ export const TaskListCreateForm: React.FC = () => {
                 Crear
               </Button>
             </div>
-          </div>
+          </>
         )}
       </Modal>
     </>

@@ -25,11 +25,11 @@ export class ActivityLogService implements IActivityLogService {
       if (request?.activityId) {
         params.append('ActivityId', request.activityId)
       }
-      if (request?.startDate) {
-        params.append('StartDate', request.startDate)
+      if (request?.from) {
+        params.append('from', request.from)
       }
-      if (request?.endDate) {
-        params.append('EndDate', request.endDate)
+      if (request?.to) {
+        params.append('to', request.to)
       }
 
       const queryString = params.toString()

@@ -42,6 +42,8 @@ export class LoginUserUseCase implements IUseCase<ILoginRequest, LoginOutput> {
   }
 
   async execute(input: ILoginRequest): Promise<LoginOutput> {
+    input.IpAddress = '0.0.0.0'
+
     const result = await this.authService.login(input)
 
     if (!this.isSuccess(result)) return result
