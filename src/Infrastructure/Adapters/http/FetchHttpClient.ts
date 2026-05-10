@@ -166,26 +166,39 @@ export class FetchHttpClient implements IHttpClient {
     url: string,
     config?: HttpRequestConfig
   ): Promise<HttpResponse<T>> {
-    const { cacheTtl, ...fetchConfig } = config ?? {}
+    const { cacheTtl, params, ...fetchConfig } = config ?? {} // ← extraer params
+
+    // Serializar params como query string
+    const queryString = params
+      ? '?' +
+        new URLSearchParams(
+          Object.entries(params)
+            .filter(([, v]) => v !== undefined)
+            .map(([k, v]) => [k, String(v)])
+        ).toString()
+      : ''
+    const fullUrl = `${url}${queryString}` // ← URL con query string
 
     // 1. Cache hit
     if (cacheTtl && cacheTtl > 0) {
-      const cached = this.cache.get<HttpResponse<T>>(url)
+      const cached = this.cache.get<HttpResponse<T>>(fullUrl) // ← fullUrl
       if (cached) {
-        console.log(`[Cache HIT] ${url}`)
+        console.log(`[Cache HIT] ${fullUrl}`)
         return cached
       }
     }
 
     // 2 + 3. Deduplication + fetch real con guardado en caché
-    return this.deduplicator.dedupe(url, async () => {
-      const response = await this.request<T>(url, {
+    return this.deduplicator.dedupe(fullUrl, async () => {
+      // ← fullUrl
+      const response = await this.request<T>(fullUrl, {
+        // ← fullUrl
         method: 'GET',
         ...fetchConfig,
       })
       if (cacheTtl && cacheTtl > 0 && response.status === 200) {
-        this.cache.set(url, response, cacheTtl)
-        console.log(`[Cache SET] ${url} (TTL: ${cacheTtl / 1000}s)`)
+        this.cache.set(fullUrl, response, cacheTtl) // ← fullUrl
+        console.log(`[Cache SET] ${fullUrl} (TTL: ${cacheTtl / 1000}s)`)
       }
       return response
     })

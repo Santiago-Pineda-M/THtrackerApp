@@ -2,25 +2,17 @@
  * APPLICATION LAYER - Caso de Uso para obtener logs filtrados por fecha
  */
 
-import type {
-  IUseCase,
-  ApiErrorResponse,
-  ActivityLogResponse,
-} from '../../../Domain'
+import type { IUseCase, ApiActivityLogsTypes } from '../../../Domain'
 import type { IActivityLogService } from '../../Services/ActivityLog/IActivityLogService'
 
-export interface GetCalendarLogsRequest {
-  startDate: Date
-  endDate: Date
-}
-
-export type GetCalendarLogsResult =
-  | { success: true; logs: ActivityLogResponse[] }
-  | { success: false; error: ApiErrorResponse }
+type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
+type ActivityLogPaginatedResponse =
+  ApiActivityLogsTypes['ActivityLogResponsePaginated']
+type GetActivityLogsRequest = ApiActivityLogsTypes['GetActivityLogsParams']
 
 export class GetCalendarLogsUseCase implements IUseCase<
-  GetCalendarLogsRequest,
-  GetCalendarLogsResult
+  GetActivityLogsRequest,
+  ActivityLogPaginatedResponse | ProblemDetails
 > {
   private readonly activityLogService: IActivityLogService
 
@@ -29,17 +21,8 @@ export class GetCalendarLogsUseCase implements IUseCase<
   }
 
   async execute(
-    request: GetCalendarLogsRequest
-  ): Promise<GetCalendarLogsResult> {
-    const result = await this.activityLogService.getActivityLogs({
-      from: request.startDate.toISOString(),
-      to: request.endDate.toISOString(),
-    })
-
-    if (Array.isArray(result)) {
-      return { success: true, logs: result }
-    }
-
-    return { success: false, error: result as ApiErrorResponse }
+    request: GetActivityLogsRequest
+  ): Promise<ActivityLogPaginatedResponse | ProblemDetails> {
+    return await this.activityLogService.getActivityLogs(request)
   }
 }

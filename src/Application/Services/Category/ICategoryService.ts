@@ -4,12 +4,18 @@
  * Refleja los endpoints de /api/v1/categories
  */
 
-import type {
-  CategoryResponse,
-  CreateCategoryRequest,
-  UpdateCategoryRequest,
-  ApiErrorResponse,
-} from '../../../Domain'
+import type { ApiCategoriesTypes } from '../../../Domain'
+
+type CategoryResponse = ApiCategoriesTypes['CategoryResponse']
+type CategoryPaginatedResponse = ApiCategoriesTypes['CategoryPaginatedResponse']
+type UpdateCategoryRequest = ApiCategoriesTypes['UpdateCategoryCommand']
+type CreateCategoryRequest = ApiCategoriesTypes['CreateCategoryCommand']
+type ProblemDetails = ApiCategoriesTypes['ProblemDetails']
+
+type GetCategoriesFilters = ApiCategoriesTypes['GetCategoriesFilters']
+type GetCategoryIdPath = ApiCategoriesTypes['GetCategoryIdPath']
+type DeleteCategoryIdPath = ApiCategoriesTypes['DeleteCategoryIdPath']
+type UpdateCategoryIdPath = ApiCategoriesTypes['UpdateCategoryIdPath']
 
 /**
  * Contrato del servicio de categorías.
@@ -21,7 +27,9 @@ export interface ICategoryService {
    * GET /api/v1/categories
    * @returns Array de CategoryResponse o ApiErrorResponse en caso de error
    */
-  getCategories(): Promise<CategoryResponse[] | ApiErrorResponse>
+  getCategories(
+    filters?: GetCategoriesFilters
+  ): Promise<CategoryPaginatedResponse | ProblemDetails>
 
   /**
    * Obtiene una categoría específica por su ID.
@@ -29,7 +37,9 @@ export interface ICategoryService {
    * @param id - ID de la categoría (UUID)
    * @returns CategoryResponse o ApiErrorResponse en caso de error
    */
-  getCategoryById(id: string): Promise<CategoryResponse | ApiErrorResponse>
+  getCategoryById(
+    id: GetCategoryIdPath
+  ): Promise<CategoryResponse | ProblemDetails>
 
   /**
    * Crea una nueva categoría para el usuario autenticado.
@@ -39,7 +49,7 @@ export interface ICategoryService {
    */
   createCategory(
     request: CreateCategoryRequest
-  ): Promise<CategoryResponse | ApiErrorResponse>
+  ): Promise<CategoryResponse | ProblemDetails>
 
   /**
    * Actualiza una categoría existente.
@@ -49,9 +59,9 @@ export interface ICategoryService {
    * @returns CategoryResponse actualizada o ApiErrorResponse en caso de error
    */
   updateCategory(
-    id: string,
+    id: UpdateCategoryIdPath,
     request: UpdateCategoryRequest
-  ): Promise<CategoryResponse | ApiErrorResponse>
+  ): Promise<CategoryResponse | ProblemDetails>
 
   /**
    * Elimina una categoría existente.
@@ -59,5 +69,5 @@ export interface ICategoryService {
    * @param id - ID de la categoría a eliminar (UUID)
    * @returns void o ApiErrorResponse en caso de error
    */
-  deleteCategory(id: string): Promise<void | ApiErrorResponse>
+  deleteCategory(id: DeleteCategoryIdPath): Promise<void | ProblemDetails>
 }

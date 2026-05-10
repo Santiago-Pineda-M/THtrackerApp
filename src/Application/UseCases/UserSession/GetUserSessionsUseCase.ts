@@ -3,22 +3,27 @@
  * Caso de uso para obtener todas las sesiones activas del usuario autenticado.
  */
 
-import type { IUseCase, IUserSessionResponse } from '../../../Domain'
+import type { IUseCase, ApiUserSessionTypes } from '../../../Domain'
 import type { IUserSessionService } from '../../Services/UserSession/IUserSessionService'
 
 /**
  * Output del caso de uso.
  */
-export interface GetUserSessionsOutput {
-  sessions: IUserSessionResponse[]
-}
+type ProblemDetails = ApiUserSessionTypes['ProblemDetails']
+type UserSessionResponsePaginated =
+  ApiUserSessionTypes['UserSessionResponsePaginated']
+type GetUserSessionsRequest = ApiUserSessionTypes['GetUserSessionsFilters']
+
+export type GetUserSessionsOutput =
+  | UserSessionResponsePaginated
+  | ProblemDetails
 
 /**
  * Caso de uso para obtener las sesiones activas del usuario.
  * Utiliza el servicio de sesiones para obtener los datos de la API.
  */
 export class GetUserSessionsUseCase implements IUseCase<
-  void,
+  GetUserSessionsRequest,
   GetUserSessionsOutput
 > {
   private readonly userSessionService: IUserSessionService
@@ -27,8 +32,10 @@ export class GetUserSessionsUseCase implements IUseCase<
     this.userSessionService = userSessionService
   }
 
-  async execute(): Promise<GetUserSessionsOutput> {
-    const sessions = await this.userSessionService.getUserSessions()
-    return { sessions }
+  async execute(
+    request: GetUserSessionsRequest
+  ): Promise<GetUserSessionsOutput> {
+    const sessions = await this.userSessionService.getUserSessions(request)
+    return sessions
   }
 }

@@ -2,44 +2,33 @@
  * APPLICATION LAYER - Caso de Uso para guardar los valores personalizados de un log (métricas)
  */
 
-import type {
-  IUseCase,
-  ApiErrorResponse,
-  LogValueRequest,
-} from '../../../Domain'
+import type { IUseCase, ApiActivityLogsTypes } from '../../../Domain'
 import type { IActivityLogService } from '../../Services/ActivityLog/IActivityLogService'
 
-export interface SaveActivityLogValuesCommand {
-  id: string // ID del activity log
-  requests: LogValueRequest[]
-}
-
-export type SaveActivityLogValuesResult =
-  | { success: true }
-  | { success: false; error: ApiErrorResponse }
+type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
+type SaveLogValuesCommand = ApiActivityLogsTypes['SaveLogValuesCommand']
+type GetActivityLogValuesParams =
+  ApiActivityLogsTypes['GetActivityLogValuesParams']
 
 export class SaveActivityLogValuesUseCase implements IUseCase<
-  SaveActivityLogValuesCommand,
-  SaveActivityLogValuesResult
+  {
+    id: GetActivityLogValuesParams
+    requests: SaveLogValuesCommand[]
+  },
+  void | ProblemDetails
 > {
   private readonly activityLogService: IActivityLogService
   constructor(activityLogService: IActivityLogService) {
     this.activityLogService = activityLogService
   }
 
-  async execute(
-    command: SaveActivityLogValuesCommand
-  ): Promise<SaveActivityLogValuesResult> {
-    const result = await this.activityLogService.saveActivityLogValues(
-      command.id,
-      command.requests
+  async execute(input: {
+    id: GetActivityLogValuesParams
+    requests: SaveLogValuesCommand[]
+  }): Promise<void | ProblemDetails> {
+    return await this.activityLogService.saveActivityLogValues(
+      input.id,
+      input.requests
     )
-
-    if (result === undefined) {
-      // El servicio retorna void si hay éxito según IActivityLogService
-      return { success: true }
-    }
-
-    return { success: false, error: result as ApiErrorResponse }
   }
 }

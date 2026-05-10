@@ -2,26 +2,16 @@
  * APPLICATION LAYER - Caso de Uso para actualizar los metadatos de un log (fechas)
  */
 
-import type {
-  IUseCase,
-  ApiErrorResponse,
-  ActivityLogResponse,
-  UpdateActivityLogRequest,
-} from '../../../Domain'
+import type { IUseCase, ApiActivityLogsTypes } from '../../../Domain'
 import type { IActivityLogService } from '../../Services/ActivityLog/IActivityLogService'
 
-export interface UpdateActivityLogCommand {
-  id: string
-  request: UpdateActivityLogRequest
-}
-
-export type UpdateActivityLogResult =
-  | { success: true; log: ActivityLogResponse }
-  | { success: false; error: ApiErrorResponse }
+type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
+type ActivityLogResponse = ApiActivityLogsTypes['ActivityLogResponse']
+type UpdateActivityLogCommand = ApiActivityLogsTypes['UpdateActivityLogCommand']
 
 export class UpdateActivityLogUseCase implements IUseCase<
   UpdateActivityLogCommand,
-  UpdateActivityLogResult
+  ActivityLogResponse | ProblemDetails
 > {
   private readonly activityLogService: IActivityLogService
   constructor(activityLogService: IActivityLogService) {
@@ -29,17 +19,11 @@ export class UpdateActivityLogUseCase implements IUseCase<
   }
 
   async execute(
-    command: UpdateActivityLogCommand
-  ): Promise<UpdateActivityLogResult> {
-    const result = await this.activityLogService.updateActivityLog(
-      command.id,
-      command.request
+    request: UpdateActivityLogCommand
+  ): Promise<ActivityLogResponse | ProblemDetails> {
+    return await this.activityLogService.updateActivityLog(
+      { id: request.id || '' },
+      request
     )
-
-    if ('id' in result) {
-      return { success: true, log: result as ActivityLogResponse }
-    }
-
-    return { success: false, error: result as ApiErrorResponse }
   }
 }

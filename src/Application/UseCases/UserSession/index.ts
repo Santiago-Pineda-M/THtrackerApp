@@ -7,7 +7,4 @@ export {
   GetUserSessionsUseCase,
   type GetUserSessionsOutput,
 } from './GetUserSessionsUseCase'
-export {
-  RevokeSessionUseCase,
-  type RevokeSessionOutput,
-} from './RevokeSessionUseCase'
+export { RevokeSessionUseCase } from './RevokeSessionUseCase'

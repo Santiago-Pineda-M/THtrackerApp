@@ -1,143 +1,119 @@
-import type { IHttpClient, ApiErrorResponse } from '../../../Domain'
+import type { IHttpClient, ApiTasksTypes } from '../../../Domain'
 import type { ITaskService } from './ITaskService'
-import type {
-  IGetTasksByListRequest,
-  IGetTaskByIdRequest,
-  ICreateTaskRequest,
-  IUpdateTaskRequest,
-  IDeleteTaskRequest,
-  IToggleTaskRequest,
-  IGetTasksByListResponse,
-  IGetTaskByIdResponse,
-  ICreateTaskResponse,
-  IUpdateTaskResponse,
-  IDeleteTaskResponse,
-  IToggleTaskResponse,
-  ITaskItem,
-} from '../../../Domain/TaskList'
+
+type TaskResponse = ApiTasksTypes['TaskResponse']
+type TaskResponsePaginated = ApiTasksTypes['TaskResponsePaginated']
+type CreateTaskRequest = ApiTasksTypes['CreateTaskCommand']
+type UpdateTaskRequest = ApiTasksTypes['UpdateTaskCommand']
+type ProblemDetails = ApiTasksTypes['ProblemDetails']
+
+type TaskByListPath = ApiTasksTypes['TaskByListPath']
+type TaskIdPath = ApiTasksTypes['TaskIdPath']
 
 export class TaskService implements ITaskService {
   private readonly httpClient: IHttpClient
-  private readonly baseTaskUrl = '/api/v1/tasks'
+  private readonly baseUrl = '/api/v1/tasks'
 
   constructor(httpClient: IHttpClient) {
     this.httpClient = httpClient
   }
 
   async getTasksByList(
-    r: IGetTasksByListRequest
-  ): Promise<IGetTasksByListResponse | ApiErrorResponse> {
+    path: TaskByListPath
+  ): Promise<TaskResponsePaginated | ProblemDetails> {
     try {
       const response = await this.httpClient.get<
-        ITaskItem[] | ApiErrorResponse
-      >(`${this.baseTaskUrl}/by-task-list/${r.taskListId}`)
-      if (response.status === 200)
-        return { tasks: response.data as ITaskItem[] }
-      return response.data as ApiErrorResponse
+        TaskResponsePaginated | ProblemDetails
+      >(`${this.baseUrl}/by-task-list/${path.taskListId}`)
+      if (response.status === 200) return response.data as TaskResponsePaginated
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
-  async getTaskById(
-    r: IGetTaskByIdRequest
-  ): Promise<IGetTaskByIdResponse | ApiErrorResponse> {
+  async getTaskById(path: TaskIdPath): Promise<TaskResponse | ProblemDetails> {
     try {
-      const response = await this.httpClient.get<ITaskItem | ApiErrorResponse>(
-        `${this.baseTaskUrl}/${r.id}`
+      const response = await this.httpClient.get<TaskResponse | ProblemDetails>(
+        `${this.baseUrl}/${path.id}`
       )
-      if (response.status === 200) return { task: response.data as ITaskItem }
-      return response.data as ApiErrorResponse
+      if (response.status === 200) return response.data as TaskResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
   async createTask(
-    r: ICreateTaskRequest
-  ): Promise<ICreateTaskResponse | ApiErrorResponse> {
+    request: CreateTaskRequest
+  ): Promise<TaskResponse | ProblemDetails> {
     try {
-      const response = await this.httpClient.post<ITaskItem | ApiErrorResponse>(
-        this.baseTaskUrl,
-        r
-      )
+      const response = await this.httpClient.post<
+        TaskResponse | ProblemDetails
+      >(this.baseUrl, request)
       if (response.status === 201) {
         this.httpClient.invalidateCache(
-          `${this.baseTaskUrl}/by-task-list/${r.taskListId}`
+          `${this.baseUrl}/by-task-list/${request.taskListId}`
         )
-        return { task: response.data as ITaskItem }
+        return response.data as TaskResponse
       }
-      return response.data as ApiErrorResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
   async updateTask(
-    r: IUpdateTaskRequest
-  ): Promise<IUpdateTaskResponse | ApiErrorResponse> {
-    const { id, taskListId, ...data } = r
+    path: TaskIdPath,
+    request: UpdateTaskRequest
+  ): Promise<TaskResponse | ProblemDetails> {
     try {
-      const response = await this.httpClient.put<ITaskItem | ApiErrorResponse>(
-        `${this.baseTaskUrl}/${id}`,
-        data
+      const response = await this.httpClient.put<TaskResponse | ProblemDetails>(
+        `${this.baseUrl}/${path.id}`,
+        request
       )
       if (response.status === 200) {
-        // Invalidar la caché de la lista a la que pertenece la tarea
-        this.httpClient.invalidateCache(
-          `${this.baseTaskUrl}/by-task-list/${taskListId}`
-        )
-        return { task: response.data as ITaskItem }
+        this.httpClient.invalidateCache(this.baseUrl)
+        return response.data as TaskResponse
       }
-      return response.data as ApiErrorResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
-  async deleteTask(
-    r: IDeleteTaskRequest
-  ): Promise<IDeleteTaskResponse | ApiErrorResponse> {
-    const { id, taskListId } = r
+  async deleteTask(path: TaskIdPath): Promise<void | ProblemDetails> {
     try {
-      const response = await this.httpClient.delete<void | ApiErrorResponse>(
-        `${this.baseTaskUrl}/${id}`
+      const response = await this.httpClient.delete<void | ProblemDetails>(
+        `${this.baseUrl}/${path.id}`
       )
       if (response.status === 204) {
-        // Invalidar la caché de la lista a la que pertenecía la tarea
-        this.httpClient.invalidateCache(
-          `${this.baseTaskUrl}/by-task-list/${taskListId}`
-        )
-        return { success: true }
+        this.httpClient.invalidateCache(this.baseUrl)
+        return
       }
-      return response.data as ApiErrorResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
-  async toggleTask(
-    r: IToggleTaskRequest
-  ): Promise<IToggleTaskResponse | ApiErrorResponse> {
+  async toggleTask(path: TaskIdPath): Promise<TaskResponse | ProblemDetails> {
     try {
-      const response = await this.httpClient.patch<void | ApiErrorResponse>(
-        `${this.baseTaskUrl}/${r.id}/toggle`,
-        {}
-      )
-      if (response.status === 204) {
-        return { success: true }
-      }
-      return response.data as ApiErrorResponse
+      const response = await this.httpClient.patch<
+        TaskResponse | ProblemDetails
+      >(`${this.baseUrl}/${path.id}/toggle`)
+      if (response.status === 200) return response.data as TaskResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
-  private toNetworkError(error: unknown): ApiErrorResponse {
+  private toNetworkError(error: unknown): ProblemDetails {
     return {
       title: 'Network Error',
-      detail: error instanceof Error ? error.message : 'Unknown error',
-      status: 500,
+      status: 0,
+      detail: error instanceof Error ? error.message : 'Error de conexión',
     }
   }
 }

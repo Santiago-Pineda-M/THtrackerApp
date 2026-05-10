@@ -2,23 +2,17 @@
  * APPLICATION LAYER - Caso de Uso para obtener logs de una actividad
  */
 
-import type {
-  IUseCase,
-  ApiErrorResponse,
-  ActivityLogResponse,
-  IGetActivityLogsRequest,
-} from '../../../Domain'
+import type { IUseCase, ApiActivityLogsTypes } from '../../../Domain'
 import type { IActivityLogService } from '../../Services/ActivityLog/IActivityLogService'
 
-export type GetActivityLogsRequest = IGetActivityLogsRequest
-
-export type GetActivityLogsResult =
-  | { success: true; logs: ActivityLogResponse[] }
-  | { success: false; error: ApiErrorResponse }
+type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
+type ActivityLogResponsePaginated =
+  ApiActivityLogsTypes['ActivityLogResponsePaginated']
+type GetActivityLogsRequest = ApiActivityLogsTypes['GetActivityLogsParams']
 
 export class GetActivityLogsUseCase implements IUseCase<
   GetActivityLogsRequest,
-  GetActivityLogsResult
+  ActivityLogResponsePaginated | ProblemDetails
 > {
   private readonly activityLogService: IActivityLogService
   constructor(activityLogService: IActivityLogService) {
@@ -27,13 +21,7 @@ export class GetActivityLogsUseCase implements IUseCase<
 
   async execute(
     request: GetActivityLogsRequest
-  ): Promise<GetActivityLogsResult> {
-    const result = await this.activityLogService.getActivityLogs(request)
-
-    if (Array.isArray(result)) {
-      return { success: true, logs: result }
-    }
-
-    return { success: false, error: result as ApiErrorResponse }
+  ): Promise<ActivityLogResponsePaginated | ProblemDetails> {
+    return await this.activityLogService.getActivityLogs(request)
   }
 }

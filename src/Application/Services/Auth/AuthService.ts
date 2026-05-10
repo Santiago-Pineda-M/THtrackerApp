@@ -1,16 +1,12 @@
-import type {
-  IHttpClient,
-  ILoginRequest,
-  IRegisterRequest,
-  IRefreshTokenRequest,
-  ILoginResponse,
-  IRegisterResponse,
-  IRefreshTokenResponse,
-  ILoginResponseError,
-  IRefreshTokenResponseError,
-  IProblemDetails,
-} from '../../../Domain'
+import type { IHttpClient, ApiAuthTypes } from '../../../Domain'
 import type { IAuthService } from './IAuthService'
+
+type LoginCommand = ApiAuthTypes['LoginCommand']
+type RegisterCommand = ApiAuthTypes['RegisterCommand']
+type SubmitRefreshToken = ApiAuthTypes['SubmitRefreshToken']
+type TokenResponse = ApiAuthTypes['TokenResponse']
+type UserResponse = ApiAuthTypes['UserResponse']
+type ProblemDetails = ApiAuthTypes['ProblemDetails']
 
 export class AuthService implements IAuthService {
   private readonly httpClient: IHttpClient
@@ -20,71 +16,47 @@ export class AuthService implements IAuthService {
     this.httpClient = httpClient
   }
 
-  async login(
-    request: ILoginRequest
-  ): Promise<ILoginResponse | ILoginResponseError> {
+  async login(request: LoginCommand): Promise<TokenResponse | ProblemDetails> {
     try {
       const response = await this.httpClient.post<
-        ILoginResponse | IProblemDetails
+        TokenResponse | ProblemDetails
       >(`${this.baseUrl}/login`, request)
-      if (response.status === 200) return response.data as ILoginResponse
-      return this.toLoginError(response.data)
+      if (response.status === 200) return response.data as TokenResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
   async register(
-    request: IRegisterRequest
-  ): Promise<IRegisterResponse | ILoginResponseError> {
+    request: RegisterCommand
+  ): Promise<UserResponse | ProblemDetails> {
     try {
       const response = await this.httpClient.post<
-        IRegisterResponse | IProblemDetails
+        UserResponse | ProblemDetails
       >(`${this.baseUrl}/register`, request)
-      if (response.status === 200 || response.status === 201)
-        return response.data as IRegisterResponse
-      return this.toLoginError(response.data)
+      if (response.status === 201) return response.data as UserResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
   async refreshToken(
-    request: IRefreshTokenRequest
-  ): Promise<IRefreshTokenResponse | IRefreshTokenResponseError> {
+    request: SubmitRefreshToken
+  ): Promise<TokenResponse | ProblemDetails> {
     try {
       const response = await this.httpClient.post<
-        IRefreshTokenResponse | IProblemDetails
+        TokenResponse | ProblemDetails
       >(`${this.baseUrl}/refresh`, request)
-      if (response.status === 200) return response.data as IRefreshTokenResponse
-      return this.toRefreshError(response.data)
+      if (response.status === 200) return response.data as TokenResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
-  private toLoginError(data: unknown): ILoginResponseError {
-    const p = data as IProblemDetails
-    return {
-      title: p?.title ?? 'Error',
-      status: p?.status ?? 401,
-      detail: p?.detail,
-      errors: p?.errors,
-      type: p?.type,
-    }
-  }
-
-  private toRefreshError(data: unknown): IRefreshTokenResponseError {
-    const p = data as IProblemDetails
-    return {
-      title: p?.title ?? 'Refresh Error',
-      status: p?.status ?? 401,
-      detail: p?.detail,
-      type: p?.type,
-    }
-  }
-
-  private toNetworkError(error: unknown): ILoginResponseError {
+  private toNetworkError(error: unknown): ProblemDetails {
     return {
       title: 'Network Error',
       status: 0,

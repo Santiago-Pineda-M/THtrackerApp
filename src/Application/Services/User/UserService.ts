@@ -1,9 +1,9 @@
-import type {
-  IHttpClient,
-  UserProfileResponse,
-  UpdateUserProfileRequest,
-  ProblemDetails,
-} from '../../../Domain'
+import type { IHttpClient, ApiUserTypes } from '../../../Domain'
+
+type UserResponse = ApiUserTypes['UserResponse']
+type UpdateUserCommand = ApiUserTypes['UpdateUserCommand']
+type ProblemDetails = ApiUserTypes['ProblemDetails']
+
 import type { IUserService } from './IUserService'
 
 export class UserService implements IUserService {
@@ -14,12 +14,13 @@ export class UserService implements IUserService {
     this.httpClient = httpClient
   }
 
-  async getProfile(): Promise<UserProfileResponse | ProblemDetails> {
+  async getProfile(): Promise<UserResponse | ProblemDetails> {
     try {
-      const response = await this.httpClient.get<
-        UserProfileResponse | ProblemDetails
-      >(`${this.baseUrl}/me`, { cacheTtl: 10 * 60 * 1000 })
-      if (response.status === 200) return response.data as UserProfileResponse
+      const response = await this.httpClient.get<UserResponse | ProblemDetails>(
+        `${this.baseUrl}/me`,
+        { cacheTtl: 10 * 60 * 1000 }
+      )
+      if (response.status === 200) return response.data as UserResponse
       return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
@@ -27,15 +28,16 @@ export class UserService implements IUserService {
   }
 
   async updateProfile(
-    request: UpdateUserProfileRequest
-  ): Promise<UserProfileResponse | ProblemDetails> {
+    request: UpdateUserCommand
+  ): Promise<UserResponse | ProblemDetails> {
     try {
-      const response = await this.httpClient.put<
-        UserProfileResponse | ProblemDetails
-      >(`${this.baseUrl}/me`, request)
+      const response = await this.httpClient.put<UserResponse | ProblemDetails>(
+        `${this.baseUrl}/me`,
+        request
+      )
       if (response.status === 200) {
         this.httpClient.invalidateCache(`${this.baseUrl}/me`)
-        return response.data as UserProfileResponse
+        return response.data as UserResponse
       }
       return response.data as ProblemDetails
     } catch (error) {

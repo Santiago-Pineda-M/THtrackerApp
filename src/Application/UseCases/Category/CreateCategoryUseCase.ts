@@ -5,33 +5,22 @@
 
 import type { IUseCase } from '../../../Domain'
 import type { ICategoryService } from '../../Services/Category/ICategoryService'
-import type {
-  CreateCategoryRequest,
-  CategoryResponse,
-  ApiErrorResponse,
-} from '../../../Domain'
+import type { ApiCategoriesTypes } from '../../../Domain'
 
-/**
- * Input del caso de uso
- */
-export interface CreateCategoryInput {
-  name: string | null
-  color: string | null
-}
+type CreateCategoryCommand = ApiCategoriesTypes['CreateCategoryCommand']
+type CategoryResponse = ApiCategoriesTypes['CategoryResponse']
+type ProblemDetails = ApiCategoriesTypes['ProblemDetails']
 
 /**
  * Output del caso de uso - puede ser éxito o error
  */
-export type CreateCategoryOutput =
-  | { success: true; category: CategoryResponse }
-  | { success: false; error: ApiErrorResponse }
-
+export type CreateCategoryOutput = CategoryResponse | ProblemDetails
 /**
  * Caso de uso para crear una nueva categoría.
  * POST /api/v1/categories
  */
 export class CreateCategoryUseCase implements IUseCase<
-  CreateCategoryInput,
+  CreateCategoryCommand,
   CreateCategoryOutput
 > {
   private readonly categoryService: ICategoryService
@@ -40,24 +29,12 @@ export class CreateCategoryUseCase implements IUseCase<
     this.categoryService = categoryService
   }
 
-  async execute(input: CreateCategoryInput): Promise<CreateCategoryOutput> {
-    const request: CreateCategoryRequest = {
+  async execute(input: CreateCategoryCommand): Promise<CreateCategoryOutput> {
+    const request: CreateCategoryCommand = {
       name: input.name,
       color: input.color,
     }
 
-    const result = await this.categoryService.createCategory(request)
-
-    if (this.isError(result)) {
-      return { success: false, error: result }
-    }
-
-    return { success: true, category: result }
-  }
-
-  private isError(
-    result: CategoryResponse | ApiErrorResponse
-  ): result is ApiErrorResponse {
-    return 'title' in result || 'detail' in result || 'status' in result
+    return await this.categoryService.createCategory(request)
   }
 }

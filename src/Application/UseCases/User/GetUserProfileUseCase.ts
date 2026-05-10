@@ -3,16 +3,16 @@
  * Caso de uso para obtener el perfil del usuario autenticado.
  */
 
-import type { IUseCase } from '../../../Domain'
+import type { IUseCase, ApiUserTypes } from '../../../Domain'
 import type { IUserService } from '../../Services/User/IUserService'
-import type { UserProfileResponse, ProblemDetails } from '../../../Domain'
+
+type UserProfileResponse = ApiUserTypes['UserResponse']
+type ProblemDetails = ApiUserTypes['ProblemDetails']
 
 /**
  * Output del caso de uso - puede ser éxito o error
  */
-export type GetUserProfileOutput =
-  | { success: true; user: UserProfileResponse }
-  | { success: false; error: ProblemDetails }
+export type GetUserProfileOutput = UserProfileResponse | ProblemDetails
 
 /**
  * Caso de uso para obtener el perfil del usuario autenticado.
@@ -31,16 +31,6 @@ export class GetUserProfileUseCase implements IUseCase<
   async execute(): Promise<GetUserProfileOutput> {
     const result = await this.userService.getProfile()
 
-    if (this.isError(result)) {
-      return { success: false, error: result }
-    }
-
-    return { success: true, user: result }
-  }
-
-  private isError(
-    result: UserProfileResponse | ProblemDetails
-  ): result is ProblemDetails {
-    return 'title' in result || 'detail' in result || 'status' in result
+    return result
   }
 }

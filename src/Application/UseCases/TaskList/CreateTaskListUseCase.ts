@@ -1,17 +1,14 @@
-import type { IUseCase, ApiErrorResponse } from '../../../Domain'
+import type { IUseCase, ApiTaskListsTypes } from '../../../Domain'
 import type { ITaskListService } from '../../Services/TaskList/ITaskListService'
-import type {
-  ICreateTaskListRequest,
-  ICreateTaskListResponse,
-} from '../../../Domain/TaskList'
-import { isApiError } from '../../../Domain'
 
-export type CreateTaskListOutput =
-  | { success: true; taskList: ICreateTaskListResponse['taskList'] }
-  | { success: false; error: ApiErrorResponse }
+type CreateTaskListRequest = ApiTaskListsTypes['CreateTaskListCommand']
+type ProblemDetails = ApiTaskListsTypes['ProblemDetails']
+type CreateTaskListResponse = ApiTaskListsTypes['TaskListResponse']
+
+export type CreateTaskListOutput = CreateTaskListResponse | ProblemDetails
 
 export class CreateTaskListUseCase implements IUseCase<
-  ICreateTaskListRequest,
+  CreateTaskListRequest,
   CreateTaskListOutput
 > {
   private readonly taskListService: ITaskListService
@@ -20,11 +17,8 @@ export class CreateTaskListUseCase implements IUseCase<
     this.taskListService = taskListService
   }
 
-  async execute(
-    request: ICreateTaskListRequest
-  ): Promise<CreateTaskListOutput> {
+  async execute(request: CreateTaskListRequest): Promise<CreateTaskListOutput> {
     const result = await this.taskListService.createTaskList(request)
-    if (isApiError(result)) return { success: false, error: result }
-    return { success: true, taskList: result.taskList }
+    return result
   }
 }

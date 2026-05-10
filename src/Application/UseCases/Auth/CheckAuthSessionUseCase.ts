@@ -5,14 +5,13 @@
  * Si el accessToken está expirado pero el refreshToken es válido, intenta renovarlo automáticamente.
  */
 
-import type {
-  IUseCase,
-  IRefreshTokenRequest,
-  IRefreshTokenResponse,
-} from '../../../Domain'
+import type { IUseCase, ApiAuthTypes } from '../../../Domain'
 import type { IAuthSessionRepository } from '../../../Domain'
 import type { IAuthService } from '../../Services/Auth/IAuthService'
 import { AuthSession, isoToExpiresInSeconds } from '../../../Domain'
+
+type SubmitRefreshToken = ApiAuthTypes['SubmitRefreshToken']
+type TokenResponse = ApiAuthTypes['TokenResponse']
 
 /**
  * Output del caso de uso.
@@ -79,7 +78,7 @@ export class CheckAuthSessionUseCase implements IUseCase<
     currentSession: AuthSession
   ): Promise<AuthSession | null> {
     try {
-      const refreshRequest: IRefreshTokenRequest = {
+      const refreshRequest: SubmitRefreshToken = {
         refreshToken: currentSession.refreshToken,
       }
 
@@ -93,9 +92,9 @@ export class CheckAuthSessionUseCase implements IUseCase<
 
       // Crear nueva sesión con los tokens renovados
       const newSession = currentSession.updateTokens(
-        result.accessToken,
-        result.refreshToken,
-        isoToExpiresInSeconds(result.refreshTokenExpiry)
+        result.accessToken!,
+        result.refreshToken!,
+        isoToExpiresInSeconds(result.refreshTokenExpiry!)
       )
 
       // Persistir la nueva sesión
@@ -108,9 +107,7 @@ export class CheckAuthSessionUseCase implements IUseCase<
     }
   }
 
-  private isRefreshSuccess(
-    r: IRefreshTokenResponse | unknown
-  ): r is IRefreshTokenResponse {
+  private isRefreshSuccess(r: TokenResponse | unknown): r is TokenResponse {
     return (
       r !== null &&
       typeof r === 'object' &&

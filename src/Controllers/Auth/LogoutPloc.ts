@@ -18,7 +18,7 @@ export class LogoutPloc extends Ploc<ILogoutState> {
       ...this.state,
       isLoggingOut: true,
       success: false,
-      error: undefined,
+      error: null,
     })
 
     try {
@@ -38,8 +38,12 @@ export class LogoutPloc extends Ploc<ILogoutState> {
         success: false,
         error:
           error instanceof Error
-            ? error.message
-            : 'No se pudo cerrar la sesión en el servidor, pero se limpió localmente.',
+            ? { title: error.message, detail: 'Error al cerrar sesión.' }
+            : {
+                title: 'Error al cerrar sesión',
+                detail:
+                  'No se pudo cerrar la sesión en el servidor, pero se limpió localmente.',
+              },
       })
     }
   }

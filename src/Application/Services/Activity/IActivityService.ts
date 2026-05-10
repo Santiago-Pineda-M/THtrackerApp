@@ -4,13 +4,19 @@
  * Refleja los endpoints de /api/v1/activities
  */
 
-import type {
-  ActivityResponse,
-  CreateActivityRequest,
-  UpdateActivityRequest,
-  ApiErrorResponse,
-} from '../../../Domain'
+import type { ApiActivitiesTypes } from '../../../Domain'
 
+type ActivityResponse = ApiActivitiesTypes['ActivityResponse']
+type ActivityResponsePaginated = ApiActivitiesTypes['ActivityPaginatedResponse']
+type CreateActivityRequest = ApiActivitiesTypes['CreateActivityCommand']
+type UpdateActivityRequest = ApiActivitiesTypes['UpdateActivityCommand']
+type ApiErrorResponse = ApiActivitiesTypes['ProblemDetails']
+
+// parametros de path
+type GetActivitiesFilters = ApiActivitiesTypes['GetActivitiesFilters']
+type GetActivityIdPath = ApiActivitiesTypes['GetActivityIdPath']
+type DeleteActivityPath = ApiActivitiesTypes['DeleteActivityPath']
+type UpdateActivityPath = ApiActivitiesTypes['UpdateActivityPath']
 /**
  * Contrato del servicio de actividades.
  * Implementado en Infrastructure por ActivityService.
@@ -20,13 +26,17 @@ export interface IActivityService {
    * Obtiene todas las actividades del usuario autenticado.
    * GET /api/v1/activities
    */
-  getActivities(): Promise<ActivityResponse[] | ApiErrorResponse>
+  getActivities(
+    filters?: GetActivitiesFilters
+  ): Promise<ActivityResponsePaginated | ApiErrorResponse>
 
   /**
    * Obtiene una actividad específica por su ID.
    * GET /api/v1/activities/{id}
    */
-  getActivityById(id: string): Promise<ActivityResponse | ApiErrorResponse>
+  getActivityById(
+    id: GetActivityIdPath
+  ): Promise<ActivityResponse | ApiErrorResponse>
 
   /**
    * Crea una nueva actividad para el usuario autenticado.
@@ -41,7 +51,7 @@ export interface IActivityService {
    * PUT /api/v1/activities/{id}
    */
   updateActivity(
-    id: string,
+    id: UpdateActivityPath,
     request: UpdateActivityRequest
   ): Promise<ActivityResponse | ApiErrorResponse>
 
@@ -49,5 +59,5 @@ export interface IActivityService {
    * Elimina una actividad existente.
    * DELETE /api/v1/activities/{id}
    */
-  deleteActivity(id: string): Promise<void | ApiErrorResponse>
+  deleteActivity(id: DeleteActivityPath): Promise<void | ApiErrorResponse>
 }

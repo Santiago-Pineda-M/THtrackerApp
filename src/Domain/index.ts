@@ -25,19 +25,6 @@ export { UserId } from './ValueObjects/UserId'
 export type { IAuthSessionRepository } from './Repositories/IAuthSessionRepository'
 export type { ISidebarRepository } from './Repositories/ISidebarRepository'
 
-// Auth Domain Types (via barrel export)
-export type {
-  ILoginRequest,
-  IRegisterRequest,
-  IRefreshTokenRequest,
-  ILoginResponse,
-  IRegisterResponse,
-  IRefreshTokenResponse,
-  ILoginResponseError,
-  IRefreshTokenResponseError,
-  IProblemDetails,
-} from './Auth'
-
 // Pattern Interfaces
 export {
   type IUseCase,
@@ -66,35 +53,6 @@ export type { IDateProvider } from './Services/IDateProvider'
 // Base PLOC
 export { Ploc } from './Ploc'
 
-// Common Types
-export type { ApiErrorResponse } from './Common/IApiErrorResponse'
-export type { ProblemDetails } from './Common/ProblemDetails'
-export { isApiError } from './Common/isApiError'
-
-// User Domain Types
-export type { UserProfileResponse } from './User/IUserResponses'
-export type { UpdateUserProfileRequest } from './User/IUserRequests'
-
-// Category Domain Types
-export type { CategoryResponse } from './Category/ICategoryResponses'
-export type {
-  CreateCategoryRequest,
-  UpdateCategoryRequest,
-} from './Category/ICategoryRequests'
-
-// Activity Domain Types
-export type {
-  ActivityResponse,
-  ActivityValueDefinitionResponse,
-  ActivityErrorResponse,
-} from './Activity/IActivityResponses'
-export type {
-  CreateActivityRequest,
-  UpdateActivityRequest,
-  CreateValueDefinitionRequest,
-  UpdateValueDefinitionRequest,
-} from './Activity/IActivityRequests'
-
 // Activity Value Definitions States
 export type {
   IActivityValueDefinitionsState,
@@ -104,16 +62,6 @@ export {
   initialActivityValueDefinitionsState,
   initialValueDefinitionCreateFormState,
 } from './IStates'
-
-// Activity Logs Domain Types (via barrel export)
-export type {
-  ActivityLogResponse,
-  LogValueResponse,
-  StartActivityLogRequest,
-  UpdateActivityLogRequest,
-  LogValueRequest,
-  IGetActivityLogsRequest,
-} from './ActivityLog'
 
 // Activity Logs States
 export type {
@@ -133,13 +81,6 @@ export {
   initialCalendarLogsState,
 } from './IStates'
 
-// UserSession Domain Types
-export type {
-  IUserSessionResponse,
-  IRevokeSessionResponse,
-} from './UserSession/IUserSessionResponses'
-export type { IRevokeSessionRequest } from './UserSession/IUserSessionRequests'
-
 // UserSession States
 export type { IUserSessionsListState, ISessionRevokeState } from './IStates'
 export {
@@ -147,11 +88,9 @@ export {
   initialSessionRevokeState,
 } from './IStates'
 
-// Domain Errors
-export * from './Errors'
-
 // Domain Events
 export * from './Events'
 
-// TaskList Domain
-export * from './TaskList'
+// api tipes
+
+export * from './api'

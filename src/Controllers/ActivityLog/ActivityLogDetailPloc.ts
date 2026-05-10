@@ -1,6 +1,6 @@
 import { Ploc, initialActivityLogDetailState } from '../../Domain'
-import type { IActivityLogDetailState, LogValueRequest } from '../../Domain'
-import type {
+import type { IActivityLogDetailState } from '../../Domain'
+import {
   GetActivityLogByIdUseCase,
   UpdateActivityLogUseCase,
   SaveActivityLogValuesUseCase,
@@ -37,19 +37,13 @@ export class ActivityLogDetailPloc extends Ploc<IActivityLogDetailState> {
 
     const result = await this.getActivityLogByIdUseCase.execute({ id })
 
-    if (result.success) {
-      this.changeState({
-        ...this.state,
-        log: result.log,
-        isLoading: false,
-      })
-    } else {
-      this.changeState({
-        ...this.state,
-        error: result.error,
-        isLoading: false,
-      })
-    }
+    this.changeState({
+      ...this.state,
+      log: result,
+      isLoading: false,
+      success: true,
+      message: 'Registro obtenido exitosamente',
+    })
   }
 
   async updateLog(id: string, startedAt: string, endedAt: string | null) {

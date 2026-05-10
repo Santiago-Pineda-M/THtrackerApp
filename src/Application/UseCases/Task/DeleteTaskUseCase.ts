@@ -1,14 +1,14 @@
-import type { IUseCase, ApiErrorResponse } from '../../../Domain'
+import type { IUseCase, ApiTasksTypes } from '../../../Domain'
 import type { ITaskService } from '../../Services/Task/ITaskService'
-import type { IDeleteTaskRequest } from '../../../Domain/TaskList'
-import { isApiError } from '../../../Domain'
 
-export type DeleteTaskOutput =
-  | { success: true }
-  | { success: false; error: ApiErrorResponse }
+type DeleteTaskRequest = ApiTasksTypes['TaskIdPath']
+
+type ProblemDetails = ApiTasksTypes['ProblemDetails']
+
+type DeleteTaskOutput = void | ProblemDetails
 
 export class DeleteTaskUseCase implements IUseCase<
-  IDeleteTaskRequest,
+  DeleteTaskRequest,
   DeleteTaskOutput
 > {
   private readonly taskService: ITaskService
@@ -17,9 +17,8 @@ export class DeleteTaskUseCase implements IUseCase<
     this.taskService = taskService
   }
 
-  async execute(request: IDeleteTaskRequest): Promise<DeleteTaskOutput> {
+  async execute(request: DeleteTaskRequest): Promise<DeleteTaskOutput> {
     const result = await this.taskService.deleteTask(request)
-    if (isApiError(result)) return { success: false, error: result }
-    return { success: true }
+    return result
   }
 }

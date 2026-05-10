@@ -1,14 +1,11 @@
-import type { IUseCase, ApiErrorResponse } from '../../../Domain'
+import type { IUseCase, ApiTasksTypes } from '../../../Domain'
 import type { ITaskService } from '../../Services/Task/ITaskService'
-import type {
-  ICreateTaskRequest,
-  ICreateTaskResponse,
-} from '../../../Domain/TaskList'
-import { isApiError } from '../../../Domain'
 
-export type CreateTaskOutput =
-  | { success: true; task: ICreateTaskResponse['task'] }
-  | { success: false; error: ApiErrorResponse }
+type ICreateTaskRequest = ApiTasksTypes['CreateTaskCommand']
+type ICreateTaskResponse = ApiTasksTypes['TaskResponse']
+type ApiErrorResponse = ApiTasksTypes['ProblemDetails']
+
+export type CreateTaskOutput = ICreateTaskResponse | ApiErrorResponse
 
 export class CreateTaskUseCase implements IUseCase<
   ICreateTaskRequest,
@@ -22,7 +19,6 @@ export class CreateTaskUseCase implements IUseCase<
 
   async execute(request: ICreateTaskRequest): Promise<CreateTaskOutput> {
     const result = await this.taskService.createTask(request)
-    if (isApiError(result)) return { success: false, error: result }
-    return { success: true, task: result.task }
+    return result
   }
 }

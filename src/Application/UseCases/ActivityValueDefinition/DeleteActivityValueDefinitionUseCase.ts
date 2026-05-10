@@ -3,22 +3,16 @@
  * Elimina una definición de valor existente para una actividad.
  */
 
-import type { IUseCase } from '../../../Domain'
+import type { IUseCase, ApiActivityValueDefinitionTypes } from '../../../Domain'
 import type { IActivityValueDefinitionService } from '../../Services/ActivityValueDefinition/IActivityValueDefinitionService'
-import type { ApiErrorResponse } from '../../../Domain'
 
-export interface DeleteActivityValueDefinitionInput {
-  activityId: string
-  id: string
-}
-
-export type DeleteActivityValueDefinitionOutput =
-  | { success: true }
-  | { success: false; error: ApiErrorResponse }
+type ProblemDetails = ApiActivityValueDefinitionTypes['ProblemDetails']
+type DeleteValueDefinitionParams =
+  ApiActivityValueDefinitionTypes['DefinitionByIdPath']
 
 export class DeleteActivityValueDefinitionUseCase implements IUseCase<
-  DeleteActivityValueDefinitionInput,
-  DeleteActivityValueDefinitionOutput
+  DeleteValueDefinitionParams,
+  void | ProblemDetails
 > {
   private readonly activityValueDefinitionService: IActivityValueDefinitionService
 
@@ -27,18 +21,10 @@ export class DeleteActivityValueDefinitionUseCase implements IUseCase<
   }
 
   async execute(
-    input: DeleteActivityValueDefinitionInput
-  ): Promise<DeleteActivityValueDefinitionOutput> {
-    const result =
-      await this.activityValueDefinitionService.deleteValueDefinition(
-        input.activityId,
-        input.id
-      )
-
-    if (result === undefined) {
-      return { success: true }
-    }
-
-    return { success: false, error: result as ApiErrorResponse }
+    input: DeleteValueDefinitionParams
+  ): Promise<void | ProblemDetails> {
+    return await this.activityValueDefinitionService.deleteValueDefinition(
+      input
+    )
   }
 }

@@ -3,20 +3,17 @@
  * Caso de uso para actualizar el perfil del usuario autenticado.
  */
 
-import type { IUseCase } from '../../../Domain'
+import type { IUseCase, ApiUserTypes } from '../../../Domain'
 import type { IUserService } from '../../Services/User/IUserService'
-import type {
-  UpdateUserProfileRequest,
-  UserProfileResponse,
-  ProblemDetails,
-} from '../../../Domain'
+
+type UpdateUserProfileRequest = ApiUserTypes['UpdateUserCommand']
+type UserResponse = ApiUserTypes['UserResponse']
+type ProblemDetails = ApiUserTypes['ProblemDetails']
 
 /**
  * Output del caso de uso - puede ser éxito o error
  */
-export type UpdateUserProfileOutput =
-  | { success: true; user: UserProfileResponse }
-  | { success: false; error: ProblemDetails }
+export type UpdateUserProfileOutput = UserResponse | ProblemDetails
 
 /**
  * Caso de uso para actualizar el perfil del usuario autenticado.
@@ -36,17 +33,6 @@ export class UpdateUserProfileUseCase implements IUseCase<
     input: UpdateUserProfileRequest
   ): Promise<UpdateUserProfileOutput> {
     const result = await this.userService.updateProfile(input)
-
-    if (this.isError(result)) {
-      return { success: false, error: result }
-    }
-
-    return { success: true, user: result }
-  }
-
-  private isError(
-    result: UserProfileResponse | ProblemDetails
-  ): result is ProblemDetails {
-    return 'title' in result || 'detail' in result || 'status' in result
+    return result
   }
 }

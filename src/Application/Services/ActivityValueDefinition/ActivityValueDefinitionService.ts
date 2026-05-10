@@ -5,12 +5,25 @@
 
 import type {
   IHttpClient,
-  ActivityValueDefinitionResponse,
-  CreateValueDefinitionRequest,
-  UpdateValueDefinitionRequest,
-  ApiErrorResponse,
+  ApiActivityValueDefinitionTypes,
 } from '../../../Domain'
 import type { IActivityValueDefinitionService } from '../../../Application/Services/ActivityValueDefinition/IActivityValueDefinitionService'
+
+type ActivityValueDefinitionResponse =
+  ApiActivityValueDefinitionTypes['ActivityValueDefinitionResponse']
+type ActivityValueDefinitionResponsePaginated =
+  ApiActivityValueDefinitionTypes['ActivityValueDefinitionResponsePaginated']
+type CreateValueDefinitionCommand =
+  ApiActivityValueDefinitionTypes['CreateValueDefinitionCommand']
+type UpdateValueDefinitionCommand =
+  ApiActivityValueDefinitionTypes['UpdateValueDefinitionCommand']
+type ProblemDetails = ApiActivityValueDefinitionTypes['ProblemDetails']
+type DefinitionsPath = ApiActivityValueDefinitionTypes['DefinitionsPath']
+
+type DefinitionFilterPath =
+  ApiActivityValueDefinitionTypes['DefinitionFilterPath']
+
+type DefinitionByIdPath = ApiActivityValueDefinitionTypes['DefinitionByIdPath']
 
 export class ActivityValueDefinitionService implements IActivityValueDefinitionService {
   private readonly httpClient: IHttpClient
@@ -21,105 +34,101 @@ export class ActivityValueDefinitionService implements IActivityValueDefinitionS
   }
 
   async getValueDefinitions(
-    activityId: string
-  ): Promise<ActivityValueDefinitionResponse[] | ApiErrorResponse> {
+    path: DefinitionsPath,
+    filters: DefinitionFilterPath
+  ): Promise<ActivityValueDefinitionResponsePaginated | ProblemDetails> {
     try {
       const response = await this.httpClient.get<
-        ActivityValueDefinitionResponse[] | ApiErrorResponse
-      >(`${this.baseUrl}/${activityId}/definitions`)
+        ActivityValueDefinitionResponsePaginated | ProblemDetails
+      >(`${this.baseUrl}/${path.activityId}/definitions`, {
+        params: filters,
+      })
       if (response.status === 200)
-        return response.data as ActivityValueDefinitionResponse[]
-      return response.data as ApiErrorResponse
+        return response.data as ActivityValueDefinitionResponsePaginated
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
   async getValueDefinitionById(
-    activityId: string,
-    definitionId: string
-  ): Promise<ActivityValueDefinitionResponse | ApiErrorResponse> {
+    path: DefinitionByIdPath
+  ): Promise<ActivityValueDefinitionResponse | ProblemDetails> {
     try {
       const response = await this.httpClient.get<
-        ActivityValueDefinitionResponse | ApiErrorResponse
-      >(`${this.baseUrl}/${activityId}/definitions/${definitionId}`)
+        ActivityValueDefinitionResponse | ProblemDetails
+      >(`${this.baseUrl}/${path.activityId}/definitions/${path.definitionId}`)
       if (response.status === 200)
         return response.data as ActivityValueDefinitionResponse
-      return response.data as ApiErrorResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
   async createValueDefinition(
-    activityId: string,
-    request: CreateValueDefinitionRequest
-  ): Promise<ActivityValueDefinitionResponse | ApiErrorResponse> {
+    path: DefinitionsPath,
+    request: CreateValueDefinitionCommand
+  ): Promise<ActivityValueDefinitionResponse | ProblemDetails> {
     try {
       const response = await this.httpClient.post<
-        ActivityValueDefinitionResponse | ApiErrorResponse
-      >(`${this.baseUrl}/${activityId}/definitions`, request)
+        ActivityValueDefinitionResponse | ProblemDetails
+      >(`${this.baseUrl}/${path.activityId}/definitions`, request)
       if (response.status === 201) {
         this.httpClient.invalidateCache(
-          `${this.baseUrl}/${activityId}/definitions`
+          `${this.baseUrl}/${path.activityId}/definitions`
         )
         return response.data as ActivityValueDefinitionResponse
       }
-      return response.data as ApiErrorResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
   async updateValueDefinition(
-    activityId: string,
-    id: string,
-    request: UpdateValueDefinitionRequest
-  ): Promise<ActivityValueDefinitionResponse | ApiErrorResponse> {
+    path: DefinitionByIdPath,
+    request: UpdateValueDefinitionCommand
+  ): Promise<ActivityValueDefinitionResponse | ProblemDetails> {
     try {
       const response = await this.httpClient.put<
-        ActivityValueDefinitionResponse | ApiErrorResponse
-      >(`${this.baseUrl}/${activityId}/definitions/${id}`, request)
+        ActivityValueDefinitionResponse | ProblemDetails
+      >(
+        `${this.baseUrl}/${path.activityId}/definitions/${path.definitionId}`,
+        request
+      )
       if (response.status === 200) {
         this.httpClient.invalidateCache(
-          `${this.baseUrl}/${activityId}/definitions`
+          `${this.baseUrl}/${path.activityId}/definitions`
         )
         return response.data as ActivityValueDefinitionResponse
       }
-      return response.data as ApiErrorResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
   async deleteValueDefinition(
-    activityId: string,
-    id: string
-  ): Promise<void | ApiErrorResponse> {
+    path: DefinitionByIdPath
+  ): Promise<void | ProblemDetails> {
     try {
-      const response = await this.httpClient.delete<boolean | ApiErrorResponse>(
-        `${this.baseUrl}/${activityId}/definitions/${id}`
+      const response = await this.httpClient.delete<void | ProblemDetails>(
+        `${this.baseUrl}/${path.activityId}/definitions/${path.definitionId}`
       )
       if (response.status === 204) {
         this.httpClient.invalidateCache(
-          `${this.baseUrl}/${activityId}/definitions`
+          `${this.baseUrl}/${path.activityId}/definitions`
         )
         return
       }
-      // El API retorna 200 con "true" para indicar éxito
-      if (response.status === 200 && response.data === true) {
-        this.httpClient.invalidateCache(
-          `${this.baseUrl}/${activityId}/definitions`
-        )
-        return
-      }
-      return response.data as ApiErrorResponse
+      return response.data as ProblemDetails
     } catch (error) {
       return this.toNetworkError(error)
     }
   }
 
-  private toNetworkError(error: unknown): ApiErrorResponse {
+  private toNetworkError(error: unknown): ProblemDetails {
     return {
       title: 'Network Error',
       status: 0,

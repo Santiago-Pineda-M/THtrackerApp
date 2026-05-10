@@ -1,31 +1,51 @@
-import type {
-  IGetTaskListsRequest,
-  IGetTaskListByIdRequest,
-  ICreateTaskListRequest,
-  IUpdateTaskListRequest,
-  IDeleteTaskListRequest,
-  IGetTaskListsResponse,
-  IGetTaskListByIdResponse,
-  ICreateTaskListResponse,
-  IUpdateTaskListResponse,
-  IDeleteTaskListResponse,
-} from '../../../Domain/TaskList'
-import type { ApiErrorResponse } from '../../../Domain'
+/**
+ * APPLICATION LAYER - TaskList Service Interface
+ * Puerto para el servicio de gestión de listas de tareas.
+ * Refleja los endpoints de /api/v1/task-lists
+ */
 
+import type { ApiTaskListsTypes } from '../../../Domain'
+
+// ── Responses ─────────────────────────────────────────────────────────────────
+type TaskListResponse = ApiTaskListsTypes['TaskListResponse']
+type TaskListResponsePaginated = ApiTaskListsTypes['TaskListResponsePaginated']
+type ProblemDetails = ApiTaskListsTypes['ProblemDetails']
+
+// ── Requests ──────────────────────────────────────────────────────────────────
+type CreateTaskListCommand = ApiTaskListsTypes['CreateTaskListCommand']
+type UpdateTaskListCommand = ApiTaskListsTypes['UpdateTaskListCommand']
+
+// ── Path params ───────────────────────────────────────────────────────────────
+type TaskListIdPath = ApiTaskListsTypes['TaskListIdPath']
+
+type GetTaskListsRequest = ApiTaskListsTypes['GetTaskListsRequest']
+
+/**
+ * Contrato del servicio de listas de tareas.
+ * Implementado en Infrastructure por TaskListService.
+ */
 export interface ITaskListService {
+  /** GET    /api/v1/task-lists       */
   getTaskLists(
-    r: IGetTaskListsRequest
-  ): Promise<IGetTaskListsResponse | ApiErrorResponse>
+    path: GetTaskListsRequest
+  ): Promise<TaskListResponsePaginated | ProblemDetails>
+
+  /** GET    /api/v1/task-lists/{id}  */
   getTaskListById(
-    r: IGetTaskListByIdRequest
-  ): Promise<IGetTaskListByIdResponse | ApiErrorResponse>
+    path: TaskListIdPath
+  ): Promise<TaskListResponse | ProblemDetails>
+
+  /** POST   /api/v1/task-lists       */
   createTaskList(
-    r: ICreateTaskListRequest
-  ): Promise<ICreateTaskListResponse | ApiErrorResponse>
+    request: CreateTaskListCommand
+  ): Promise<TaskListResponse | ProblemDetails>
+
+  /** PUT    /api/v1/task-lists/{id}  */
   updateTaskList(
-    r: IUpdateTaskListRequest
-  ): Promise<IUpdateTaskListResponse | ApiErrorResponse>
-  deleteTaskList(
-    r: IDeleteTaskListRequest
-  ): Promise<IDeleteTaskListResponse | ApiErrorResponse>
+    path: TaskListIdPath,
+    request: UpdateTaskListCommand
+  ): Promise<TaskListResponse | ProblemDetails>
+
+  /** DELETE /api/v1/task-lists/{id}  */
+  deleteTaskList(path: TaskListIdPath): Promise<void | ProblemDetails>
 }

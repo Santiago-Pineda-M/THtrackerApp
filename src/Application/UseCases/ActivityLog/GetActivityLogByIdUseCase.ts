@@ -2,24 +2,16 @@
  * APPLICATION LAYER - Caso de Uso para obtener el detalle de un registro de actividad por ID
  */
 
-import type {
-  IUseCase,
-  ApiErrorResponse,
-  ActivityLogResponse,
-} from '../../../Domain'
+import type { IUseCase, ApiActivityLogsTypes } from '../../../Domain'
 import type { IActivityLogService } from '../../Services/ActivityLog/IActivityLogService'
 
-export interface GetActivityLogByIdRequest {
-  id: string
-}
-
-export type GetActivityLogByIdResult =
-  | { success: true; log: ActivityLogResponse }
-  | { success: false; error: ApiErrorResponse }
+type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
+type ActivityLogResponse = ApiActivityLogsTypes['ActivityLogResponse']
+type GetActivityLogIdPath = ApiActivityLogsTypes['GetActivityLogIdParams']
 
 export class GetActivityLogByIdUseCase implements IUseCase<
-  GetActivityLogByIdRequest,
-  GetActivityLogByIdResult
+  GetActivityLogIdPath,
+  ActivityLogResponse | ProblemDetails
 > {
   private readonly activityLogService: IActivityLogService
   constructor(activityLogService: IActivityLogService) {
@@ -27,14 +19,8 @@ export class GetActivityLogByIdUseCase implements IUseCase<
   }
 
   async execute(
-    request: GetActivityLogByIdRequest
-  ): Promise<GetActivityLogByIdResult> {
-    const result = await this.activityLogService.getActivityLogById(request.id)
-
-    if ('id' in result) {
-      return { success: true, log: result as ActivityLogResponse }
-    }
-
-    return { success: false, error: result as ApiErrorResponse }
+    request: GetActivityLogIdPath
+  ): Promise<ActivityLogResponse | ProblemDetails> {
+    return await this.activityLogService.getActivityLogById(request)
   }
 }

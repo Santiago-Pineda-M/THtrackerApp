@@ -3,14 +3,19 @@
  * Implementación de IActivityService que conecta con el API de actividades.
  */
 
-import type {
-  IHttpClient,
-  ActivityResponse,
-  CreateActivityRequest,
-  UpdateActivityRequest,
-  ApiErrorResponse,
-} from '../../../Domain'
+import type { IHttpClient, ApiActivitiesTypes } from '../../../Domain'
 import type { IActivityService } from './IActivityService'
+
+type ActivityResponse = ApiActivitiesTypes['ActivityResponse']
+type ActivityResponsePaginated = ApiActivitiesTypes['ActivityPaginatedResponse']
+type CreateActivityRequest = ApiActivitiesTypes['CreateActivityCommand']
+type UpdateActivityRequest = ApiActivitiesTypes['UpdateActivityCommand']
+type ApiErrorResponse = ApiActivitiesTypes['ProblemDetails']
+
+type GetActivitiesFilters = ApiActivitiesTypes['GetActivitiesFilters']
+type GetActivityIdPath = ApiActivitiesTypes['GetActivityIdPath']
+type DeleteActivityPath = ApiActivitiesTypes['DeleteActivityPath']
+type UpdateActivityPath = ApiActivitiesTypes['UpdateActivityPath']
 
 export class ActivityService implements IActivityService {
   private readonly httpClient: IHttpClient
@@ -20,12 +25,15 @@ export class ActivityService implements IActivityService {
     this.httpClient = httpClient
   }
 
-  async getActivities(): Promise<ActivityResponse[] | ApiErrorResponse> {
+  async getActivities(
+    filters: GetActivitiesFilters
+  ): Promise<ActivityResponsePaginated | ApiErrorResponse> {
     try {
       const response = await this.httpClient.get<
-        ActivityResponse[] | ApiErrorResponse
-      >(this.baseUrl, { cacheTtl: 5 * 60 * 1000 })
-      if (response.status === 200) return response.data as ActivityResponse[]
+        ActivityResponsePaginated | ApiErrorResponse
+      >(this.baseUrl, { cacheTtl: 5 * 60 * 1000, params: filters })
+      if (response.status === 200)
+        return response.data as ActivityResponsePaginated
       return response.data as ApiErrorResponse
     } catch (error) {
       return this.toNetworkError(error)
@@ -33,7 +41,7 @@ export class ActivityService implements IActivityService {
   }
 
   async getActivityById(
-    id: string
+    id: GetActivityIdPath
   ): Promise<ActivityResponse | ApiErrorResponse> {
     try {
       const response = await this.httpClient.get<
@@ -64,7 +72,7 @@ export class ActivityService implements IActivityService {
   }
 
   async updateActivity(
-    id: string,
+    id: UpdateActivityPath,
     request: UpdateActivityRequest
   ): Promise<ActivityResponse | ApiErrorResponse> {
     try {
@@ -81,7 +89,9 @@ export class ActivityService implements IActivityService {
     }
   }
 
-  async deleteActivity(id: string): Promise<void | ApiErrorResponse> {
+  async deleteActivity(
+    id: DeleteActivityPath
+  ): Promise<void | ApiErrorResponse> {
     try {
       const response = await this.httpClient.delete<void | ApiErrorResponse>(
         `${this.baseUrl}/${id}`

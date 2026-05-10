@@ -4,60 +4,65 @@
  * Refleja los endpoints de /api/v1/activities/{activityId}/definitions
  */
 
-import type {
-  ActivityValueDefinitionResponse,
-  CreateValueDefinitionRequest,
-  UpdateValueDefinitionRequest,
-  ApiErrorResponse,
-} from '../../../Domain'
+import type { ApiActivityValueDefinitionTypes } from '../../../Domain'
 
-/**
- * Contrato del servicio de definiciones de valor de actividades.
- * Implementado en Infrastructure por ActivityValueDefinitionService.
- */
+type ActivityValueDefinitionResponse =
+  ApiActivityValueDefinitionTypes['ActivityValueDefinitionResponse']
+type ActivityValueDefinitionResponsePaginated =
+  ApiActivityValueDefinitionTypes['ActivityValueDefinitionResponsePaginated']
+type CreateValueDefinitionCommand =
+  ApiActivityValueDefinitionTypes['CreateValueDefinitionCommand']
+type UpdateValueDefinitionCommand =
+  ApiActivityValueDefinitionTypes['UpdateValueDefinitionCommand']
+type ProblemDetails = ApiActivityValueDefinitionTypes['ProblemDetails']
+type DefinitionsPath = ApiActivityValueDefinitionTypes['DefinitionsPath']
+
+type DefinitionFilterPath =
+  ApiActivityValueDefinitionTypes['DefinitionFilterPath']
+
+type DefinitionByIdPath = ApiActivityValueDefinitionTypes['DefinitionByIdPath']
+
 export interface IActivityValueDefinitionService {
   /**
    * Lista las definiciones de valor de una actividad.
    * GET /api/v1/activities/{activityId}/definitions
    */
   getValueDefinitions(
-    activityId: string
-  ): Promise<ActivityValueDefinitionResponse[] | ApiErrorResponse>
+    path: DefinitionsPath,
+    filters: DefinitionFilterPath
+  ): Promise<ActivityValueDefinitionResponsePaginated | ProblemDetails>
 
   /**
    * Obtiene una definición de valor por su ID.
    * GET /api/v1/activities/{activityId}/definitions/{definitionId}
    */
   getValueDefinitionById(
-    activityId: string,
-    definitionId: string
-  ): Promise<ActivityValueDefinitionResponse | ApiErrorResponse>
+    path: DefinitionByIdPath
+  ): Promise<ActivityValueDefinitionResponse | ProblemDetails>
 
   /**
    * Crea una nueva definición de valor para una actividad.
    * POST /api/v1/activities/{activityId}/definitions
    */
   createValueDefinition(
-    activityId: string,
-    request: CreateValueDefinitionRequest
-  ): Promise<ActivityValueDefinitionResponse | ApiErrorResponse>
+    path: DefinitionsPath,
+    request: CreateValueDefinitionCommand
+  ): Promise<ActivityValueDefinitionResponse | ProblemDetails>
 
   /**
    * Actualiza una definición de valor existente para una actividad.
-   * PUT /api/v1/activities/{activityId}/definitions/{id}
+   * PUT /api/v1/activities/{activityId}/definitions/{definitionId}
    */
   updateValueDefinition(
-    activityId: string,
-    id: string,
-    request: UpdateValueDefinitionRequest
-  ): Promise<ActivityValueDefinitionResponse | ApiErrorResponse>
+    path: DefinitionByIdPath,
+    request: UpdateValueDefinitionCommand
+  ): Promise<ActivityValueDefinitionResponse | ProblemDetails>
 
   /**
    * Elimina una definición de valor existente para una actividad.
-   * DELETE /api/v1/activities/{activityId}/definitions/{id}
+   * DELETE /api/v1/activities/{activityId}/definitions/{definitionId}
    */
   deleteValueDefinition(
-    activityId: string,
-    id: string
-  ): Promise<void | ApiErrorResponse>
+    path: DefinitionByIdPath
+  ): Promise<void | ProblemDetails>
 }

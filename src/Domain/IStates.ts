@@ -5,10 +5,17 @@
  */
 
 import type { AuthSession } from './Entities/AuthSession'
-import type { ApiErrorResponse } from './Common/IApiErrorResponse'
-import type { ActivityValueDefinitionResponse } from './Activity/IActivityResponses'
-import type { ActivityLogResponse } from './ActivityLog/IActivityLogResponses'
-import type { ITaskListItem, ITaskItem } from './TaskList/ITaskListResponses'
+import type {
+  ApiActivitiesTypes,
+  ApiCategoriesTypes,
+  ApiUserSessionTypes,
+  ApiAuthTypes,
+  ApiActivityValueDefinitionTypes,
+  ApiActivityLogsTypes,
+  ApiTaskListsTypes,
+  ApiTasksTypes,
+  ApiUserTypes,
+} from './api'
 
 /**
  * ==========================================
@@ -56,22 +63,20 @@ export const initialAuthState: IAuthState = {
  * Usada por LoginPloc para gestionar el flujo de login.
  */
 export interface ILoginState {
-  IpAddress: string
   deviceInfo: string
   email: string
   password: string
-  errors: Record<string, string[]>
+  errors: ApiAuthTypes['ProblemDetails'] | null
   success: boolean
   message: string
   isLoading: boolean
 }
 
 export const initialLoginState: ILoginState = {
-  IpAddress: '',
   deviceInfo: '',
   email: '',
   password: '',
-  errors: {},
+  errors: null,
   success: false,
   message: '',
   isLoading: false,
@@ -92,7 +97,7 @@ export interface IRegisterState {
   email: string
   password: string
   confirmPassword: string
-  errors: Record<string, string[]>
+  errors: ApiAuthTypes['ProblemDetails'] | null
   success: boolean
   message: string
   isLoading: boolean
@@ -103,7 +108,7 @@ export const initialRegisterState: IRegisterState = {
   email: '',
   password: '',
   confirmPassword: '',
-  errors: {},
+  errors: null,
   success: false,
   message: '',
   isLoading: false,
@@ -118,13 +123,13 @@ export const initialRegisterState: IRegisterState = {
 export interface IRefreshTokenState {
   isRefreshing: boolean
   success: boolean
-  error?: string
+  error: ApiAuthTypes['ProblemDetails'] | null
 }
 
 export const initialRefreshTokenState: IRefreshTokenState = {
   isRefreshing: false,
   success: false,
-  error: undefined,
+  error: null,
 }
 
 /**
@@ -136,13 +141,13 @@ export const initialRefreshTokenState: IRefreshTokenState = {
 export interface ILogoutState {
   isLoggingOut: boolean
   success: boolean
-  error?: string
+  error: ApiAuthTypes['ProblemDetails'] | null
 }
 
 export const initialLogoutState: ILogoutState = {
   isLoggingOut: false,
   success: false,
-  error: undefined,
+  error: null,
 }
 
 /**
@@ -173,15 +178,8 @@ export const initialSidebarState: ISidebarState = {
  * Estado simple para mostrar el perfil del usuario (consulta)
  */
 export interface IUserProfileDisplayState {
-  user: {
-    id: string
-    name: string | null
-    email: string | null
-  } | null
-  error: {
-    title?: string
-    detail?: string
-  } | null
+  user: ApiUserTypes['UserResponse'] | null
+  error: ApiUserTypes['ProblemDetails'] | null
   isLoading: boolean
 }
 
@@ -203,7 +201,7 @@ export const initialUserProfileDisplayState: IUserProfileDisplayState = {
 export interface IUserProfileFormState {
   name: string
   email: string
-  errors: Record<string, string[]>
+  errors: ApiUserTypes['ProblemDetails'] | null
   isLoading: boolean
   success: boolean
   message: string
@@ -216,7 +214,7 @@ export interface IUserProfileFormState {
 export const initialUserProfileFormState: IUserProfileFormState = {
   name: '',
   email: '',
-  errors: {},
+  errors: null,
   isLoading: false,
   success: false,
   message: '',
@@ -235,21 +233,15 @@ export const initialUserProfileFormState: IUserProfileFormState = {
 /**
  * Estado para la lista de categorías del usuario autenticado
  */
-export interface ICategory {
-  id: string
-  userId: string
-  name: string | null
-  color: string | null
-}
 
 export interface ICategoriesListState {
-  categories: Array<ICategory>
-  error: ApiErrorResponse | null
+  categories: ApiCategoriesTypes['CategoryPaginatedResponse'] | null
+  error: ApiCategoriesTypes['ProblemDetails'] | null
   isLoading: boolean
 }
 
 export const initialCategoriesListState: ICategoriesListState = {
-  categories: [],
+  categories: null,
   error: null,
   isLoading: false,
 }
@@ -264,8 +256,8 @@ export const initialCategoriesListState: ICategoriesListState = {
  * Estado para mostrar una categoría individual
  */
 export interface ICategoryDetailState {
-  category: ICategory | null
-  error: ApiErrorResponse | null
+  category: ApiCategoriesTypes['CategoryResponse'] | null
+  error: ApiCategoriesTypes['ProblemDetails'] | null
   isLoading: boolean
 }
 
@@ -287,7 +279,7 @@ export const initialCategoryDetailState: ICategoryDetailState = {
 export interface ICategoryCreateFormState {
   name: string
   color: string
-  errors: Record<string, string[]>
+  errors: ApiCategoriesTypes['ProblemDetails'] | null
   isLoading: boolean
   success: boolean
   message: string
@@ -300,7 +292,7 @@ export interface ICategoryCreateFormState {
 export const initialCategoryCreateFormState: ICategoryCreateFormState = {
   name: '',
   color: '#000000',
-  errors: {},
+  errors: null,
   isLoading: false,
   success: false,
   message: '',
@@ -323,7 +315,7 @@ export interface ICategoryEditFormState {
   id: string
   name: string
   color: string
-  errors: Record<string, string[]>
+  errors: ApiCategoriesTypes['ProblemDetails'] | null
   isLoading: boolean
   success: boolean
   message: string
@@ -337,7 +329,7 @@ export const initialCategoryEditFormState: ICategoryEditFormState = {
   id: '',
   name: '',
   color: '',
-  errors: {},
+  errors: null,
   isLoading: false,
   success: false,
   message: '',
@@ -357,20 +349,13 @@ export const initialCategoryEditFormState: ICategoryEditFormState = {
  * Estado para la lista de actividades del usuario autenticado
  */
 export interface IActivitiesListState {
-  activities: Array<{
-    id: string
-    userId: string
-    categoryId: string
-    name: string | null
-    color: string | null
-    allowOverlap: boolean
-  }>
-  error: ApiErrorResponse | null
+  activities: ApiActivitiesTypes['ActivityPaginatedResponse'] | null
+  error: ApiActivitiesTypes['ProblemDetails'] | null
   isLoading: boolean
 }
 
 export const initialActivitiesListState: IActivitiesListState = {
-  activities: [],
+  activities: null,
   error: null,
   isLoading: false,
 }
@@ -385,15 +370,8 @@ export const initialActivitiesListState: IActivitiesListState = {
  * Estado para mostrar una actividad individual
  */
 export interface IActivityDetailState {
-  activity: {
-    id: string
-    userId: string
-    categoryId: string
-    name: string | null
-    color: string | null
-    allowOverlap: boolean
-  } | null
-  error: ApiErrorResponse | null
+  activity: ApiActivitiesTypes['ActivityResponse'] | null
+  error: ApiActivitiesTypes['ProblemDetails'] | null
   isLoading: boolean
 }
 
@@ -417,7 +395,7 @@ export interface IActivityCreateFormState {
   name: string
   color: string
   allowOverlap: boolean
-  errors: Record<string, string[]>
+  errors: ApiActivitiesTypes['ProblemDetails'] | null
   isLoading: boolean
   success: boolean
   message: string
@@ -434,7 +412,7 @@ export const initialActivityCreateFormState: IActivityCreateFormState = {
   name: '',
   color: '#000000',
   allowOverlap: false,
-  errors: {},
+  errors: null,
   isLoading: false,
   success: false,
   message: '',
@@ -461,7 +439,7 @@ export interface IActivityEditFormState {
   name: string
   color: string
   allowOverlap: boolean
-  errors: Record<string, string[]>
+  errors: ApiActivitiesTypes['ProblemDetails'] | null
   isLoading: boolean
   success: boolean
   message: string
@@ -479,7 +457,7 @@ export const initialActivityEditFormState: IActivityEditFormState = {
   name: '',
   color: '',
   allowOverlap: false,
-  errors: {},
+  errors: null,
   isLoading: false,
   success: false,
   message: '',
@@ -503,7 +481,7 @@ export const initialActivityEditFormState: IActivityEditFormState = {
 export interface IActivityDeleteState {
   isLoading: boolean
   success: boolean
-  error: ApiErrorResponse | null
+  error: ApiActivitiesTypes['ProblemDetails'] | null
 }
 
 export const initialActivityDeleteState: IActivityDeleteState = {
@@ -523,15 +501,17 @@ export const initialActivityDeleteState: IActivityDeleteState = {
  */
 export interface IActivityValueDefinitionsState {
   activityId: string | null
-  definitions: ActivityValueDefinitionResponse[]
+  definitions:
+    | ApiActivityValueDefinitionTypes['ActivityValueDefinitionResponsePaginated']
+    | null
   isLoading: boolean
-  error: ApiErrorResponse | null
+  error: ApiActivityValueDefinitionTypes['ProblemDetails'] | null
 }
 
 export const initialActivityValueDefinitionsState: IActivityValueDefinitionsState =
   {
     activityId: null,
-    definitions: [],
+    definitions: null,
     isLoading: false,
     error: null,
   }
@@ -553,7 +533,7 @@ export interface IValueDefinitionCreateFormState {
   unit: string
   minValue: string
   maxValue: string
-  errors: Record<string, string[]>
+  errors: ApiActivityValueDefinitionTypes['ProblemDetails'] | null
   isLoading: boolean
   success: boolean
   message: string
@@ -568,7 +548,7 @@ export const initialValueDefinitionCreateFormState: IValueDefinitionCreateFormSt
     unit: '',
     minValue: '',
     maxValue: '',
-    errors: {},
+    errors: null,
     isLoading: false,
     success: false,
     message: '',
@@ -592,7 +572,7 @@ export interface IValueDefinitionEditFormState {
   unit: string | null
   minValue: string | null
   maxValue: string | null
-  errors: Record<string, string[]>
+  errors: ApiActivityValueDefinitionTypes['ProblemDetails'] | null
   isLoading: boolean
   success: boolean
   message: string
@@ -608,7 +588,7 @@ export const initialValueDefinitionEditFormState: IValueDefinitionEditFormState 
     unit: null,
     minValue: null,
     maxValue: null,
-    errors: {},
+    errors: null,
     isLoading: false,
     success: false,
     message: '',
@@ -626,7 +606,7 @@ export const initialValueDefinitionEditFormState: IValueDefinitionEditFormState 
 export interface IValueDefinitionDeleteState {
   isLoading: boolean
   success: boolean
-  error: ApiErrorResponse | null
+  error: ApiActivityValueDefinitionTypes['ProblemDetails'] | null
 }
 
 export const initialValueDefinitionDeleteState: IValueDefinitionDeleteState = {
@@ -646,14 +626,14 @@ export const initialValueDefinitionDeleteState: IValueDefinitionDeleteState = {
  */
 export interface IActivityLogsListState {
   activityId: string
-  logs: ActivityLogResponse[]
+  logs: ApiActivityLogsTypes['ActivityLogResponsePaginated'] | null
   isLoading: boolean
-  error: ApiErrorResponse | null
+  error: ApiActivityLogsTypes['ProblemDetails'] | null
 }
 
 export const initialActivityLogsListState: IActivityLogsListState = {
   activityId: '',
-  logs: [],
+  logs: null,
   isLoading: false,
   error: null,
 }
@@ -662,9 +642,9 @@ export const initialActivityLogsListState: IActivityLogsListState = {
  * Estado para el detalle y edición de valores de un registro de actividad específico
  */
 export interface IActivityLogDetailState {
-  log: ActivityLogResponse | null
+  log: ApiActivityLogsTypes['ActivityLogResponse'] | null
   isLoading: boolean
-  error: ApiErrorResponse | null
+  error: ApiActivityLogsTypes['ProblemDetails'] | null
   success: boolean
   message: string
 }
@@ -681,13 +661,13 @@ export const initialActivityLogDetailState: IActivityLogDetailState = {
  * Estado para la lista global de registros activos (en curso) del usuario
  */
 export interface IActiveActivityLogsState {
-  logs: ActivityLogResponse[]
+  logs: ApiActivityLogsTypes['ActivityLogResponsePaginated'] | null
   isLoading: boolean
-  error: ApiErrorResponse | null
+  error: ApiActivityLogsTypes['ProblemDetails'] | null
 }
 
 export const initialActiveActivityLogsState: IActiveActivityLogsState = {
-  logs: [],
+  logs: null,
   isLoading: false,
   error: null,
 }
@@ -698,8 +678,8 @@ export const initialActiveActivityLogsState: IActiveActivityLogsState = {
 export interface IActivityLogStartState {
   isLoading: boolean
   success: boolean
-  error: ApiErrorResponse | null
-  newLog: ActivityLogResponse | null
+  error: ApiActivityLogsTypes['ProblemDetails'] | null
+  newLog: ApiActivityLogsTypes['ActivityLogResponse'] | null
 }
 
 export const initialActivityLogStartState: IActivityLogStartState = {
@@ -713,17 +693,19 @@ export const initialActivityLogStartState: IActivityLogStartState = {
  * Estado para el flujo de detención de un registro de actividad
  */
 export interface IActivityLogStopState {
-  logToStop: ActivityLogResponse | null
-  definitions: ActivityValueDefinitionResponse[]
+  logToStop: ApiActivityLogsTypes['ActivityLogResponse'] | null
+  definitions:
+    | ApiActivityValueDefinitionTypes['ActivityValueDefinitionResponsePaginated']
+    | null
   isLoadingDefinitions: boolean
   isStopping: boolean
   success: boolean
-  error: ApiErrorResponse | null
+  error: ApiActivityLogsTypes['ProblemDetails'] | null
 }
 
 export const initialActivityLogStopState: IActivityLogStopState = {
   logToStop: null,
-  definitions: [],
+  definitions: null,
   isLoadingDefinitions: false,
   isStopping: false,
   success: false,
@@ -740,21 +722,13 @@ export const initialActivityLogStopState: IActivityLogStopState = {
  * Estado para la lista de sesiones activas del usuario
  */
 export interface IUserSessionsListState {
-  sessions: Array<{
-    id: string
-    deviceInfo: string | null
-    ipAddress: string | null
-    location: string | null
-    createdAt: string
-    expiresAt: string
-    isActive: boolean
-  }>
-  error: ApiErrorResponse | null
+  sessions: ApiUserSessionTypes['UserSessionResponsePaginated'] | null
+  error: ApiUserSessionTypes['ProblemDetails'] | null
   isLoading: boolean
 }
 
 export const initialUserSessionsListState: IUserSessionsListState = {
-  sessions: [],
+  sessions: null,
   error: null,
   isLoading: false,
 }
@@ -771,7 +745,7 @@ export const initialUserSessionsListState: IUserSessionsListState = {
 export interface ISessionRevokeState {
   isRevoking: boolean
   success: boolean
-  error: ApiErrorResponse | null
+  error: ApiUserSessionTypes['ProblemDetails'] | null
   revokedSessionId: string | null
 }
 
@@ -793,14 +767,14 @@ export const initialSessionRevokeState: ISessionRevokeState = {
  */
 export interface ICalendarLogsState {
   currentWeekDate: Date
-  logs: ActivityLogResponse[]
+  logs: ApiActivityLogsTypes['ActivityLogResponsePaginated'] | null
   isLoading: boolean
-  error: ApiErrorResponse | null
+  error: ApiActivityLogsTypes['ProblemDetails'] | null
 }
 
 export const initialCalendarLogsState: ICalendarLogsState = {
   currentWeekDate: new Date(),
-  logs: [],
+  logs: null,
   isLoading: false,
   error: null,
 }
@@ -815,13 +789,13 @@ export const initialCalendarLogsState: ICalendarLogsState = {
  * Estado para la lista de listas de tareas del usuario autenticado
  */
 export interface ITaskListsState {
-  taskLists: ITaskListItem[]
-  error: ApiErrorResponse | null
+  taskLists: ApiTaskListsTypes['TaskListResponsePaginated'] | null
+  error: ApiTaskListsTypes['ProblemDetails'] | null
   isLoading: boolean
 }
 
 export const initialTaskListsState: ITaskListsState = {
-  taskLists: [],
+  taskLists: null,
   error: null,
   isLoading: false,
 }
@@ -836,13 +810,13 @@ export const initialTaskListsState: ITaskListsState = {
  * Estado para la lista de tareas dentro de una lista de tareas
  */
 export interface ITasksState {
-  tasks: ITaskItem[]
-  error: ApiErrorResponse | null
+  tasks: ApiTasksTypes['TaskResponsePaginated'] | null
+  error: ApiTasksTypes['ProblemDetails'] | null
   isLoading: boolean
 }
 
 export const initialTasksState: ITasksState = {
-  tasks: [],
+  tasks: null,
   error: null,
   isLoading: false,
 }
@@ -854,8 +828,8 @@ export const initialTasksState: ITasksState = {
  */
 
 export interface ITaskListDetailState {
-  taskList: ITaskListItem | null
-  error: ApiErrorResponse | null
+  taskList: ApiTaskListsTypes['TaskListResponse'] | null
+  error: ApiTaskListsTypes['ProblemDetails'] | null
   isLoading: boolean
 }
 
@@ -875,7 +849,7 @@ export interface ITaskListCreateFormState {
   name: string
   description: string | null
   color: string
-  errors: Record<string, string[]>
+  errors: ApiTaskListsTypes['ProblemDetails'] | null
   isLoading: boolean
   success: boolean
   message: string
@@ -885,7 +859,7 @@ export const initialTaskListCreateFormState: ITaskListCreateFormState = {
   color: '',
   name: '',
   description: null,
-  errors: {},
+  errors: null,
   isLoading: false,
   success: false,
   message: '',
@@ -901,7 +875,7 @@ export interface ITaskListEditFormState {
   id: string
   name: string
   description: string | null
-  errors: Record<string, string[]>
+  errors: ApiTaskListsTypes['ProblemDetails'] | null
   isLoading: boolean
   success: boolean
   message: string
@@ -911,7 +885,7 @@ export const initialTaskListEditFormState: ITaskListEditFormState = {
   id: '',
   name: '',
   description: null,
-  errors: {},
+  errors: null,
   isLoading: false,
   success: false,
   message: '',
@@ -926,7 +900,7 @@ export const initialTaskListEditFormState: ITaskListEditFormState = {
 export interface ITaskListDeleteState {
   isLoading: boolean
   success: boolean
-  error: ApiErrorResponse | null
+  error: ApiTaskListsTypes['ProblemDetails'] | null
 }
 
 export const initialTaskListDeleteState: ITaskListDeleteState = {
@@ -946,7 +920,7 @@ export interface ITaskCreateFormState {
   content: string
   dueDate: string
   showDueDate: boolean
-  errors: Record<string, string[]>
+  errors: ApiTasksTypes['ProblemDetails'] | null
   isLoading: boolean
   success: boolean
   message: string
@@ -957,7 +931,7 @@ export const initialTaskCreateFormState: ITaskCreateFormState = {
   content: '',
   dueDate: '',
   showDueDate: false,
-  errors: {},
+  errors: null,
   isLoading: false,
   success: false,
   message: '',
@@ -975,7 +949,7 @@ export interface ITaskEditFormState {
   content: string
   dueDate: string
   showDueDate: boolean
-  errors: Record<string, string[]>
+  errors: ApiTasksTypes['ProblemDetails'] | null
   isLoading: boolean
   success: boolean
   message: string
@@ -987,7 +961,7 @@ export const initialTaskEditFormState: ITaskEditFormState = {
   content: '',
   dueDate: '',
   showDueDate: false,
-  errors: {},
+  errors: null,
   isLoading: false,
   success: false,
   message: '',
@@ -1002,7 +976,7 @@ export const initialTaskEditFormState: ITaskEditFormState = {
 export interface ITaskDeleteState {
   isLoading: boolean
   success: boolean
-  error: ApiErrorResponse | null
+  error: ApiTasksTypes['ProblemDetails'] | null
 }
 
 export const initialTaskDeleteState: ITaskDeleteState = {
@@ -1021,7 +995,7 @@ export interface ITaskToggleState {
   taskId: string
   isLoading: boolean
   success: boolean
-  error: ApiErrorResponse | null
+  error: ApiTasksTypes['ProblemDetails'] | null
 }
 
 export const initialTaskToggleState: ITaskToggleState = {

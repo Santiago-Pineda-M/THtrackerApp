@@ -105,7 +105,7 @@ export class ActivityCreateFormPloc extends Ploc<IActivityCreateFormState> {
 
       const result = await this.createActivityUseCase.execute(request)
 
-      if (result.success) {
+      if (result.id) {
         this.changeState({
           ...initialActivityCreateFormState,
           success: true,
@@ -115,20 +115,11 @@ export class ActivityCreateFormPloc extends Ploc<IActivityCreateFormState> {
         return
       }
 
-      // Error del servidor
-      const errorResult = result.error
-      const rawErrors = errorResult.errors ?? {
-        general: [errorResult.title || errorResult.detail],
-      }
-      const errors = this.normalizeErrorKeys(
-        rawErrors as Record<string, string[]>
-      )
-
       this.changeState({
         ...this.state,
-        errors,
+        errors: result,
         success: false,
-        message: errorResult.title || 'Error al crear la actividad.',
+        message: 'Error al crear la actividad.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -162,15 +153,5 @@ export class ActivityCreateFormPloc extends Ploc<IActivityCreateFormState> {
     }
 
     return errors
-  }
-
-  private normalizeErrorKeys(
-    errors: Record<string, string[]>
-  ): Record<string, string[]> {
-    const normalized: Record<string, string[]> = {}
-    for (const [key, value] of Object.entries(errors)) {
-      normalized[key.toLowerCase()] = value
-    }
-    return normalized
   }
 }

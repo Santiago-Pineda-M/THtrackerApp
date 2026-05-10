@@ -3,23 +3,27 @@
  * Caso de uso para obtener todas las categorías del usuario autenticado.
  */
 
-import type { IUseCase } from '../../../Domain'
+import type { IUseCase, ApiCategoriesTypes } from '../../../Domain'
 import type { ICategoryService } from '../../Services/Category/ICategoryService'
-import type { CategoryResponse, ApiErrorResponse } from '../../../Domain'
+
+type ProblemDetails = ApiCategoriesTypes['ProblemDetails']
+type CategoryResponsePaginatedResponse =
+  ApiCategoriesTypes['CategoryPaginatedResponse']
+type GetCategoriesRequest = ApiCategoriesTypes['GetCategoriesFilters']
 
 /**
  * Output del caso de uso - puede ser éxito o error
  */
 export type GetCategoriesOutput =
-  | { success: true; categories: CategoryResponse[] }
-  | { success: false; error: ApiErrorResponse }
+  | CategoryResponsePaginatedResponse
+  | ProblemDetails
 
 /**
  * Caso de uso para obtener todas las categorías del usuario autenticado.
  * GET /api/v1/categories
  */
 export class GetCategoriesUseCase implements IUseCase<
-  void,
+  GetCategoriesRequest,
   GetCategoriesOutput
 > {
   private readonly categoryService: ICategoryService
@@ -28,19 +32,7 @@ export class GetCategoriesUseCase implements IUseCase<
     this.categoryService = categoryService
   }
 
-  async execute(): Promise<GetCategoriesOutput> {
-    const result = await this.categoryService.getCategories()
-
-    if (this.isError(result)) {
-      return { success: false, error: result }
-    }
-
-    return { success: true, categories: result }
-  }
-
-  private isError(
-    result: CategoryResponse[] | ApiErrorResponse
-  ): result is ApiErrorResponse {
-    return 'title' in result || 'detail' in result || 'status' in result
+  async execute(filters?: GetCategoriesRequest): Promise<GetCategoriesOutput> {
+    return await this.categoryService.getCategories(filters)
   }
 }

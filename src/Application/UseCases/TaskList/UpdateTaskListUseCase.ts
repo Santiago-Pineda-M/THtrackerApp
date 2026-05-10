@@ -1,17 +1,16 @@
-import type { IUseCase, ApiErrorResponse } from '../../../Domain'
+import type { IUseCase, ApiTaskListsTypes } from '../../../Domain'
 import type { ITaskListService } from '../../Services/TaskList/ITaskListService'
-import type {
-  IUpdateTaskListRequest,
-  IUpdateTaskListResponse,
-} from '../../../Domain/TaskList'
-import { isApiError } from '../../../Domain'
 
-export type UpdateTaskListOutput =
-  | { success: true; taskList: IUpdateTaskListResponse['taskList'] }
-  | { success: false; error: ApiErrorResponse }
+type UpdateTaskListRequest = ApiTaskListsTypes['UpdateTaskListCommand']
+type ProblemDetails = ApiTaskListsTypes['ProblemDetails']
+type UpdateTaskListResponse = ApiTaskListsTypes['TaskListResponse']
+
+type UpdateTaskListParams = ApiTaskListsTypes['TaskListIdPath']
+
+export type UpdateTaskListOutput = UpdateTaskListResponse | ProblemDetails
 
 export class UpdateTaskListUseCase implements IUseCase<
-  IUpdateTaskListRequest,
+  UpdateTaskListRequest,
   UpdateTaskListOutput
 > {
   private readonly taskListService: ITaskListService
@@ -20,11 +19,11 @@ export class UpdateTaskListUseCase implements IUseCase<
     this.taskListService = taskListService
   }
 
-  async execute(
-    request: IUpdateTaskListRequest
-  ): Promise<UpdateTaskListOutput> {
-    const result = await this.taskListService.updateTaskList(request)
-    if (isApiError(result)) return { success: false, error: result }
-    return { success: true, taskList: result.taskList }
+  async execute(request: UpdateTaskListRequest): Promise<UpdateTaskListOutput> {
+    const params: UpdateTaskListParams = {
+      id: request.id!,
+    }
+    const result = await this.taskListService.updateTaskList(params, request)
+    return result
   }
 }

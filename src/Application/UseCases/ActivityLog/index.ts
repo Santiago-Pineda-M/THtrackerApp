@@ -2,46 +2,12 @@
  * APPLICATION LAYER - ActivityLogs Use Cases Barrel Export
  */
 
-export {
-  GetActivityLogsUseCase,
-  type GetActivityLogsRequest,
-  type GetActivityLogsResult,
-} from './GetActivityLogsUseCase'
-export {
-  GetActivityLogByIdUseCase,
-  type GetActivityLogByIdRequest,
-  type GetActivityLogByIdResult,
-} from './GetActivityLogByIdUseCase'
-export {
-  StartActivityLogUseCase,
-  type StartActivityLogResult,
-} from './StartActivityLogUseCase'
-export {
-  StopActivityLogUseCase,
-  type StopActivityLogRequest,
-  type StopActivityLogResult,
-} from './StopActivityLogUseCase'
-export {
-  UpdateActivityLogUseCase,
-  type UpdateActivityLogCommand,
-  type UpdateActivityLogResult,
-} from './UpdateActivityLogUseCase'
-export {
-  SaveActivityLogValuesUseCase,
-  type SaveActivityLogValuesCommand,
-  type SaveActivityLogValuesResult,
-} from './SaveActivityLogValuesUseCase'
-export {
-  GetActivityLogValuesUseCase,
-  type GetActivityLogValuesRequest,
-  type GetActivityLogValuesResult,
-} from './GetActivityLogValuesUseCase'
-export {
-  GetActiveActivityLogsUseCase,
-  type GetActiveActivityLogsResult,
-} from './GetActiveActivityLogsUseCase'
-export {
-  GetCalendarLogsUseCase,
-  type GetCalendarLogsRequest,
-  type GetCalendarLogsResult,
-} from './GetCalendarLogsUseCase'
+export { GetActivityLogsUseCase } from './GetActivityLogsUseCase'
+export { GetActivityLogByIdUseCase } from './GetActivityLogByIdUseCase'
+export { StartActivityLogUseCase } from './StartActivityLogUseCase'
+export { StopActivityLogUseCase } from './StopActivityLogUseCase'
+export { UpdateActivityLogUseCase } from './UpdateActivityLogUseCase'
+export { SaveActivityLogValuesUseCase } from './SaveActivityLogValuesUseCase'
+export { GetActivityLogValuesUseCase } from './GetActivityLogValuesUseCase'
+export { GetActiveActivityLogsUseCase } from './GetActiveActivityLogsUseCase'
+export { GetCalendarLogsUseCase } from './GetCalendarLogsUseCase'

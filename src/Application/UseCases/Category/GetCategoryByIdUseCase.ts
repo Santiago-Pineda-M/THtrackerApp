@@ -3,23 +3,17 @@
  * Caso de uso para obtener una categoría específica por su ID.
  */
 
-import type { IUseCase } from '../../../Domain'
+import type { IUseCase, ApiCategoriesTypes } from '../../../Domain'
 import type { ICategoryService } from '../../Services/Category/ICategoryService'
-import type { CategoryResponse, ApiErrorResponse } from '../../../Domain'
 
-/**
- * Input del caso de uso
- */
-export interface GetCategoryByIdInput {
-  id: string
-}
+type CategoryResponse = ApiCategoriesTypes['CategoryResponse']
+type ProblemDetails = ApiCategoriesTypes['ProblemDetails']
+type GetCategoryByIdInput = ApiCategoriesTypes['GetCategoryIdPath']
 
 /**
  * Output del caso de uso - puede ser éxito o error
  */
-export type GetCategoryByIdOutput =
-  | { success: true; category: CategoryResponse }
-  | { success: false; error: ApiErrorResponse }
+export type GetCategoryByIdOutput = CategoryResponse | ProblemDetails
 
 /**
  * Caso de uso para obtener una categoría específica por su ID.
@@ -36,18 +30,8 @@ export class GetCategoryByIdUseCase implements IUseCase<
   }
 
   async execute(input: GetCategoryByIdInput): Promise<GetCategoryByIdOutput> {
-    const result = await this.categoryService.getCategoryById(input.id)
+    const result = await this.categoryService.getCategoryById(input)
 
-    if (this.isError(result)) {
-      return { success: false, error: result }
-    }
-
-    return { success: true, category: result }
-  }
-
-  private isError(
-    result: CategoryResponse | ApiErrorResponse
-  ): result is ApiErrorResponse {
-    return 'title' in result || 'detail' in result || 'status' in result
+    return result
   }
 }

@@ -7,9 +7,7 @@
 import type {
   IUseCase,
   IAuthSessionRepository,
-  ILoginRequest,
-  ILoginResponse,
-  ILoginResponseError,
+  ApiAuthTypes,
 } from '../../../Domain'
 import type { IAuthService } from '../../Services/Auth/IAuthService'
 import { AuthSession } from '../../../Domain/Entities/AuthSession'
@@ -24,12 +22,17 @@ interface JwtPayload {
   exp?: number
 }
 
-export type LoginOutput = ILoginResponse | ILoginResponseError
+export type LoginOutput =
+  | ApiAuthTypes['TokenResponse']
+  | ApiAuthTypes['ProblemDetails']
 
 /**
  * Inicia sesión, crea la AuthSession desde JWT claims, y la persiste.
  */
-export class LoginUserUseCase implements IUseCase<ILoginRequest, LoginOutput> {
+export class LoginUserUseCase implements IUseCase<
+  ApiAuthTypes['LoginCommand'],
+  LoginOutput
+> {
   private readonly authService: IAuthService
   private readonly authSessionRepo: IAuthSessionRepository
 
@@ -41,16 +44,14 @@ export class LoginUserUseCase implements IUseCase<ILoginRequest, LoginOutput> {
     this.authSessionRepo = authSessionRepo
   }
 
-  async execute(input: ILoginRequest): Promise<LoginOutput> {
-    input.IpAddress = '0.0.0.0'
-
+  async execute(input: ApiAuthTypes['LoginCommand']): Promise<LoginOutput> {
     const result = await this.authService.login(input)
 
     if (!this.isSuccess(result)) return result
 
-    const claims = this.decodeJwt(result.accessToken)
+    const claims = this.decodeJwt(result.accessToken!)
     const userId = claims.sub
-    const userEmail = claims.email ?? input.email
+    const userEmail = claims.email ?? input.email!
 
     if (!userId?.trim()) {
       return {
@@ -61,10 +62,10 @@ export class LoginUserUseCase implements IUseCase<ILoginRequest, LoginOutput> {
     }
 
     const tokens = AuthTokens.createWithExpiry(
-      result.accessToken,
-      result.refreshToken,
+      result.accessToken!,
+      result.refreshToken!,
       // La API devuelve refreshTokenExpiry como ISO date — convertimos a segundos
-      isoToExpiresInSeconds(result.refreshTokenExpiry)
+      isoToExpiresInSeconds(result.refreshTokenExpiry!)
     )
 
     const session = AuthSession.create({
@@ -78,8 +79,8 @@ export class LoginUserUseCase implements IUseCase<ILoginRequest, LoginOutput> {
   }
 
   private isSuccess(
-    r: ILoginResponse | ILoginResponseError
-  ): r is ILoginResponse {
+    r: ApiAuthTypes['TokenResponse'] | ApiAuthTypes['ProblemDetails']
+  ): r is ApiAuthTypes['TokenResponse'] {
     return 'accessToken' in r && 'refreshToken' in r
   }
 

@@ -2,21 +2,16 @@
  * APPLICATION LAYER - Caso de Uso para iniciar un registro de actividad
  */
 
-import type {
-  IUseCase,
-  ApiErrorResponse,
-  ActivityLogResponse,
-  StartActivityLogRequest,
-} from '../../../Domain'
+import type { IUseCase, ApiActivityLogsTypes } from '../../../Domain'
 import type { IActivityLogService } from '../../Services/ActivityLog/IActivityLogService'
 
-export type StartActivityLogResult =
-  | { success: true; log: ActivityLogResponse }
-  | { success: false; error: ApiErrorResponse }
+type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
+type ActivityLogResponse = ApiActivityLogsTypes['ActivityLogResponse']
+type StartActivityCommand = ApiActivityLogsTypes['StartActivityCommand']
 
 export class StartActivityLogUseCase implements IUseCase<
-  StartActivityLogRequest,
-  StartActivityLogResult
+  StartActivityCommand,
+  ActivityLogResponse | ProblemDetails
 > {
   private readonly activityLogService: IActivityLogService
   constructor(activityLogService: IActivityLogService) {
@@ -24,14 +19,8 @@ export class StartActivityLogUseCase implements IUseCase<
   }
 
   async execute(
-    request: StartActivityLogRequest
-  ): Promise<StartActivityLogResult> {
-    const result = await this.activityLogService.startActivityLog(request)
-
-    if ('id' in result) {
-      return { success: true, log: result as ActivityLogResponse }
-    }
-
-    return { success: false, error: result as ApiErrorResponse }
+    request: StartActivityCommand
+  ): Promise<ActivityLogResponse | ProblemDetails> {
+    return await this.activityLogService.startActivityLog(request)
   }
 }

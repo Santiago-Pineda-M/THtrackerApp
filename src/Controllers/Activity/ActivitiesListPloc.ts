@@ -29,12 +29,15 @@ export class ActivitiesListPloc extends Ploc<IActivitiesListState> {
     })
 
     try {
-      const result = await this.getActivitiesUseCase.execute()
+      const result = await this.getActivitiesUseCase.execute({
+        pageNumber: 1,
+        pageSize: 10,
+      })
 
-      if (result.success) {
+      if (result.items) {
         this.changeState({
           ...this.state,
-          activities: result.activities,
+          activities: result.items,
           isLoading: false,
           error: null,
         })

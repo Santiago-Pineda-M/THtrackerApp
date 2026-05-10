@@ -1,14 +1,15 @@
-import type { IUseCase, ApiErrorResponse } from '../../../Domain'
+import type { IUseCase, ApiTasksTypes } from '../../../Domain'
 import type { ITaskService } from '../../Services/Task/ITaskService'
-import type { IToggleTaskRequest } from '../../../Domain/TaskList'
-import { isApiError } from '../../../Domain'
 
-export type ToggleTaskOutput =
-  | { success: true }
-  | { success: false; error: ApiErrorResponse }
+type ToggleTaskResponse = ApiTasksTypes['TaskResponse']
+type ProblemDetails = ApiTasksTypes['ProblemDetails']
+
+type ToggleTaskPath = ApiTasksTypes['ToggleTaskPath']
+
+type ToggleTaskOutput = ToggleTaskResponse | ProblemDetails
 
 export class ToggleTaskUseCase implements IUseCase<
-  IToggleTaskRequest,
+  ToggleTaskPath,
   ToggleTaskOutput
 > {
   private readonly taskService: ITaskService
@@ -17,9 +18,8 @@ export class ToggleTaskUseCase implements IUseCase<
     this.taskService = taskService
   }
 
-  async execute(request: IToggleTaskRequest): Promise<ToggleTaskOutput> {
+  async execute(request: ToggleTaskPath): Promise<ToggleTaskOutput> {
     const result = await this.taskService.toggleTask(request)
-    if (isApiError(result)) return { success: false, error: result }
-    return { success: true }
+    return result
   }
 }

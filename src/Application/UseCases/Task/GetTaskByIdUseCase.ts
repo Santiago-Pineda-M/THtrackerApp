@@ -1,17 +1,14 @@
-import type { IUseCase, ApiErrorResponse } from '../../../Domain'
+import type { IUseCase, ApiTasksTypes } from '../../../Domain'
 import type { ITaskService } from '../../Services/Task/ITaskService'
-import type {
-  IGetTaskByIdRequest,
-  IGetTaskByIdResponse,
-} from '../../../Domain/TaskList'
-import { isApiError } from '../../../Domain'
 
-export type GetTaskByIdOutput =
-  | { success: true; task: IGetTaskByIdResponse['task'] }
-  | { success: false; error: ApiErrorResponse }
+type TaskResponse = ApiTasksTypes['TaskResponse']
+type ProblemDetails = ApiTasksTypes['ProblemDetails']
+type GetTaskByIdRequest = ApiTasksTypes['TaskIdPath']
+
+export type GetTaskByIdOutput = TaskResponse | ProblemDetails
 
 export class GetTaskByIdUseCase implements IUseCase<
-  IGetTaskByIdRequest,
+  GetTaskByIdRequest,
   GetTaskByIdOutput
 > {
   private readonly taskService: ITaskService
@@ -20,9 +17,8 @@ export class GetTaskByIdUseCase implements IUseCase<
     this.taskService = taskService
   }
 
-  async execute(request: IGetTaskByIdRequest): Promise<GetTaskByIdOutput> {
+  async execute(request: GetTaskByIdRequest): Promise<GetTaskByIdOutput> {
     const result = await this.taskService.getTaskById(request)
-    if (isApiError(result)) return { success: false, error: result }
-    return { success: true, task: result.task }
+    return result
   }
 }

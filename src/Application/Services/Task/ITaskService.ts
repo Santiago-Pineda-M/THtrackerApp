@@ -1,36 +1,43 @@
-import type {
-  IGetTasksByListRequest,
-  IGetTaskByIdRequest,
-  ICreateTaskRequest,
-  IUpdateTaskRequest,
-  IDeleteTaskRequest,
-  IToggleTaskRequest,
-  IGetTasksByListResponse,
-  IGetTaskByIdResponse,
-  ICreateTaskResponse,
-  IUpdateTaskResponse,
-  IDeleteTaskResponse,
-  IToggleTaskResponse,
-} from '../../../Domain/TaskList'
-import type { ApiErrorResponse } from '../../../Domain'
+/**
+ * APPLICATION LAYER - Task Service Interface
+ * Puerto para el servicio de gestión de tareas.
+ * Refleja los endpoints de /api/v1/tasks
+ */
+
+import type { ApiTasksTypes } from '../../../Domain'
+
+type TaskResponse = ApiTasksTypes['TaskResponse']
+type TaskResponsePaginated = ApiTasksTypes['TaskResponsePaginated']
+type ProblemDetails = ApiTasksTypes['ProblemDetails']
+type CreateTaskRequest = ApiTasksTypes['CreateTaskCommand']
+type UpdateTaskRequest = ApiTasksTypes['UpdateTaskCommand']
+
+type TaskByListPath = ApiTasksTypes['TaskByListPath']
+type TaskIdPath = ApiTasksTypes['TaskIdPath']
+
+type ToggleTaskPath = ApiTasksTypes['ToggleTaskPath']
 
 export interface ITaskService {
+  /** GET  /api/v1/task-lists/{id}/tasks */
   getTasksByList(
-    r: IGetTasksByListRequest
-  ): Promise<IGetTasksByListResponse | ApiErrorResponse>
-  getTaskById(
-    r: IGetTaskByIdRequest
-  ): Promise<IGetTaskByIdResponse | ApiErrorResponse>
-  createTask(
-    r: ICreateTaskRequest
-  ): Promise<ICreateTaskResponse | ApiErrorResponse>
+    path: TaskByListPath
+  ): Promise<TaskResponsePaginated | ProblemDetails>
+
+  /** GET  /api/v1/tasks/{id} */
+  getTaskById(path: TaskIdPath): Promise<TaskResponse | ProblemDetails>
+
+  /** POST /api/v1/tasks */
+  createTask(request: CreateTaskRequest): Promise<TaskResponse | ProblemDetails>
+
+  /** PUT  /api/v1/tasks/{id} */
   updateTask(
-    r: IUpdateTaskRequest
-  ): Promise<IUpdateTaskResponse | ApiErrorResponse>
-  deleteTask(
-    r: IDeleteTaskRequest
-  ): Promise<IDeleteTaskResponse | ApiErrorResponse>
-  toggleTask(
-    r: IToggleTaskRequest
-  ): Promise<IToggleTaskResponse | ApiErrorResponse>
+    path: TaskIdPath,
+    request: UpdateTaskRequest
+  ): Promise<TaskResponse | ProblemDetails>
+
+  /** DELETE /api/v1/tasks/{id} */
+  deleteTask(path: TaskIdPath): Promise<void | ProblemDetails>
+
+  /** PATCH /api/v1/tasks/{id}/toggle */
+  toggleTask(path: ToggleTaskPath): Promise<TaskResponse | ProblemDetails>
 }

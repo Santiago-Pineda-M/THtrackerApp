@@ -1,12 +1,12 @@
 import { Ploc } from '../../Domain/Ploc'
 import { type ILoginState, initialLoginState } from '../../Domain/IStates'
-import type {
-  ILoginRequest,
-  ILoginResponse,
-  ILoginResponseError,
-} from '../../Domain'
+import type { ApiAuthTypes } from '../../Domain'
 import type { LoginUserUseCase } from '../../Application/UseCases/Auth'
 import { AuthPloc } from './AuthPloc'
+
+type LoginRequest = ApiAuthTypes['LoginCommand']
+type LoginResponse = ApiAuthTypes['TokenResponse']
+type LoginResponseError = ApiAuthTypes['ProblemDetails']
 
 export class LoginPloc extends Ploc<ILoginState> {
   private readonly loginUserUseCase: LoginUserUseCase
@@ -47,11 +47,10 @@ export class LoginPloc extends Ploc<ILoginState> {
     })
 
     try {
-      const request: ILoginRequest = {
+      const request: LoginRequest = {
         email: this.state.email.trim(),
         password: this.state.password,
         deviceInfo: this.state.deviceInfo,
-        IpAddress: this.state.IpAddress,
       }
       const result = await this.loginUserUseCase.execute(request)
 
@@ -70,17 +69,15 @@ export class LoginPloc extends Ploc<ILoginState> {
         return
       }
 
-      const errorResult = result as ILoginResponseError
+      const errorResult = result as LoginResponseError
       console.log('[LoginPloc] Login failed, errorResult:', errorResult)
-      const rawErrors = errorResult.errors ?? { general: [errorResult.title] }
-      const errors = this.normalizeErrorKeys(rawErrors)
       this.changeState({
         ...this.state,
         email: this.state.email,
         password: this.state.password,
-        errors,
+        errors: errorResult,
         success: false,
-        message: errorResult.title,
+        message: errorResult.title!,
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -118,13 +115,6 @@ export class LoginPloc extends Ploc<ILoginState> {
     this.changeState({ ...this.state, deviceInfo, errors: newErrors })
   }
 
-  updateIpAddress(IpAddress: string): void {
-    const newErrors = { ...this.state.errors }
-    delete newErrors.IpAddress
-    delete newErrors.general
-    this.changeState({ ...this.state, IpAddress, errors: newErrors })
-  }
-
   /**
    * Resetea el estado del formulario de login.
    * Se llama cuando el componente se monta para limpiar el estado anterior.
@@ -134,11 +124,11 @@ export class LoginPloc extends Ploc<ILoginState> {
   }
 
   private isLoginSuccess(
-    result: ILoginResponse | ILoginResponseError
-  ): result is ILoginResponse {
+    result: LoginResponse | LoginResponseError
+  ): result is LoginResponse {
     return (
-      typeof (result as ILoginResponse).accessToken === 'string' &&
-      typeof (result as ILoginResponse).refreshToken === 'string'
+      typeof (result as LoginResponse).accessToken === 'string' &&
+      typeof (result as LoginResponse).refreshToken === 'string'
     )
   }
 
@@ -158,23 +148,11 @@ export class LoginPloc extends Ploc<ILoginState> {
     }
     if (!deviceInfo || deviceInfo.trim() === '') {
       errors.deviceInfo = ['El dispositivo es requerido']
-    } else {
-      return {}
     }
     return errors
   }
 
   private isValidEmail(value: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-  }
-
-  private normalizeErrorKeys(
-    errors: Record<string, string[]>
-  ): Record<string, string[]> {
-    const normalized: Record<string, string[]> = {}
-    for (const [key, value] of Object.entries(errors)) {
-      normalized[key.toLowerCase()] = value
-    }
-    return normalized
   }
 }

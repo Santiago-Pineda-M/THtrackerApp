@@ -1,171 +1,166 @@
-import type { IHttpClient } from '../../../Domain/IPatterns'
-import type {
-  ActivityLogResponse,
-  StartActivityLogRequest,
-  UpdateActivityLogRequest,
-  LogValueRequest,
-  LogValueResponse,
-  IGetActivityLogsRequest,
-  ApiErrorResponse,
-} from '../../../Domain'
+import type { IHttpClient } from '../../../Domain'
 import type { IActivityLogService } from './IActivityLogService'
+import type { ApiActivityLogsTypes } from '../../../Domain'
+type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
+type ActivityLogResponse = ApiActivityLogsTypes['ActivityLogResponse']
+type ActivityLogResponsePaginated =
+  ApiActivityLogsTypes['ActivityLogResponsePaginated']
+type StartActivityCommand = ApiActivityLogsTypes['StartActivityCommand']
+type UpdateActivityLogCommand = ApiActivityLogsTypes['UpdateActivityLogCommand']
+type SaveLogValuesCommand = ApiActivityLogsTypes['SaveLogValuesCommand']
+type LogValueResponsePaginated =
+  ApiActivityLogsTypes['LogValueResponsePaginated']
+type GetActivityLogsParams = ApiActivityLogsTypes['GetActivityLogsParams']
+type GetActivityLogIdParams = ApiActivityLogsTypes['GetActivityLogIdParams']
+type UpdateActivityLogParams = ApiActivityLogsTypes['UpdateActivityLogParams']
+type StopActivityLogParams = ApiActivityLogsTypes['StopActivityLogParams']
+type SaveActivityLogValuesParams =
+  ApiActivityLogsTypes['SaveActivityLogValuesParams']
+type GetActivityLogValuesParams =
+  ApiActivityLogsTypes['GetActivityLogValuesParams']
+type GetActiveActivityLogsFilters =
+  ApiActivityLogsTypes['GetActiveActivityLogsFilters']
 
 export class ActivityLogService implements IActivityLogService {
   private readonly httpClient: IHttpClient
+  private readonly baseUrl = '/api/v1/activity-logs'
+
   constructor(httpClient: IHttpClient) {
     this.httpClient = httpClient
   }
 
   async getActivityLogs(
-    request?: IGetActivityLogsRequest
-  ): Promise<ActivityLogResponse[] | ApiErrorResponse> {
+    filters?: GetActivityLogsParams
+  ): Promise<ActivityLogResponsePaginated | ProblemDetails> {
     try {
-      const params = new URLSearchParams()
-
-      if (request?.activityId) {
-        params.append('ActivityId', request.activityId)
-      }
-      if (request?.from) {
-        params.append('from', request.from)
-      }
-      if (request?.to) {
-        params.append('to', request.to)
-      }
-
-      const queryString = params.toString()
-      const url = queryString
-        ? `/api/v1/activity-logs?${queryString}`
-        : '/api/v1/activity-logs'
-
-      const response = await this.httpClient.get<ActivityLogResponse[]>(url)
-      return response.data
-    } catch (error: unknown) {
-      return this.handleError(error)
+      const response = await this.httpClient.get<
+        ActivityLogResponsePaginated | ProblemDetails
+      >(this.baseUrl, { params: filters })
+      if (response.status === 200)
+        return response.data as ActivityLogResponsePaginated
+      return response.data as ProblemDetails
+    } catch (error) {
+      return this.toNetworkError(error)
     }
   }
 
   async getActivityLogById(
-    id: string
-  ): Promise<ActivityLogResponse | ApiErrorResponse> {
+    id: GetActivityLogIdParams
+  ): Promise<ActivityLogResponse | ProblemDetails> {
     try {
-      const response = await this.httpClient.get<ActivityLogResponse>(
-        `/api/v1/activity-logs/${id}`
-      )
-      return response.data
-    } catch (error: unknown) {
-      return this.handleError(error)
+      const response = await this.httpClient.get<
+        ActivityLogResponse | ProblemDetails
+      >(`${this.baseUrl}/${id.id}`) // ← id.id, no id
+      if (response.status === 200) return response.data as ActivityLogResponse
+      return response.data as ProblemDetails
+    } catch (error) {
+      return this.toNetworkError(error)
     }
   }
 
   async startActivityLog(
-    request: StartActivityLogRequest
-  ): Promise<ActivityLogResponse | ApiErrorResponse> {
+    request: StartActivityCommand // ← body, no path params
+  ): Promise<ActivityLogResponse | ProblemDetails> {
     try {
-      const response = await this.httpClient.post<ActivityLogResponse>(
-        '/api/v1/activity-logs/start',
-        request
-      )
+      const response = await this.httpClient.post<
+        ActivityLogResponse | ProblemDetails
+      >(`${this.baseUrl}/start`, request)
       if (response.status === 201) {
-        this.httpClient.invalidateCache('/api/v1/activity-logs')
+        this.httpClient.invalidateCache(this.baseUrl)
+        return response.data as ActivityLogResponse
       }
-      return response.data
-    } catch (error: unknown) {
-      return this.handleError(error)
+      return response.data as ProblemDetails
+    } catch (error) {
+      return this.toNetworkError(error)
     }
   }
 
   async stopActivityLog(
-    id: string
-  ): Promise<ActivityLogResponse | ApiErrorResponse> {
+    id: StopActivityLogParams
+  ): Promise<ActivityLogResponse | ProblemDetails> {
     try {
-      const response = await this.httpClient.post<ActivityLogResponse>(
-        `/api/v1/activity-logs/${id}/stop`
-      )
+      const response = await this.httpClient.post<
+        ActivityLogResponse | ProblemDetails
+      >(`${this.baseUrl}/${id.id}/stop`)
       if (response.status === 200) {
-        this.httpClient.invalidateCache('/api/v1/activity-logs')
+        this.httpClient.invalidateCache(this.baseUrl)
+        return response.data as ActivityLogResponse
       }
-      return response.data
-    } catch (error: unknown) {
-      return this.handleError(error)
+      return response.data as ProblemDetails
+    } catch (error) {
+      return this.toNetworkError(error)
     }
   }
 
   async updateActivityLog(
-    id: string,
-    request: UpdateActivityLogRequest
-  ): Promise<ActivityLogResponse | ApiErrorResponse> {
+    id: UpdateActivityLogParams,
+    request: UpdateActivityLogCommand
+  ): Promise<ActivityLogResponse | ProblemDetails> {
     try {
-      const response = await this.httpClient.put<ActivityLogResponse>(
-        `/api/v1/activity-logs/${id}`,
-        request
-      )
+      const response = await this.httpClient.put<
+        ActivityLogResponse | ProblemDetails
+      >(`${this.baseUrl}/${id.id}`, request)
       if (response.status === 200) {
-        this.httpClient.invalidateCache('/api/v1/activity-logs')
+        this.httpClient.invalidateCache(this.baseUrl)
+        return response.data as ActivityLogResponse
       }
-      return response.data
-    } catch (error: unknown) {
-      return this.handleError(error)
+      return response.data as ProblemDetails
+    } catch (error) {
+      return this.toNetworkError(error)
     }
   }
 
   async saveActivityLogValues(
-    id: string,
-    requests: LogValueRequest[]
-  ): Promise<void | ApiErrorResponse> {
+    id: SaveActivityLogValuesParams,
+    requests: SaveLogValuesCommand[]
+  ): Promise<void | ProblemDetails> {
     try {
-      await this.httpClient.post<void>(
-        `/api/v1/activity-logs/${id}/values`,
+      const response = await this.httpClient.post<void | ProblemDetails>(
+        `${this.baseUrl}/${id.id}/values`,
         requests
       )
-    } catch (error: unknown) {
-      return this.handleError(error)
+      if (response.status === 204) return
+      return response.data as ProblemDetails
+    } catch (error) {
+      return this.toNetworkError(error)
     }
   }
 
   async getActivityLogValues(
-    id: string
-  ): Promise<LogValueResponse[] | ApiErrorResponse> {
+    id: GetActivityLogValuesParams
+  ): Promise<LogValueResponsePaginated | ProblemDetails> {
     try {
-      const response = await this.httpClient.get<LogValueResponse[]>(
-        `/api/v1/activity-logs/${id}/values`
-      )
-      return response.data
-    } catch (error: unknown) {
-      return this.handleError(error)
+      const response = await this.httpClient.get<
+        LogValueResponsePaginated | ProblemDetails
+      >(`${this.baseUrl}/${id.id}/values`)
+      if (response.status === 200)
+        return response.data as LogValueResponsePaginated
+      return response.data as ProblemDetails
+    } catch (error) {
+      return this.toNetworkError(error)
     }
   }
 
-  async getActiveActivityLogs(): Promise<
-    ActivityLogResponse[] | ApiErrorResponse
-  > {
+  async getActiveActivityLogs(
+    filters: GetActiveActivityLogsFilters
+  ): Promise<ActivityLogResponsePaginated | ProblemDetails> {
     try {
-      const response = await this.httpClient.get<ActivityLogResponse[]>(
-        '/api/v1/activity-logs/active'
-      )
-      return response.data
-    } catch (error: unknown) {
-      return this.handleError(error)
+      const response = await this.httpClient.get<
+        ActivityLogResponsePaginated | ProblemDetails
+      >(`${this.baseUrl}/active`, { params: filters })
+      if (response.status === 200)
+        return response.data as ActivityLogResponsePaginated
+      return response.data as ProblemDetails
+    } catch (error) {
+      return this.toNetworkError(error)
     }
   }
 
-  private handleError(error: unknown): ApiErrorResponse {
-    if (
-      error &&
-      typeof error === 'object' &&
-      'response' in error &&
-      error.response &&
-      typeof error.response === 'object' &&
-      'data' in error.response
-    ) {
-      return error.response.data as ApiErrorResponse
-    }
+  private toNetworkError(error: unknown): ProblemDetails {
     return {
-      title: 'Error de red o de servidor',
-      status: 500,
-      detail:
-        error instanceof Error
-          ? error.message
-          : 'Ha ocurrido un error inesperado al conectar con el servidor',
-    } as ApiErrorResponse
+      title: 'Network Error',
+      status: 0,
+      detail: error instanceof Error ? error.message : 'Error de conexión',
+    }
   }
 }

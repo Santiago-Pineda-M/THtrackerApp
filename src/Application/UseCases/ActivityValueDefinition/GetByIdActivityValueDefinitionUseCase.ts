@@ -3,25 +3,19 @@
  * Obtiene una definición de valor específica por su ID.
  */
 
-import type { IUseCase } from '../../../Domain'
+import type { IUseCase, ApiActivityValueDefinitionTypes } from '../../../Domain'
 import type { IActivityValueDefinitionService } from '../../Services/ActivityValueDefinition/IActivityValueDefinitionService'
-import type {
-  ActivityValueDefinitionResponse,
-  ApiErrorResponse,
-} from '../../../Domain'
 
-export interface GetByIdActivityValueDefinitionInput {
-  activityId: string
-  id: string
-}
+type GetByIdActivityValueDefinitionInput =
+  ApiActivityValueDefinitionTypes['DefinitionByIdPath']
 
-export type GetByIdActivityValueDefinitionOutput =
-  | { success: true; definition: ActivityValueDefinitionResponse }
-  | { success: false; error: ApiErrorResponse }
+type ProblemDetails = ApiActivityValueDefinitionTypes['ProblemDetails']
+type GetByIdActivityValueDefinitionResponse =
+  ApiActivityValueDefinitionTypes['ActivityValueDefinitionResponse']
 
 export class GetByIdActivityValueDefinitionUseCase implements IUseCase<
   GetByIdActivityValueDefinitionInput,
-  GetByIdActivityValueDefinitionOutput
+  GetByIdActivityValueDefinitionResponse | ProblemDetails
 > {
   private readonly activityValueDefinitionService: IActivityValueDefinitionService
 
@@ -31,23 +25,9 @@ export class GetByIdActivityValueDefinitionUseCase implements IUseCase<
 
   async execute(
     input: GetByIdActivityValueDefinitionInput
-  ): Promise<GetByIdActivityValueDefinitionOutput> {
-    const result =
-      await this.activityValueDefinitionService.getValueDefinitionById(
-        input.activityId,
-        input.id
-      )
-
-    if (this.isDefinition(result)) {
-      return { success: true, definition: result }
-    }
-
-    return { success: false, error: result as ApiErrorResponse }
-  }
-
-  private isDefinition(
-    result: ActivityValueDefinitionResponse | ApiErrorResponse
-  ): result is ActivityValueDefinitionResponse {
-    return 'activityId' in result
+  ): Promise<GetByIdActivityValueDefinitionResponse | ProblemDetails> {
+    return await this.activityValueDefinitionService.getValueDefinitionById(
+      input
+    )
   }
 }

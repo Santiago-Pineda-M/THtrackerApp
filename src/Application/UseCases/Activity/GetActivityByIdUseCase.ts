@@ -3,23 +3,12 @@
  * Caso de uso para obtener una actividad específica por su ID.
  */
 
-import type { IUseCase } from '../../../Domain'
+import type { IUseCase, ApiActivitiesTypes } from '../../../Domain'
 import type { IActivityService } from '../../Services/Activity/IActivityService'
-import type { ActivityResponse, ApiErrorResponse } from '../../../Domain'
 
-/**
- * Input del caso de uso
- */
-export interface GetActivityByIdInput {
-  id: string // UUID
-}
-
-/**
- * Output del caso de uso - puede ser éxito o error
- */
-export type GetActivityByIdOutput =
-  | { success: true; activity: ActivityResponse }
-  | { success: false; error: ApiErrorResponse }
+type ActivityResponse = ApiActivitiesTypes['ActivityResponse']
+type ApiErrorResponse = ApiActivitiesTypes['ProblemDetails']
+type GetActivityByIdInput = ApiActivitiesTypes['GetActivityIdPath']
 
 /**
  * Caso de uso para obtener una actividad específica por su ID.
@@ -27,7 +16,7 @@ export type GetActivityByIdOutput =
  */
 export class GetActivityByIdUseCase implements IUseCase<
   GetActivityByIdInput,
-  GetActivityByIdOutput
+  ActivityResponse | ApiErrorResponse
 > {
   private readonly activityService: IActivityService
 
@@ -35,19 +24,10 @@ export class GetActivityByIdUseCase implements IUseCase<
     this.activityService = activityService
   }
 
-  async execute(input: GetActivityByIdInput): Promise<GetActivityByIdOutput> {
-    const result = await this.activityService.getActivityById(input.id)
-
-    if (this.isError(result)) {
-      return { success: false, error: result }
-    }
-
-    return { success: true, activity: result }
-  }
-
-  private isError(
-    result: ActivityResponse | ApiErrorResponse
-  ): result is ApiErrorResponse {
-    return 'title' in result || 'detail' in result || 'status' in result
+  async execute(
+    input: GetActivityByIdInput
+  ): Promise<ActivityResponse | ApiErrorResponse> {
+    const result = await this.activityService.getActivityById(input)
+    return result
   }
 }

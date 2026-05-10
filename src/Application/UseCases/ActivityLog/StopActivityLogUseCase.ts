@@ -2,24 +2,16 @@
  * APPLICATION LAYER - Caso de Uso para detener un registro de actividad
  */
 
-import type {
-  IUseCase,
-  ApiErrorResponse,
-  ActivityLogResponse,
-} from '../../../Domain'
+import type { IUseCase, ApiActivityLogsTypes } from '../../../Domain'
 import type { IActivityLogService } from '../../Services/ActivityLog/IActivityLogService'
 
-export interface StopActivityLogRequest {
-  logId: string
-}
-
-export type StopActivityLogResult =
-  | { success: true; log: ActivityLogResponse }
-  | { success: false; error: ApiErrorResponse }
+type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
+type ActivityLogResponse = ApiActivityLogsTypes['ActivityLogResponse']
+type StopActivityLogRequest = ApiActivityLogsTypes['GetActivityLogValuesParams']
 
 export class StopActivityLogUseCase implements IUseCase<
   StopActivityLogRequest,
-  StopActivityLogResult
+  ActivityLogResponse | ProblemDetails
 > {
   private readonly activityLogService: IActivityLogService
   constructor(activityLogService: IActivityLogService) {
@@ -28,13 +20,7 @@ export class StopActivityLogUseCase implements IUseCase<
 
   async execute(
     request: StopActivityLogRequest
-  ): Promise<StopActivityLogResult> {
-    const result = await this.activityLogService.stopActivityLog(request.logId)
-
-    if ('id' in result) {
-      return { success: true, log: result as ActivityLogResponse }
-    }
-
-    return { success: false, error: result as ApiErrorResponse }
+  ): Promise<ActivityLogResponse | ProblemDetails> {
+    return await this.activityLogService.stopActivityLog(request)
   }
 }

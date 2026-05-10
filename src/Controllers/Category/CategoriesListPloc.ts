@@ -31,10 +31,10 @@ export class CategoriesListPloc extends Ploc<ICategoriesListState> {
     try {
       const result = await this.getCategoriesUseCase.execute()
 
-      if (result.success) {
+      if (result.items && result.items.length > 0) {
         this.changeState({
           ...this.state,
-          categories: result.categories,
+          categories: result },
           isLoading: false,
           error: null,
         })
@@ -43,9 +43,9 @@ export class CategoriesListPloc extends Ploc<ICategoriesListState> {
 
       this.changeState({
         ...this.state,
-        categories: [],
+        categories: null,
         isLoading: false,
-        error: result.error,
+        error: { result },
       })
     } catch (err: unknown) {
       const error =

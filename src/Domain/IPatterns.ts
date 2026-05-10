@@ -36,6 +36,7 @@ export interface HttpResponse<T = unknown> {
  */
 export interface HttpRequestConfig extends RequestInit {
   cacheTtl?: number
+  params?: Record<string, string | number | boolean | undefined>
 }
 
 export interface IHttpClient {

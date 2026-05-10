@@ -1,6 +1,6 @@
 import { Ploc } from '../../Domain/Ploc'
 import { type IRegisterState, initialRegisterState } from '../../Domain/IStates'
-import type { IRegisterRequest, ILoginResponseError } from '../../Domain'
+import { isApiError, type IRegisterRequest, type ILoginResponseError } from '../../Domain'
 import type { RegisterUseCases } from '../../Application/UseCases/Auth'
 
 export class RegisterPloc extends Ploc<IRegisterState> {
@@ -57,7 +57,7 @@ export class RegisterPloc extends Ploc<IRegisterState> {
       }
       const result = await this.registerUseCases.execute(request)
 
-      if ('message' in result) {
+      if (!isApiError(result)) {
         // Registro exitoso
         this.changeState({
           ...this.state,
@@ -67,8 +67,7 @@ export class RegisterPloc extends Ploc<IRegisterState> {
           confirmPassword: '',
           errors: {},
           success: true,
-          message:
-            'Cuenta creada correctamente. Por favor verifica tu correo electrónico.',
+          message: 'Cuenta creada correctamente. Ya puedes iniciar sesión.',
           isLoading: false,
         })
         return

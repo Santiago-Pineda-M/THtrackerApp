@@ -4,18 +4,17 @@
  * La API solo tiene /register — no existe confirmEmail ni resend.
  */
 
-import type {
-  IUseCase,
-  IRegisterRequest,
-  IRegisterResponse,
-  ILoginResponseError,
-} from '../../../Domain'
+import type { IUseCase, ApiAuthTypes } from '../../../Domain'
 import type { IAuthService } from '../../Services/Auth/IAuthService'
 
-export type RegisterOutput = IRegisterResponse | ILoginResponseError
+type RegisterCommand = ApiAuthTypes['RegisterCommand']
+type UserResponse = ApiAuthTypes['UserResponse']
+type ProblemDetails = ApiAuthTypes['ProblemDetails']
+
+export type RegisterOutput = UserResponse | ProblemDetails
 
 export class RegisterUseCases implements IUseCase<
-  IRegisterRequest,
+  RegisterCommand,
   RegisterOutput
 > {
   private readonly authService: IAuthService
@@ -23,7 +22,7 @@ export class RegisterUseCases implements IUseCase<
     this.authService = authService
   }
 
-  async execute(input: IRegisterRequest): Promise<RegisterOutput> {
+  async execute(input: RegisterCommand): Promise<RegisterOutput> {
     return this.authService.register(input)
   }
 }

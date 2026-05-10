@@ -27,17 +27,7 @@ export class RefreshTokenPloc extends Ploc<IRefreshTokenState> {
     this.getSessionUseCase = getSessionUseCase
   }
 
-  /**
-   * Fuerza la renovación del token manualmente.
-   *
-   * Flujo:
-   * 1. Obtiene la sesión actual usando GetSessionUseCase
-   * 2. Extrae el refreshToken
-   * 3. Usa RefreshTokenUseCases para renovar
-   * 4. Actualiza el estado según el resultado
-   */
   async forceRefreshToken(): Promise<void> {
-    // Obtener sesión actual
     const { session } = await this.getSessionUseCase.execute()
 
     if (!session) {
@@ -45,7 +35,7 @@ export class RefreshTokenPloc extends Ploc<IRefreshTokenState> {
         ...this.state,
         isRefreshing: false,
         success: false,
-        error: 'No hay sesión activa',
+        error: { title: 'Error', detail: 'No hay sesión activa' },
       })
       return
     }
@@ -54,7 +44,7 @@ export class RefreshTokenPloc extends Ploc<IRefreshTokenState> {
       ...this.state,
       isRefreshing: true,
       success: false,
-      error: undefined,
+      error: null,
     })
 
     try {
@@ -67,14 +57,14 @@ export class RefreshTokenPloc extends Ploc<IRefreshTokenState> {
           ...this.state,
           isRefreshing: false,
           success: true,
-          error: undefined,
+          error: null,
         })
       } else {
         this.changeState({
           ...this.state,
           isRefreshing: false,
           success: false,
-          error: 'Error al refresh el token',
+          error: result,
         })
       }
     } catch (error) {
@@ -82,8 +72,10 @@ export class RefreshTokenPloc extends Ploc<IRefreshTokenState> {
         ...this.state,
         isRefreshing: false,
         success: false,
-        error:
-          error instanceof Error ? error.message : 'Error al refresh el token',
+        error: {
+          title: 'Error',
+          detail: 'Error al refresh el token: ' + error,
+        },
       })
     }
   }

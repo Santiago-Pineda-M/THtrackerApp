@@ -3,24 +3,26 @@
  * Lista las definiciones de valor de una actividad.
  */
 
-import type { IUseCase } from '../../../Domain'
+import type { IUseCase, ApiActivityValueDefinitionTypes } from '../../../Domain'
 import type { IActivityValueDefinitionService } from '../../Services/ActivityValueDefinition/IActivityValueDefinitionService'
-import type {
-  ActivityValueDefinitionResponse,
-  ApiErrorResponse,
-} from '../../../Domain'
 
-export interface GetListActivityValueDefinitionInput {
-  activityId: string
-}
+type ProblemDetails = ApiActivityValueDefinitionTypes['ProblemDetails']
 
-export type GetListActivityValueDefinitionOutput =
-  | { success: true; definitions: ActivityValueDefinitionResponse[] }
-  | { success: false; error: ApiErrorResponse }
+type GetListActivityValueDefinitionPath =
+  ApiActivityValueDefinitionTypes['DefinitionsPath']
+
+type GetListActivityValueDefinitionFilters =
+  ApiActivityValueDefinitionTypes['DefinitionFilterPath']
+
+type GetListActivityValueDefinitionPaginatedResponse =
+  ApiActivityValueDefinitionTypes['ActivityValueDefinitionResponsePaginated']
 
 export class GetListActivityValueDefinitionUseCase implements IUseCase<
-  GetListActivityValueDefinitionInput,
-  GetListActivityValueDefinitionOutput
+  {
+    path: GetListActivityValueDefinitionPath
+    filters: GetListActivityValueDefinitionFilters
+  },
+  GetListActivityValueDefinitionPaginatedResponse | ProblemDetails
 > {
   private readonly activityValueDefinitionService: IActivityValueDefinitionService
 
@@ -28,18 +30,15 @@ export class GetListActivityValueDefinitionUseCase implements IUseCase<
     this.activityValueDefinitionService = activityValueDefinitionService
   }
 
-  async execute(
-    input: GetListActivityValueDefinitionInput
-  ): Promise<GetListActivityValueDefinitionOutput> {
-    const result =
-      await this.activityValueDefinitionService.getValueDefinitions(
-        input.activityId
-      )
-
-    if (Array.isArray(result)) {
-      return { success: true, definitions: result }
-    }
-
-    return { success: false, error: result as ApiErrorResponse }
+  async execute(input: {
+    path: GetListActivityValueDefinitionPath
+    filters: GetListActivityValueDefinitionFilters
+  }): Promise<
+    GetListActivityValueDefinitionPaginatedResponse | ProblemDetails
+  > {
+    return await this.activityValueDefinitionService.getValueDefinitions(
+      input.path,
+      input.filters
+    )
   }
 }

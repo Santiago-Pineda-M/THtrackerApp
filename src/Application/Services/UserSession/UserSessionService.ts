@@ -3,12 +3,14 @@
  * Implementación de IUserSessionService que conecta con el API de sesiones de usuario.
  */
 
-import type {
-  IHttpClient,
-  IUserSessionResponse,
-  IRevokeSessionResponse,
-} from '../../../Domain'
+import type { IHttpClient, ApiUserSessionTypes } from '../../../Domain'
 import type { IUserSessionService } from './IUserSessionService'
+
+type ProblemDetails = ApiUserSessionTypes['ProblemDetails']
+type UserSessionResponsePaginated =
+  ApiUserSessionTypes['UserSessionResponsePaginated']
+type GetUserSessionsFilters = ApiUserSessionTypes['GetUserSessionsFilters']
+type RevokeSessionIdPath = ApiUserSessionTypes['RevokeSessionIdPath']
 
 export class UserSessionService implements IUserSessionService {
   private readonly httpClient: IHttpClient
@@ -18,25 +20,30 @@ export class UserSessionService implements IUserSessionService {
     this.httpClient = httpClient
   }
 
-  async getUserSessions(): Promise<IUserSessionResponse[]> {
+  async getUserSessions(
+    filters: GetUserSessionsFilters
+  ): Promise<UserSessionResponsePaginated | ProblemDetails> {
     try {
-      const response = await this.httpClient.get<IUserSessionResponse[]>(
-        this.baseUrl
-      )
-      if (response.status === 200) return response.data
+      const response = await this.httpClient.get<
+        UserSessionResponsePaginated | ProblemDetails
+      >(this.baseUrl, { cacheTtl: 5 * 60 * 1000, params: filters })
+      if (response.status === 200)
+        return response.data as UserSessionResponsePaginated
       throw new Error('Error al obtener las sesiones')
     } catch (error) {
       throw error instanceof Error ? error : new Error('Error de conexión')
     }
   }
 
-  async revokeSession(sessionId: string): Promise<IRevokeSessionResponse> {
+  async revokeSession(
+    sessionId: RevokeSessionIdPath
+  ): Promise<void | ProblemDetails> {
     try {
-      const response = await this.httpClient.post<void>(
+      const response = await this.httpClient.post<void | ProblemDetails>(
         `${this.baseUrl}/${sessionId}/revoke`
       )
-      if (response.status === 204) return { success: true }
-      throw new Error('Error al revocar la sesión')
+      if (response.status === 204) return
+      return response.data as ProblemDetails
     } catch (error) {
       throw error instanceof Error ? error : new Error('Error de conexión')
     }
