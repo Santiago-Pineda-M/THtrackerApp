@@ -1,3 +1,4 @@
+export * from './CommonTypes'
 export * from './AuthTypes'
 export * from './ActivitiesTypes'
 export * from './ActivityLogsTypes'
