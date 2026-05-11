@@ -2,17 +2,25 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Text, Icon } from '../../../../../components'
 import styles from './ActivitiesListItem.module.scss'
-import type { ICategory } from '../../../../../../../Domain'
+
+type ActivityType = {
+  id: string
+  name: string | null
+  categoryId: string
+  color: string | null
+  allowOverlap: boolean
+}
+
+type CategoryType = {
+  id: string
+  userId: string
+  name: string | null
+  color: string | null
+}
 
 interface ActivitiesListItemProps {
-  activity: {
-    id: string
-    name: string | null
-    categoryId: string
-    color: string | null
-    allowOverlap: boolean
-  }
-  category: ICategory
+  activity: ActivityType
+  category: CategoryType
 }
 
 export const ActivitiesListItem: React.FC<ActivitiesListItemProps> = ({

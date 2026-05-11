@@ -8,7 +8,12 @@ import {
   type ICategoryDetailState,
   initialCategoryDetailState,
 } from '../../Domain'
-import type { GetCategoryByIdUseCase } from '../../Application/UseCases/Category'
+import type {
+  GetCategoryByIdUseCase,
+  CategoryResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/Category/GetCategoryByIdUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class CategoryDetailPloc extends Ploc<ICategoryDetailState> {
   private readonly getCategoryByIdUseCase: GetCategoryByIdUseCase
@@ -25,44 +30,47 @@ export class CategoryDetailPloc extends Ploc<ICategoryDetailState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
     try {
       const result = await this.getCategoryByIdUseCase.execute({ id })
 
-      if (result.success) {
+      if (this.isCategorySuccess(result)) {
         this.changeState({
           ...this.state,
-          category: result.category,
+          category: result,
           isLoading: false,
-          error: null,
+          errors: {},
         })
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         category: null,
         isLoading: false,
-        error: result.error,
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
-      const error =
+      const message =
         err instanceof Error
-          ? { title: 'Error', detail: err.message }
-          : {
-              title: 'Error',
-              detail: 'Error desconocido al cargar la categoría',
-            }
-
+          ? err.message
+          : 'Error desconocido al cargar la categoría'
       this.changeState({
         ...this.state,
         category: null,
         isLoading: false,
-        error,
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isCategorySuccess(
+    result: CategoryResponse | ProblemDetails
+  ): result is CategoryResponse {
+    return 'id' in result && 'name' in result
   }
 
   /**

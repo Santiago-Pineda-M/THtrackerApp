@@ -53,7 +53,7 @@ export const ActivityDelete: React.FC<ActivityDeleteProps> = ({
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? 'Â¡Éxito!' : 'Eliminar Actividad'}
+        title={state.success ? '¡Éxito!' : 'Eliminar Actividad'}
       >
         {state.success ? (
           <div className={styles.successContainer}>
@@ -64,7 +64,7 @@ export const ActivityDelete: React.FC<ActivityDeleteProps> = ({
           </div>
         ) : (
           <div className={styles.modalContent}>
-            {state.error && (
+            {state.errors && (
               <Text
                 size='sm'
                 className={styles.errorMessage}
@@ -72,14 +72,13 @@ export const ActivityDelete: React.FC<ActivityDeleteProps> = ({
                   color: '#ef4444',
                 }}
               >
-                {state.error.title || 'Error al eliminar la actividad.'}
+                {state.errors?.[0] || 'Error al eliminar la actividad.'}
               </Text>
             )}
 
             <Text className={styles.modalText}>
-              Â¿Estás seguro de que deseas eliminar la actividad{' '}
-              <strong>{activityName}</strong>? Esta acción no se puede
-              deshacer.
+              ¿Estás seguro de que deseas eliminar la actividad{' '}
+              <strong>{activityName}</strong>? Esta acción no se puede deshacer.
             </Text>
 
             <div className={styles.modalActions}>

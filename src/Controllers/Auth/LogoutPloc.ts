@@ -18,7 +18,7 @@ export class LogoutPloc extends Ploc<ILogoutState> {
       ...this.state,
       isLoggingOut: true,
       success: false,
-      error: null,
+      errors: {},
     })
 
     try {
@@ -32,18 +32,15 @@ export class LogoutPloc extends Ploc<ILogoutState> {
       })
     } catch (error) {
       this.authPloc.onLogout() // Forzamos cierre aunque falle red para no dejar al usuario atrapado
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'No se pudo cerrar la sesión en el servidor, pero se limpió localmente.'
       this.changeState({
         ...this.state,
         isLoggingOut: false,
         success: false,
-        error:
-          error instanceof Error
-            ? { title: error.message, detail: 'Error al cerrar sesión.' }
-            : {
-                title: 'Error al cerrar sesión',
-                detail:
-                  'No se pudo cerrar la sesión en el servidor, pero se limpió localmente.',
-              },
+        errors: { general: [message] },
       })
     }
   }

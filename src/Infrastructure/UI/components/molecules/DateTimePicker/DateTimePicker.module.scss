@@ -19,8 +19,7 @@
 
 .container:focus-within {
   border-color: $color-accent;
-  box-shadow: 0 0 0 3px
-    $color-accent-soft;
+  box-shadow: 0 0 0 3px $color-accent-soft;
 }
 
 /* Visually hidden legend for screen readers */
@@ -170,8 +169,7 @@
 
 .stepperSelect:focus {
   border-color: $color-accent;
-  box-shadow: 0 0 0 2px
-    $color-accent-soft;
+  box-shadow: 0 0 0 2px $color-accent-soft;
   background: $color-bg-input;
   position: relative;
   z-index: 1;

@@ -28,28 +28,42 @@ export const ActivitiesList: React.FC = () => {
     >
       <Divider spacing='none' />
 
-      {listState.isLoading && listState.activities.length === 0 ? (
+      {listState.isLoading ? (
         <div className={styles.emptyState}>
           <Spinner size='lg' />
         </div>
-      ) : listState.activities.length > 0 ? (
+      ) : listState.activities?.items &&
+        listState.activities.items.length > 0 ? (
         <ul className={styles.list}>
-          {listState.activities.map((activity) => (
-            <ActivitiesListItem
-              key={activity.id}
-              activity={activity}
-              category={
-                categoriesState.categories.find(
-                  (cat) => cat.id === activity.categoryId
-                ) || {
-                  userId: '',
-                  id: '',
-                  name: 'Sin categoría',
-                  color: null,
-                }
-              }
-            />
-          ))}
+          {listState.activities.items.map((activity) => {
+            if (!activity.id || !activity.categoryId) return null
+
+            const safeActivity = {
+              id: activity.id,
+              name: activity.name || null,
+              categoryId: activity.categoryId,
+              color: activity.color || null,
+              allowOverlap: activity.allowOverlap || false,
+            }
+
+            const foundCategory = categoriesState.categories?.items?.find(
+              (cat) => cat.id === activity.categoryId
+            )
+            const category = {
+              id: foundCategory?.id || '',
+              userId: foundCategory?.userId || '',
+              name: foundCategory?.name || 'Sin categoría',
+              color: foundCategory?.color || null,
+            }
+
+            return (
+              <ActivitiesListItem
+                key={activity.id}
+                activity={safeActivity}
+                category={category}
+              />
+            )
+          })}
         </ul>
       ) : (
         <div className={styles.emptyState}>
@@ -59,12 +73,12 @@ export const ActivitiesList: React.FC = () => {
         </div>
       )}
 
-      {listState.error && (
+      {listState.errors && Object.keys(listState.errors).length > 0 && (
         <Text
           size='sm'
           className={styles.errorText}
         >
-          {listState.error.title || 'Error al cargar actividades.'}
+          {listState.errors?.[0] || 'Error al cargar actividades.'}
         </Text>
       )}
       <Divider spacing='none' />

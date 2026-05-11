@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import { dependenciesLocator } from '../DI/DependenciesLocator'
 import { DependenciesContext } from './useDependencies'
 

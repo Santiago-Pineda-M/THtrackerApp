@@ -1,6 +1,11 @@
 import { Ploc, initialActiveActivityLogsState } from '../../Domain'
 import type { IActiveActivityLogsState } from '../../Domain'
-import type { GetActiveActivityLogsUseCase } from '../../Application/UseCases/ActivityLog'
+import type {
+  GetActiveActivityLogsUseCase,
+  ActivityLogResponsePaginated,
+  ProblemDetails,
+} from '../../Application/UseCases/ActivityLog/GetActiveActivityLogsUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 /**
  * CONTROLLER LAYER - PLOC para gestionar la lista global de logs activos
@@ -20,24 +25,43 @@ export class ActiveActivityLogsPloc extends Ploc<IActiveActivityLogsState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
-    const result = await this.getActiveActivityLogsUseCase.execute()
+    try {
+      const result = await this.getActiveActivityLogsUseCase.execute({})
 
-    if (result.success) {
+      if (this.isActiveActivityLogsSuccess(result)) {
+        this.changeState({
+          ...this.state,
+          logs: result,
+          isLoading: false,
+        })
+        return
+      }
+
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        logs: result.logs,
+        logs: null,
         isLoading: false,
+        errors: mappedErrors,
       })
-    } else {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
       this.changeState({
         ...this.state,
-        error: result.error,
+        logs: null,
         isLoading: false,
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isActiveActivityLogsSuccess(
+    result: ActivityLogResponsePaginated | ProblemDetails
+  ): result is ActivityLogResponsePaginated {
+    return 'items' in result
   }
 
   /**

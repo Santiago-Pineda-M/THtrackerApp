@@ -8,7 +8,12 @@ import {
   type ITaskListDetailState,
   initialTaskListDetailState,
 } from '../../Domain'
-import type { GetTaskListByIdUseCase } from '../../Application/UseCases/TaskList/GetTaskListByIdUseCase'
+import type {
+  GetTaskListByIdUseCase,
+  ProblemDetails,
+  TaskListResponse,
+} from '../../Application/UseCases/TaskList/GetTaskListByIdUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class TaskListDetailPloc extends Ploc<ITaskListDetailState> {
   private readonly getTaskListByIdUseCase: GetTaskListByIdUseCase
@@ -25,26 +30,27 @@ export class TaskListDetailPloc extends Ploc<ITaskListDetailState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
     try {
       const result = await this.getTaskListByIdUseCase.execute({ id })
 
-      if (result.success) {
+      if (this.isTaskListDetailSuccess(result)) {
         this.changeState({
           ...this.state,
-          taskList: result.taskList,
+          taskList: result,
           isLoading: false,
         })
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         taskList: null,
         isLoading: false,
-        error: result.error,
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -52,9 +58,15 @@ export class TaskListDetailPloc extends Ploc<ITaskListDetailState> {
         ...this.state,
         taskList: null,
         isLoading: false,
-        error: { title: 'Error', detail: message },
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isTaskListDetailSuccess(
+    result: TaskListResponse | ProblemDetails
+  ): result is TaskListResponse {
+    return 'id' in result && 'name' in result
   }
 
   /**

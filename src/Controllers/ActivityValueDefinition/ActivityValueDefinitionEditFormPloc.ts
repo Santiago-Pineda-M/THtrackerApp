@@ -10,8 +10,13 @@ import {
 } from '../../Domain'
 import type {
   GetByIdActivityValueDefinitionUseCase,
+  ProblemDetails,
+} from '../../Application/UseCases/ActivityValueDefinition/GetByIdActivityValueDefinitionUseCase'
+import type {
   UpdateActivityValueDefinitionUseCase,
-} from '../../Application/UseCases/ActivityValueDefinition'
+  UpdateValueDefinitionRequest,
+} from '../../Application/UseCases/ActivityValueDefinition/UpdateActivityValueDefinitionUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class ActivityValueDefinitionEditFormPloc extends Ploc<IValueDefinitionEditFormState> {
   private readonly getValueDefinitionByIdUseCase: GetByIdActivityValueDefinitionUseCase
@@ -41,30 +46,28 @@ export class ActivityValueDefinitionEditFormPloc extends Ploc<IValueDefinitionEd
     try {
       const result = await this.getValueDefinitionByIdUseCase.execute({
         activityId,
-        id,
+        definitionId: id,
       })
 
-      if (result.success) {
-        const definition = result.definition
+      if (this.isEditDefinitionSuccess(result)) {
         this.changeState({
           ...this.state,
-          name: definition.name,
-          valueType: definition.valueType,
-          isRequired: definition.isRequired,
-          unit: definition.unit,
-          minValue: definition.minValue,
-          maxValue: definition.maxValue,
+          name: result.name ?? '',
+          valueType: result.valueType ?? 'Number',
+          isRequired: result.isRequired ?? false,
+          unit: result.unit ?? '',
+          minValue: result.minValue ?? '',
+          maxValue: result.maxValue ?? '',
           isLoading: false,
         })
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         isLoading: false,
-        errors: result.error
-          ? { general: [result.error.detail || 'Error al cargar datos'] }
-          : {},
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -134,7 +137,7 @@ export class ActivityValueDefinitionEditFormPloc extends Ploc<IValueDefinitionEd
     try {
       const request = {
         activityId: this.state.activityId,
-        id: this.state.id,
+        definitionId: this.state.id,
         name: this.state.name?.trim() || null,
         valueType: this.state.valueType || 'Number',
         isRequired: this.state.isRequired,
@@ -145,7 +148,7 @@ export class ActivityValueDefinitionEditFormPloc extends Ploc<IValueDefinitionEd
 
       const result = await this.updateValueDefinitionUseCase.execute(request)
 
-      if (result.success) {
+      if (this.isEditDefinitionSuccess(result)) {
         this.changeState({
           ...this.state,
           success: true,
@@ -155,19 +158,14 @@ export class ActivityValueDefinitionEditFormPloc extends Ploc<IValueDefinitionEd
         return
       }
 
-      const errorResult = result.error
-      const rawErrors = errorResult.errors ?? {
-        general: [errorResult.title || errorResult.detail],
-      }
-      const errors = this.normalizeErrorKeys(
-        rawErrors as Record<string, string[]>
-      )
-
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        errors,
+        errors: mappedErrors,
         success: false,
-        message: errorResult.title || 'Error al actualizar la definición.',
+        message:
+          (result as ProblemDetails).title ||
+          'Error al actualizar la definición.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -180,6 +178,12 @@ export class ActivityValueDefinitionEditFormPloc extends Ploc<IValueDefinitionEd
         isLoading: false,
       })
     }
+  }
+
+  private isEditDefinitionSuccess(
+    result: UpdateValueDefinitionRequest | ProblemDetails
+  ): result is UpdateValueDefinitionRequest {
+    return 'definitionId' in result && 'name' in result
   }
 
   /**
@@ -195,15 +199,5 @@ export class ActivityValueDefinitionEditFormPloc extends Ploc<IValueDefinitionEd
       errors.name = ['El nombre es requerido']
     }
     return errors
-  }
-
-  private normalizeErrorKeys(
-    errors: Record<string, string[]>
-  ): Record<string, string[]> {
-    const normalized: Record<string, string[]> = {}
-    for (const [key, value] of Object.entries(errors)) {
-      normalized[key.toLowerCase()] = value
-    }
-    return normalized
   }
 }

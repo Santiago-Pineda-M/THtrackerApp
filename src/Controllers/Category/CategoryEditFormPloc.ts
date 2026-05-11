@@ -8,8 +8,14 @@ import {
   type ICategoryEditFormState,
   initialCategoryEditFormState,
 } from '../../Domain'
-import type { UpdateCategoryUseCase } from '../../Application/UseCases/Category'
-import type { GetCategoryByIdUseCase } from '../../Application/UseCases/Category'
+import type {
+  UpdateCategoryUseCase,
+  CategoryResponse,
+  ProblemDetails as UpdateCategoryError,
+  UpdateCategoryCommand,
+} from '../../Application/UseCases/Category/UpdateCategoryUseCase'
+import type { GetCategoryByIdUseCase } from '../../Application/UseCases/Category/GetCategoryByIdUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
   private readonly updateCategoryUseCase: UpdateCategoryUseCase
@@ -37,8 +43,8 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
     try {
       const result = await this.getCategoryByIdUseCase.execute({ id })
 
-      if (result.success) {
-        const category = result.category
+      if (this.isCategorySuccess(result)) {
+        const category = result
         this.changeState({
           ...this.state,
           name: category.name ?? '',
@@ -53,12 +59,11 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         isLoading: false,
-        errors: result.error
-          ? { general: [result.error.detail || 'Error al cargar datos'] }
-          : {},
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -136,7 +141,7 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
     })
 
     try {
-      const request = {
+      const request: UpdateCategoryCommand = {
         id: this.state.id,
         name: this.state.name.trim() || null,
         color: this.state.color.trim() || null,
@@ -144,14 +149,14 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
 
       const result = await this.updateCategoryUseCase.execute(request)
 
-      if (result.success) {
+      if (this.isCategorySuccess(result)) {
         this.changeState({
           ...this.state,
-          name: result.category.name ?? '',
-          color: result.category.color ?? '',
+          name: result.name ?? '',
+          color: result.color ?? '',
           initialValues: {
-            name: result.category.name ?? '',
-            color: result.category.color ?? '',
+            name: result.name ?? '',
+            color: result.color ?? '',
           },
           errors: {},
           success: true,
@@ -162,19 +167,13 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
       }
 
       // Error del servidor
-      const errorResult = result.error
-      const rawErrors = errorResult.errors ?? {
-        general: [errorResult.title || errorResult.detail],
-      }
-      const errors = this.normalizeErrorKeys(
-        rawErrors as Record<string, string[]>
-      )
+      const mappedErrors = mapProblemDetailsToErrors(result)
 
       this.changeState({
         ...this.state,
-        errors,
+        errors: mappedErrors,
         success: false,
-        message: errorResult.title || 'Error al actualizar la categoría.',
+        message: result.title || 'Error al actualizar la categoría.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -211,13 +210,9 @@ export class CategoryEditFormPloc extends Ploc<ICategoryEditFormState> {
     return errors
   }
 
-  private normalizeErrorKeys(
-    errors: Record<string, string[]>
-  ): Record<string, string[]> {
-    const normalized: Record<string, string[]> = {}
-    for (const [key, value] of Object.entries(errors)) {
-      normalized[key.toLowerCase()] = value
-    }
-    return normalized
+  private isCategorySuccess(
+    result: CategoryResponse | UpdateCategoryError
+  ): result is CategoryResponse {
+    return 'id' in result && 'name' in result
   }
 }

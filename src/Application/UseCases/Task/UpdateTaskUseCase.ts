@@ -1,16 +1,14 @@
 import type { IUseCase, ApiTasksTypes } from '../../../Domain'
 import type { ITaskService } from '../../Services/Task/ITaskService'
 
-type UpdateTaskResponse = ApiTasksTypes['TaskResponse']
-type ProblemDetails = ApiTasksTypes['ProblemDetails']
-type UpdateTaskRequest = ApiTasksTypes['UpdateTaskCommand']
-type TaskIdPath = ApiTasksTypes['TaskIdPath']
-
-export type UpdateTaskOutput = UpdateTaskResponse | ProblemDetails
+export type UpdateTaskResponse = ApiTasksTypes['TaskResponse']
+export type ProblemDetails = ApiTasksTypes['ProblemDetails']
+export type UpdateTaskRequest = ApiTasksTypes['UpdateTaskCommand']
+export type TaskIdPath = ApiTasksTypes['TaskIdPath']
 
 export class UpdateTaskUseCase implements IUseCase<
   UpdateTaskRequest,
-  UpdateTaskOutput
+  UpdateTaskResponse | ProblemDetails
 > {
   private readonly taskService: ITaskService
 
@@ -18,7 +16,9 @@ export class UpdateTaskUseCase implements IUseCase<
     this.taskService = taskService
   }
 
-  async execute(request: UpdateTaskRequest): Promise<UpdateTaskOutput> {
+  async execute(
+    request: UpdateTaskRequest
+  ): Promise<UpdateTaskResponse | ProblemDetails> {
     const path: TaskIdPath = { id: request.id! }
     const result = await this.taskService.updateTask(path, request)
     return result

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react'
+import React, { useState } from 'react'
 import {
   Button,
   Text,
@@ -9,15 +9,18 @@ import {
 } from '../../../../components'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
-import type { ICategory } from '../../../../../../Domain'
+import type { ApiCategoriesTypes } from '../../../../../../Domain'
 import type { ICategoryEditFormState } from '../../../../../../Domain/IStates'
 import styles from './CategoryEdit.module.scss'
 
+type CategoryType = ApiCategoriesTypes['CategoryResponse']
+
 interface CategoryEditProps {
-  category: ICategory
+  category: CategoryType
 }
 
 export const CategoryEdit: React.FC<CategoryEditProps> = ({ category }) => {
+  if (!category.id) return null
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { providerCategoryEditFormPloc, providerCategoriesListPloc } =
     useDependencies()
@@ -27,7 +30,7 @@ export const CategoryEdit: React.FC<CategoryEditProps> = ({ category }) => {
 
   const handleOpen = () => {
     providerCategoryEditFormPloc.reset()
-    providerCategoryEditFormPloc.initializeForm(category.id)
+    providerCategoryEditFormPloc.initializeForm(category.id || '')
     setIsModalOpen(true)
   }
 
@@ -67,7 +70,7 @@ export const CategoryEdit: React.FC<CategoryEditProps> = ({ category }) => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? 'Â¡Éxito!' : `Editar ${category.name}`}
+        title={state.success ? '¡Éxito!' : `Editar ${category.name}`}
       >
         {state.success ? (
           <div className={styles['success-container']}>

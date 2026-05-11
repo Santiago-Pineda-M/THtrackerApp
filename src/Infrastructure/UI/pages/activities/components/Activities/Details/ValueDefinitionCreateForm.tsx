@@ -31,7 +31,8 @@ export const ValueDefinitionCreateForm: React.FC<
 
   useEffect(() => {
     if (state.success) {
-      providerActivityValueDefinitionsListPloc.loadDefinitions(activityId)
+      providerActivityValueDefinitionsListPloc.setActivityId(activityId)
+      providerActivityValueDefinitionsListPloc.loadDefinitions()
     }
   }, [state.success, providerActivityValueDefinitionsListPloc, activityId])
 

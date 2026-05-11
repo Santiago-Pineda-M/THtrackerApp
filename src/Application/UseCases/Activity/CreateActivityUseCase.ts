@@ -6,9 +6,9 @@
 import type { IUseCase, ApiActivitiesTypes } from '../../../Domain'
 import type { IActivityService } from '../../Services/Activity/IActivityService'
 
-type CreateActivityRequest = ApiActivitiesTypes['CreateActivityCommand']
-type ActivityResponse = ApiActivitiesTypes['ActivityResponse']
-type ProblemDetails = ApiActivitiesTypes['ProblemDetails']
+export type CreateActivityRequest = ApiActivitiesTypes['CreateActivityCommand']
+export type ActivityResponse = ApiActivitiesTypes['ActivityResponse']
+export type ProblemDetails = ApiActivitiesTypes['ProblemDetails']
 
 /**
  * Caso de uso para crear una nueva actividad.

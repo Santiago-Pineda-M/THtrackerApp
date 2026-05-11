@@ -53,11 +53,11 @@ export class RequestCache {
    * // Elimina: '/api/v1/categories', '/api/v1/categories/123', etc.
    */
   invalidate(pattern: string): void {
-    for (const key of this.store.keys()) {
+    this.store.forEach((_, key) => {
       if (key.includes(pattern)) {
         this.store.delete(key)
       }
-    }
+    })
   }
 
   /**

@@ -865,7 +865,7 @@ export const initialTaskListDetailState: ITaskListDetailState = {
 
 export interface ITaskListCreateFormState {
   name: string
-  description: string | null
+  userId: string
   color: string
   errors: Record<string, string[]>
   isLoading: boolean
@@ -874,9 +874,9 @@ export interface ITaskListCreateFormState {
 }
 
 export const initialTaskListCreateFormState: ITaskListCreateFormState = {
+  userId: '',
   color: '',
   name: '',
-  description: null,
   errors: {},
   isLoading: false,
   success: false,
@@ -892,7 +892,7 @@ export const initialTaskListCreateFormState: ITaskListCreateFormState = {
 export interface ITaskListEditFormState {
   id: string
   name: string
-  description: string | null
+  color: string
   errors: Record<string, string[]>
   isLoading: boolean
   success: boolean
@@ -902,7 +902,7 @@ export interface ITaskListEditFormState {
 export const initialTaskListEditFormState: ITaskListEditFormState = {
   id: '',
   name: '',
-  description: null,
+  color: '',
   errors: {},
   isLoading: false,
   success: false,

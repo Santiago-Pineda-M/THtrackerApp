@@ -1,14 +1,13 @@
-/**
- * CONTROLLER LAYER - SessionRevokePloc
- * PLOC para revocar una sesión específica del usuario autenticado.
- */
-
 import { Ploc } from '../../Domain/Ploc'
 import {
   type ISessionRevokeState,
   initialSessionRevokeState,
 } from '../../Domain'
-import type { RevokeSessionUseCase } from '../../Application/UseCases/UserSession'
+import type {
+  RevokeSessionUseCase,
+  ProblemDetails,
+} from '../../Application/UseCases/UserSession/RevokeSessionUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class SessionRevokePloc extends Ploc<ISessionRevokeState> {
   private readonly revokeSessionUseCase: RevokeSessionUseCase
@@ -25,21 +24,24 @@ export class SessionRevokePloc extends Ploc<ISessionRevokeState> {
     this.changeState({
       ...this.state,
       isRevoking: true,
-      error: null,
+      errors: {},
       success: false,
       revokedSessionId: null,
     })
 
     try {
-      const result = await this.revokeSessionUseCase.execute({ sessionId })
+      const result = await this.revokeSessionUseCase.execute({
+        sessionId: sessionId,
+      })
 
-      if (result.success) {
+      if (this.isSessionRevokeError(result)) {
+        const mappedErrors = mapProblemDetailsToErrors(result)
         this.changeState({
           ...this.state,
           isRevoking: false,
-          success: true,
-          revokedSessionId: result.revokedSessionId,
-          error: null,
+          success: false,
+          errors: mappedErrors,
+          revokedSessionId: null,
         })
         return
       }
@@ -47,24 +49,30 @@ export class SessionRevokePloc extends Ploc<ISessionRevokeState> {
       this.changeState({
         ...this.state,
         isRevoking: false,
-        success: false,
-        error: { title: 'Error', detail: 'No se pudo revocar la sesión.' },
-        revokedSessionId: null,
+        success: true,
+        revokedSessionId: sessionId,
+        errors: {},
       })
     } catch (err: unknown) {
-      const error =
-        err instanceof Error
-          ? { title: 'Error', detail: err.message }
-          : { title: 'Error', detail: 'Error desconocido al revocar la sesión' }
-
+      const message = err instanceof Error ? err.message : 'Error desconocido'
       this.changeState({
         ...this.state,
         isRevoking: false,
         success: false,
-        error,
+        errors: { general: [message] },
         revokedSessionId: null,
       })
     }
+  }
+
+  /**
+   * Type guard para verificar si el resultado es un error.
+   * La revocación exitosa devuelve void (undefined).
+   */
+  private isSessionRevokeError(
+    result: ProblemDetails | void
+  ): result is ProblemDetails {
+    return result !== undefined && 'type' in result
   }
 
   /**

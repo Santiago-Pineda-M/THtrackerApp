@@ -9,12 +9,12 @@ import {
 } from '../../../../components'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
-import type { ITaskListItem } from '../../../../../../Domain/TaskList/ITaskListResponses'
+import type { ApiTasksTypes } from '../../../../../../Domain'
 import type { ITaskListEditFormState } from '../../../../../../Domain/IStates'
 import styles from './TaskListEditForm.module.scss'
 
 interface TaskListEditFormProps {
-  taskList: ITaskListItem
+  taskList: ApiTasksTypes['TaskResponse']
   onSuccess?: () => void
 }
 
@@ -31,7 +31,7 @@ export const TaskListEditForm: React.FC<TaskListEditFormProps> = ({
 
   const handleOpen = () => {
     providerTaskListEditFormPloc.reset()
-    providerTaskListEditFormPloc.loadForEdit(taskList.id)
+    providerTaskListEditFormPloc.loadForEdit(taskList.id!)
     setIsModalOpen(true)
   }
 
@@ -48,16 +48,12 @@ export const TaskListEditForm: React.FC<TaskListEditFormProps> = ({
     providerTaskListEditFormPloc.updateName(e.target.value)
   }
 
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerTaskListEditFormPloc.updateDescription(e.target.value || null)
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    providerTaskListEditFormPloc.updateColor(e.target.value)
   }
 
   const handleSubmit = async () => {
-    await providerTaskListEditFormPloc.submitEdit({
-      id: taskList.id,
-      name: state.name,
-      description: state.description,
-    })
+    await providerTaskListEditFormPloc.submitEdit()
   }
 
   return (
@@ -76,7 +72,7 @@ export const TaskListEditForm: React.FC<TaskListEditFormProps> = ({
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? '¡Éxito!' : `Editar ${taskList.name}`}
+        title={state.success ? '¡Éxito!' : `Editar ${taskList.content}`}
       >
         {state.success ? (
           <div className={styles['success-container']}>
@@ -121,14 +117,14 @@ export const TaskListEditForm: React.FC<TaskListEditFormProps> = ({
             </FormField>
 
             <FormField
-              label='Descripción'
-              error={state.errors.description?.[0]}
+              label='Color'
+              required
+              error={state.errors.color?.[0]}
             >
               <Input
-                type='text'
-                value={state.description || ''}
-                onChange={handleDescriptionChange}
-                placeholder='Ej: Lista de tareas para hacer en la casa'
+                type='color'
+                value={state.color}
+                onChange={handleColorChange}
                 disabled={state.isLoading}
               />
             </FormField>

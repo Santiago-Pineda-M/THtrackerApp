@@ -17,10 +17,13 @@ type TaskIdPath = ApiTasksTypes['TaskIdPath']
 
 type ToggleTaskPath = ApiTasksTypes['ToggleTaskPath']
 
+type GetTasksByListQuery = ApiTasksTypes['GetTasksByListQuery']
+
 export interface ITaskService {
   /** GET  /api/v1/task-lists/{id}/tasks */
   getTasksByList(
-    path: TaskByListPath
+    path: TaskByListPath,
+    query: GetTasksByListQuery
   ): Promise<TaskResponsePaginated | ProblemDetails>
 
   /** GET  /api/v1/tasks/{id} */

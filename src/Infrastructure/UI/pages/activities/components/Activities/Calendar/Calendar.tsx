@@ -56,11 +56,17 @@ export const Calendar = () => {
   useEffect(() => {
     providerCalendarLogsPloc.loadWeek(new Date())
 
-    if (activitiesState.activities.length === 0 && !activitiesState.isLoading) {
+    if (
+      activitiesState.activities?.items?.length === 0 &&
+      !activitiesState.isLoading
+    ) {
       providerActivitiesListPloc.loadActivities()
     }
 
-    if (categoriesState.categories.length === 0 && !categoriesState.isLoading) {
+    if (
+      categoriesState.categories?.items?.length === 0 &&
+      !categoriesState.isLoading
+    ) {
       providerCategoriesListPloc.loadCategories()
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -77,23 +83,26 @@ export const Calendar = () => {
 
   // Map Logs -> Events (splitting those that cross midnight)
   const events: LogEventView[] = useMemo(() => {
-    const eventViews = calendarState.logs.flatMap((log) => {
-      const activity = activitiesState.activities.find(
-        (a) => a.id === log.activityId
-      )
-      const category =
-        activity &&
-        categoriesState.categories.find((c) => c.id === activity.categoryId)
+    const eventViews =
+      calendarState.logs?.items?.flatMap((log) => {
+        const activity = activitiesState.activities?.items?.find(
+          (a) => a.id === log.activityId
+        )
+        const category =
+          activity &&
+          categoriesState.categories?.items?.find(
+            (c) => c.id === activity.categoryId
+          )
 
-      return splitEventByDay({
-        log,
-        activity,
-        category,
-        pixelsPerHour,
-        parseDate: providerDateProvider.parse,
-        now: providerDateProvider.now,
-      })
-    })
+        return splitEventByDay({
+          log,
+          activity,
+          category,
+          pixelsPerHour,
+          parseDate: providerDateProvider.parse,
+          now: providerDateProvider.now,
+        })
+      }) ?? []
 
     // Grouping events per day to calculate overlaps
     const groupedByDay: Record<string, LogEventView[]> = {}
@@ -121,8 +130,7 @@ export const Calendar = () => {
     setSelectedEvent(event)
   }
 
-  const formatDuration = (minutes: number | null): string => {
-    if (!minutes) return '-'
+  const formatDuration = (minutes: number): string => {
     const totalSeconds = Math.round(minutes * 60)
     const hours = Math.floor(totalSeconds / 3600)
     const mins = Math.floor((totalSeconds % 3600) / 60)
@@ -130,17 +138,6 @@ export const Calendar = () => {
     const pad = (n: number) => n.toString().padStart(2, '0')
     if (hours > 0) return `${pad(hours)}:${pad(mins)}:${pad(secs)}`
     return `${pad(mins)}:${pad(secs)}`
-  }
-
-  const parseDurationToUnits = (
-    minutes: number | null
-  ): { hours: number; minutes: number; seconds: number } | null => {
-    if (!minutes) return null
-    const totalSeconds = Math.round(minutes * 60)
-    const hours = Math.floor(totalSeconds / 3600)
-    const mins = Math.floor((totalSeconds % 3600) / 60)
-    const secs = totalSeconds % 60
-    return { hours, minutes: mins, seconds: secs }
   }
 
   return (
@@ -247,64 +244,20 @@ export const Calendar = () => {
                 <Text weight='medium'>Hora de fin:</Text>
                 <Text>
                   {selectedEvent.rawLog.endedAt
-                    ? providerDateProvider.formatTime(
-                        providerDateProvider.parse(selectedEvent.rawLog.endedAt)
-                      )
+                    ? providerDateProvider.formatTime(selectedEvent.endedAt)
                     : 'En curso'}
                 </Text>
               </div>
               <div className={styles.detailRow}>
                 <Text weight='medium'>Duración:</Text>
                 <Badge
-                  variant={
-                    selectedEvent.rawLog.durationMinutes ? 'default' : 'success'
-                  }
+                  variant={selectedEvent.rawLog.endedAt ? 'default' : 'success'}
                 >
-                  {selectedEvent.rawLog.durationMinutes
-                    ? (() => {
-                        const d = parseDurationToUnits(
-                          selectedEvent.rawLog.durationMinutes
-                        )
-                        if (!d)
-                          return formatDuration(
-                            selectedEvent.rawLog.durationMinutes
-                          )
-                        const pad = (n: number) => n.toString().padStart(2, '0')
-                        return `${pad(d.hours)}:${pad(d.minutes)}:${pad(d.seconds)}`
-                      })()
+                  {selectedEvent.rawLog.endedAt
+                    ? formatDuration(selectedEvent.durationMinutes)
                     : 'En curso'}
                 </Badge>
               </div>
-
-              {selectedEvent.rawLog.values &&
-                selectedEvent.rawLog.values.length > 0 && (
-                  <div className={styles.valuesSection}>
-                    <Text
-                      weight='medium'
-                      className={styles.valuesTitle}
-                    >
-                      Valores registrados:
-                    </Text>
-                    <div className={styles.valuesList}>
-                      {selectedEvent.rawLog.values.map((value) => (
-                        <div
-                          key={value.id}
-                          className={styles.valueItem}
-                        >
-                          <Text
-                            size='sm'
-                            color='secondary'
-                          >
-                            ID: {value.valueDefinitionId}
-                          </Text>
-                          <Text size='sm'>
-                            Valor: {value.value || 'Sin valor'}
-                          </Text>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
             </div>
           )}
         </Modal>

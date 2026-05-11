@@ -6,9 +6,10 @@
 import type { IUseCase, ApiActivitiesTypes } from '../../../Domain'
 import type { IActivityService } from '../../Services/Activity/IActivityService'
 
-type ActivityPaginatedResponse = ApiActivitiesTypes['ActivityPaginatedResponse']
-type GetActivitiesFilters = ApiActivitiesTypes['GetActivitiesFilters']
-type ApiErrorResponse = ApiActivitiesTypes['ProblemDetails']
+export type ActivityPaginatedResponse =
+  ApiActivitiesTypes['ActivityPaginatedResponse']
+export type GetActivitiesFilters = ApiActivitiesTypes['GetActivitiesFilters']
+export type ProblemDetails = ApiActivitiesTypes['ProblemDetails']
 
 /**
  * Caso de uso para obtener todas las actividades del usuario autenticado.
@@ -16,7 +17,7 @@ type ApiErrorResponse = ApiActivitiesTypes['ProblemDetails']
  */
 export class GetActivitiesUseCase implements IUseCase<
   GetActivitiesFilters,
-  ActivityPaginatedResponse | ApiErrorResponse
+  ActivityPaginatedResponse | ProblemDetails
 > {
   private readonly activityService: IActivityService
 
@@ -26,7 +27,7 @@ export class GetActivitiesUseCase implements IUseCase<
 
   async execute(
     filters: GetActivitiesFilters
-  ): Promise<ActivityPaginatedResponse | ApiErrorResponse> {
+  ): Promise<ActivityPaginatedResponse | ProblemDetails> {
     return await this.activityService.getActivities(filters)
   }
 }

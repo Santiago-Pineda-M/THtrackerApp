@@ -1,20 +1,5 @@
-export {
-  GetTaskListsUseCase,
-  type GetTaskListsOutput,
-} from './GetTaskListsUseCase'
-export {
-  GetTaskListByIdUseCase,
-  type GetTaskListByIdOutput,
-} from './GetTaskListByIdUseCase'
-export {
-  CreateTaskListUseCase,
-  type CreateTaskListOutput,
-} from './CreateTaskListUseCase'
-export {
-  UpdateTaskListUseCase,
-  type UpdateTaskListOutput,
-} from './UpdateTaskListUseCase'
-export {
-  DeleteTaskListUseCase,
-  type DeleteTaskListOutput,
-} from './DeleteTaskListUseCase'
+export { GetTaskListsUseCase } from './GetTaskListsUseCase'
+export { GetTaskListByIdUseCase } from './GetTaskListByIdUseCase'
+export { CreateTaskListUseCase } from './CreateTaskListUseCase'
+export { UpdateTaskListUseCase } from './UpdateTaskListUseCase'
+export { DeleteTaskListUseCase } from './DeleteTaskListUseCase'

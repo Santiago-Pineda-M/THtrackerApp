@@ -63,7 +63,7 @@ export const UserSessions: React.FC = () => {
     return date.toLocaleString()
   }
 
-  if (listState.isLoading && listState.sessions.length === 0) {
+  if (listState.isLoading && !listState.sessions?.items?.length) {
     return (
       <Card
         h={4}
@@ -83,29 +83,30 @@ export const UserSessions: React.FC = () => {
       w={3}
       title='Sesiones Activas'
     >
-      {listState.error && (
+      {/* // TODO: implement custom error display que el un dictionary */}
+      {listState.errors && Object.keys(listState.errors).length > 0 && (
         <Text
           size='sm'
           color='error'
         >
-          {listState.error.detail || 'Error al cargar las sesiones'}
+          {Object.values(listState.errors).map((error) => error)}
         </Text>
       )}
 
-      {revokeState.error && (
+      {revokeState.errors && Object.keys(revokeState.errors).length > 0 && (
         <Text
           size='sm'
           color='error'
         >
-          {revokeState.error.detail || 'Error al revocar la sesión'}
+          {Object.values(revokeState.errors).map((error) => error)}
         </Text>
       )}
 
       <div className={styles.sessionsList}>
-        {listState.sessions.length === 0 && !listState.isLoading ? (
+        {listState.sessions?.items?.length === 0 && !listState.isLoading ? (
           <Text>No hay sesiones activas.</Text>
         ) : (
-          listState.sessions.map((session) => {
+          listState.sessions?.items?.map((session) => {
             const isCurrent = session.id === currentSessionId
 
             return (
@@ -150,7 +151,7 @@ export const UserSessions: React.FC = () => {
                       size='sm'
                       color='muted'
                     >
-                      Iniciada: {formatDate(session.createdAt)}
+                      Iniciada: {formatDate(session.createdAt!)}
                     </Text>
                   </div>
 
@@ -164,7 +165,7 @@ export const UserSessions: React.FC = () => {
                 {!isCurrent && (
                   <Button
                     className={styles.revokeBtn}
-                    onClick={() => handleRevoke(session.id)}
+                    onClick={() => handleRevoke(session.id!)}
                     disabled={revokeState.isRevoking}
                     title='Cerrar sesión remota'
                   >

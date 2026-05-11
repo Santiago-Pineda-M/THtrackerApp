@@ -8,9 +8,22 @@ import {
   type IUserProfileFormState,
   initialUserProfileFormState,
 } from '../../Domain'
-import type { UpdateUserProfileUseCase } from '../../Application/UseCases/User'
-import type { GetUserProfileUseCase } from '../../Application/UseCases/User'
+
+import type {
+  UpdateUserProfileUseCase,
+  UpdateUserProfileCommand,
+  UserResponse as UpdateUserProfileResponse,
+  ProblemDetails as UpdateUserProfileResponseError,
+} from '../../Application/UseCases/User/UpdateUserProfileUseCase'
+
+import type {
+  GetUserProfileUseCase,
+  UserProfileResponse as GetUserProfileResponse,
+  ProblemDetails as GetUserProfileResponseError,
+} from '../../Application/UseCases/User/GetUserProfileUseCase'
+
 import type { AuthPloc } from '../Auth/AuthPloc'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class UserProfileFormPloc extends Ploc<IUserProfileFormState> {
   private readonly updateUserProfileUseCase: UpdateUserProfileUseCase
@@ -40,8 +53,8 @@ export class UserProfileFormPloc extends Ploc<IUserProfileFormState> {
     try {
       const result = await this.getUserProfileUseCase.execute()
 
-      if (result.success) {
-        const user = result.user
+      if (this.isGetUserSuccess(result)) {
+        const user = result
         this.changeState({
           ...this.state,
           name: user.name ?? '',
@@ -56,12 +69,11 @@ export class UserProfileFormPloc extends Ploc<IUserProfileFormState> {
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         isLoading: false,
-        errors: result.error
-          ? { general: [result.error.detail || 'Error al cargar datos'] }
-          : {},
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -142,27 +154,27 @@ export class UserProfileFormPloc extends Ploc<IUserProfileFormState> {
     })
 
     try {
-      const request = {
+      const request: UpdateUserProfileCommand = {
         name: this.state.name.trim() || null,
         email: this.state.email.trim() || null,
       }
 
       const result = await this.updateUserProfileUseCase.execute(request)
 
-      if (result.success) {
+      if (this.isUpdateUserSuccess(result)) {
         // Actualizar la sesión con los nuevos datos
         await this.authPloc.updateUserSession({
-          name: result.user.name,
-          email: result.user.email,
+          name: result.name,
+          email: result.email,
         })
 
         this.changeState({
           ...this.state,
-          name: result.user.name ?? '',
-          email: result.user.email ?? '',
+          name: result.name ?? '',
+          email: result.email ?? '',
           initialValues: {
-            name: result.user.name ?? '',
-            email: result.user.email ?? '',
+            name: result.name ?? '',
+            email: result.email ?? '',
           },
           errors: {},
           success: true,
@@ -173,19 +185,13 @@ export class UserProfileFormPloc extends Ploc<IUserProfileFormState> {
       }
 
       // Error del servidor
-      const errorResult = result.error
-      const rawErrors = errorResult.errors ?? {
-        general: [errorResult.title || errorResult.detail],
-      }
-      const errors = this.normalizeErrorKeys(
-        rawErrors as Record<string, string[]>
-      )
+      const mappedErrors = mapProblemDetailsToErrors(result)
 
       this.changeState({
         ...this.state,
-        errors,
+        errors: mappedErrors,
         success: false,
-        message: errorResult.title || 'Error al actualizar el perfil.',
+        message: result.title || 'Error al actualizar el perfil.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -232,13 +238,15 @@ export class UserProfileFormPloc extends Ploc<IUserProfileFormState> {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
   }
 
-  private normalizeErrorKeys(
-    errors: Record<string, string[]>
-  ): Record<string, string[]> {
-    const normalized: Record<string, string[]> = {}
-    for (const [key, value] of Object.entries(errors)) {
-      normalized[key.toLowerCase()] = value
-    }
-    return normalized
+  private isGetUserSuccess(
+    result: GetUserProfileResponse | GetUserProfileResponseError
+  ): result is GetUserProfileResponse {
+    return 'id' in result && 'email' in result
+  }
+
+  private isUpdateUserSuccess(
+    result: UpdateUserProfileResponse | UpdateUserProfileResponseError
+  ): result is UpdateUserProfileResponse {
+    return 'id' in result && 'email' in result
   }
 }

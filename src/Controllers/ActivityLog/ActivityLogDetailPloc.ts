@@ -2,10 +2,19 @@ import { Ploc, initialActivityLogDetailState } from '../../Domain'
 import type { IActivityLogDetailState } from '../../Domain'
 import {
   GetActivityLogByIdUseCase,
-  UpdateActivityLogUseCase,
+  type ProblemDetails,
+  type ActivityLogResponse,
+} from '../../Application/UseCases/ActivityLog/GetActivityLogByIdUseCase'
+import { UpdateActivityLogUseCase } from '../../Application/UseCases/ActivityLog/UpdateActivityLogUseCase'
+import {
   SaveActivityLogValuesUseCase,
+  type SaveLogValuesCommand,
+} from '../../Application/UseCases/ActivityLog/SaveActivityLogValuesUseCase'
+import {
   GetActivityLogValuesUseCase,
-} from '../../Application/UseCases/ActivityLog'
+  type LogValueResponsePaginated,
+} from '../../Application/UseCases/ActivityLog/GetActivityLogValuesUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class ActivityLogDetailPloc extends Ploc<IActivityLogDetailState> {
   private readonly getActivityLogByIdUseCase: GetActivityLogByIdUseCase
@@ -30,68 +39,111 @@ export class ActivityLogDetailPloc extends Ploc<IActivityLogDetailState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
       success: false,
       message: '',
     })
 
-    const result = await this.getActivityLogByIdUseCase.execute({ id })
+    try {
+      const result = await this.getActivityLogByIdUseCase.execute({ id })
 
-    this.changeState({
-      ...this.state,
-      log: result,
-      isLoading: false,
-      success: true,
-      message: 'Registro obtenido exitosamente',
-    })
+      if (this.isActivityLogSuccess(result)) {
+        this.changeState({
+          ...this.state,
+          log: result,
+          isLoading: false,
+          success: true,
+          message: 'Registro obtenido exitosamente',
+        })
+        return
+      }
+
+      const mappedErrors = mapProblemDetailsToErrors(result)
+      this.changeState({
+        ...this.state,
+        log: null,
+        isLoading: false,
+        errors: mappedErrors,
+      })
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
+      this.changeState({
+        ...this.state,
+        log: null,
+        isLoading: false,
+        errors: { general: [message] },
+      })
+    }
   }
 
   async updateLog(id: string, startedAt: string, endedAt: string | null) {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
       success: false,
       message: '',
     })
 
-    const result = await this.updateActivityLogUseCase.execute({
-      id,
-      request: { startedAt, endedAt },
-    })
-
-    if (result.success) {
-      this.changeState({
-        ...this.state,
-        log: result.log,
-        isLoading: false,
-        success: true,
-        message: 'Registro de fecha actualizado exitosamente',
+    try {
+      const result = await this.updateActivityLogUseCase.execute({
+        id,
+        startedAt,
+        endedAt,
       })
-    } else {
+
+      if (this.isActivityLogSuccess(result)) {
+        this.changeState({
+          ...this.state,
+          log: result,
+          isLoading: false,
+          success: true,
+          message: 'Registro de fecha actualizado exitosamente',
+        })
+        return
+      }
+
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        error: result.error,
         isLoading: false,
+        errors: mappedErrors,
+      })
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
+      this.changeState({
+        ...this.state,
+        isLoading: false,
+        errors: { general: [message] },
       })
     }
   }
 
-  async saveValues(id: string, values: LogValueRequest[]) {
+  async saveValues(id: string, values: SaveLogValuesCommand) {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
       success: false,
       message: '',
     })
 
-    const result = await this.saveActivityLogValuesUseCase.execute({
-      id,
-      requests: values,
-    })
+    try {
+      const result = await this.saveActivityLogValuesUseCase.execute({
+        id: { id },
+        requests: values,
+      })
 
-    if (result.success) {
+      if (this.isSaveValuesError(result)) {
+        const mappedErrors = mapProblemDetailsToErrors(result)
+        this.changeState({
+          ...this.state,
+          isLoading: false,
+          errors: mappedErrors,
+        })
+        return
+      }
+
       // Después de guardar métricas, recargamos el detalle del log para tener sus custom values fresquitos
       await this.getLogDetail(id)
       this.changeState({
@@ -99,26 +151,48 @@ export class ActivityLogDetailPloc extends Ploc<IActivityLogDetailState> {
         success: true,
         message: 'Valores adicionales guardados exitosamente',
       })
-    } else {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
       this.changeState({
         ...this.state,
-        error: result.error,
         isLoading: false,
+        errors: { general: [message] },
       })
     }
   }
 
   async fetchValues(id: string) {
-    const result = await this.getActivityLogValuesUseCase.execute({ logId: id })
-    if (result.success && this.state.log) {
-      this.changeState({
-        ...this.state,
-        log: {
-          ...this.state.log,
-          values: result.values,
-        },
-      })
+    try {
+      const result = await this.getActivityLogValuesUseCase.execute({ id })
+      if (this.isValuesSuccess(result) && this.state.log) {
+        this.changeState({
+          ...this.state,
+          log: {
+            ...this.state.log,
+          },
+        })
+      }
+    } catch (err) {
+      console.error(err)
     }
+  }
+
+  private isActivityLogSuccess(
+    result: ActivityLogResponse | ProblemDetails
+  ): result is ActivityLogResponse {
+    return 'id' in result && 'activityId' in result
+  }
+
+  private isSaveValuesError(
+    result: void | ProblemDetails
+  ): result is ProblemDetails {
+    return typeof result === 'object' && result !== null && 'type' in result
+  }
+
+  private isValuesSuccess(
+    result: LogValueResponsePaginated | ProblemDetails
+  ): result is LogValueResponsePaginated {
+    return 'items' in result
   }
 
   reset() {

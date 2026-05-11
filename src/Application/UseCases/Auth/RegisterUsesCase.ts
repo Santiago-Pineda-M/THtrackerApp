@@ -7,9 +7,9 @@
 import type { IUseCase, ApiAuthTypes } from '../../../Domain'
 import type { IAuthService } from '../../Services/Auth/IAuthService'
 
-type RegisterCommand = ApiAuthTypes['RegisterCommand']
-type UserResponse = ApiAuthTypes['UserResponse']
-type ProblemDetails = ApiAuthTypes['ProblemDetails']
+export type RegisterCommand = ApiAuthTypes['RegisterCommand']
+export type UserResponse = ApiAuthTypes['UserResponse']
+export type ProblemDetails = ApiAuthTypes['ProblemDetails']
 
 export type RegisterOutput = UserResponse | ProblemDetails
 

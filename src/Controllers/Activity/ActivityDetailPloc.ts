@@ -8,7 +8,12 @@ import {
   type IActivityDetailState,
   initialActivityDetailState,
 } from '../../Domain'
-import type { GetActivityByIdUseCase } from '../../Application/UseCases/Activity'
+import type {
+  GetActivityByIdUseCase,
+  ActivityResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/Activity/GetActivityByIdUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class ActivityDetailPloc extends Ploc<IActivityDetailState> {
   private readonly getActivityByIdUseCase: GetActivityByIdUseCase
@@ -25,26 +30,27 @@ export class ActivityDetailPloc extends Ploc<IActivityDetailState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
     try {
       const result = await this.getActivityByIdUseCase.execute({ id })
 
-      if (result.success) {
+      if (this.isActivitySuccess(result)) {
         this.changeState({
           ...this.state,
-          activity: result.activity,
+          activity: result,
           isLoading: false,
         })
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         activity: null,
         isLoading: false,
-        error: result.error,
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -52,9 +58,15 @@ export class ActivityDetailPloc extends Ploc<IActivityDetailState> {
         ...this.state,
         activity: null,
         isLoading: false,
-        error: { title: 'Error', detail: message },
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isActivitySuccess(
+    result: ActivityResponse | ProblemDetails
+  ): result is ActivityResponse {
+    return 'id' in result && 'name' in result
   }
 
   /**

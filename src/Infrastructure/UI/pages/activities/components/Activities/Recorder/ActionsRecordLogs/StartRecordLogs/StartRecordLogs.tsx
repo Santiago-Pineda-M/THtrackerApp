@@ -62,16 +62,22 @@ export const StartRecordLogs = () => {
   ])
 
   // Filter activities that are NOT currently active
-  const inactiveActivities = listState.activities.filter(
-    (activity) =>
-      !activeState.logs.some((log) => log.activityId === activity.id)
-  )
+  const inactiveActivities =
+    listState.activities?.items?.filter(
+      (activity) =>
+        !activeState.logs?.items?.some((log) => log.activityId === activity.id)
+    ) ?? []
 
-  const handleSelect = (activity: (typeof inactiveActivities)[0]) => {
+  const handleSelect = (activity: {
+    id?: string
+    name?: string | null
+    color?: string | null
+  }) => {
+    if (!activity.id) return
     setSelectedActivity({
       id: activity.id,
-      name: activity.name,
-      color: activity.color,
+      name: activity.name || null,
+      color: activity.color || null,
     })
     setIsSelectionModalOpen(false)
     setIsConfirmationModalOpen(true)
@@ -111,28 +117,32 @@ export const StartRecordLogs = () => {
               <Text>Cargando actividades...</Text>
             </div>
           ) : inactiveActivities.length > 0 ? (
-            inactiveActivities.map((activity) => (
-              <div
-                key={activity.id}
-                className={styles.listItem}
-                onClick={() => handleSelect(activity)}
-              >
-                <div className={styles.activityInfo}>
-                  <div
-                    className={styles.colorDot}
-                    style={{
-                      color: activity.color || 'var(--color-primary)',
-                      backgroundColor: activity.color || 'var(--color-primary)',
-                    }}
+            inactiveActivities.map((activity) => {
+              if (!activity.id) return null
+              return (
+                <div
+                  key={activity.id}
+                  className={styles.listItem}
+                  onClick={() => handleSelect(activity)}
+                >
+                  <div className={styles.activityInfo}>
+                    <div
+                      className={styles.colorDot}
+                      style={{
+                        color: activity.color || 'var(--color-primary)',
+                        backgroundColor:
+                          activity.color || 'var(--color-primary)',
+                      }}
+                    />
+                    <Text weight='medium'>{activity.name}</Text>
+                  </div>
+                  <Icon
+                    name='ChevronRight'
+                    size={18}
                   />
-                  <Text weight='medium'>{activity.name}</Text>
                 </div>
-                <Icon
-                  name='ChevronRight'
-                  size={18}
-                />
-              </div>
-            ))
+              )
+            })
           ) : (
             <div className={styles.emptyState}>
               <Text>No hay actividades disponibles para iniciar.</Text>
@@ -149,7 +159,7 @@ export const StartRecordLogs = () => {
       >
         <div className={styles.confirmationBox}>
           <Text size='lg'>
-            Â¿Estás seguro de que quieres iniciar{' '}
+            ¿Estás seguro de que quieres iniciar{' '}
             <Text
               as='span'
               weight='bold'
@@ -160,9 +170,9 @@ export const StartRecordLogs = () => {
             ?
           </Text>
 
-          {startState.error && (
+          {startState.errors && (
             <Text color='danger'>
-              {startState.error.title || 'Error al iniciar actividad'}
+              {startState.errors?.[0] || 'Error al iniciar actividad'}
             </Text>
           )}
 

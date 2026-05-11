@@ -5,7 +5,12 @@
 
 import { Ploc } from '../../Domain/Ploc'
 import { type ITasksState, initialTasksState } from '../../Domain'
-import type { GetTasksByListUseCase } from '../../Application/UseCases/Task/GetTasksByListUseCase'
+import type {
+  GetTasksByListUseCase,
+  TaskPaginatedResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/Task/GetTasksByListUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class TasksPloc extends Ploc<ITasksState> {
   private readonly getTasksByListUseCase: GetTasksByListUseCase
@@ -22,44 +27,49 @@ export class TasksPloc extends Ploc<ITasksState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
     try {
-      const result = await this.getTasksByListUseCase.execute({ taskListId })
+      const result = await this.getTasksByListUseCase.execute({
+        request: { taskListId },
+        query: { pageNumber: 0, pageSize: 100 },
+      })
 
-      if (result.success) {
+      if (this.isTasksSuccess(result)) {
         this.changeState({
           ...this.state,
-          tasks: result.tasks,
+          tasks: result,
           isLoading: false,
-          error: null,
         })
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        tasks: [],
+        tasks: null,
         isLoading: false,
-        error: result.error,
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
-      const error =
+      const message =
         err instanceof Error
-          ? { title: 'Error', detail: err.message }
-          : {
-              title: 'Error',
-              detail: 'Error desconocido al cargar las tareas',
-            }
-
+          ? err.message
+          : 'Error desconocido al cargar las tareas'
       this.changeState({
         ...this.state,
-        tasks: [],
+        tasks: null,
         isLoading: false,
-        error,
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isTasksSuccess(
+    result: TaskPaginatedResponse | ProblemDetails
+  ): result is TaskPaginatedResponse {
+    return 'items' in result
   }
 
   /**

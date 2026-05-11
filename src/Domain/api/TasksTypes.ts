@@ -15,7 +15,11 @@ type TaskIdPath = paths['/api/v1/tasks/{id}']['get']['parameters']['path']
 type ToggleTaskPath =
   paths['/api/v1/tasks/{id}/toggle']['patch']['parameters']['path']
 
+type GetTasksByListQuery =
+  paths['/api/v1/tasks/by-task-list/{taskListId}']['get']['parameters']['query']
+
 export type ApiTasksTypes = {
+  GetTasksByListQuery: GetTasksByListQuery
   TaskResponse: TaskResponse
   TaskResponsePaginated: TaskResponsePaginated
   ProblemDetails: ProblemDetails

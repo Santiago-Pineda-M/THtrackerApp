@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 import { Button, Text, Modal, Icon } from '../../../../components'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
-import type { ITaskItem } from '../../../../../../Domain/TaskList/ITaskListResponses'
+import type { ApiTasksTypes } from '../../../../../../Domain'
 import type { ITaskDeleteState } from '../../../../../../Domain/IStates'
 import styles from './TaskDelete.module.scss'
 
 interface TaskDeleteProps {
-  task: ITaskItem
+  task: ApiTasksTypes['TaskResponse']
   onSuccess?: () => void
 }
 
@@ -30,7 +30,7 @@ export const TaskDelete: React.FC<TaskDeleteProps> = ({ task, onSuccess }) => {
   }
 
   const handleDelete = async () => {
-    await providerTaskDeletePloc.deleteTask(task.id, task.taskListId)
+    await providerTaskDeletePloc.deleteTask({ id: task.id! })
   }
 
   return (
@@ -60,7 +60,7 @@ export const TaskDelete: React.FC<TaskDeleteProps> = ({ task, onSuccess }) => {
           </div>
         ) : (
           <div className={styles['modal-content']}>
-            {state.error && (
+            {state.errors && (
               <Text
                 size='sm'
                 style={{
@@ -69,7 +69,7 @@ export const TaskDelete: React.FC<TaskDeleteProps> = ({ task, onSuccess }) => {
                   display: 'block',
                 }}
               >
-                {state.error.detail ||
+                {state.errors?.[0] ||
                   'Ha ocurrido un error al eliminar la tarea.'}
               </Text>
             )}

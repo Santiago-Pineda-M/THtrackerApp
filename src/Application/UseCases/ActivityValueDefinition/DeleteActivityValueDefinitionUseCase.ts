@@ -6,8 +6,8 @@
 import type { IUseCase, ApiActivityValueDefinitionTypes } from '../../../Domain'
 import type { IActivityValueDefinitionService } from '../../Services/ActivityValueDefinition/IActivityValueDefinitionService'
 
-type ProblemDetails = ApiActivityValueDefinitionTypes['ProblemDetails']
-type DeleteValueDefinitionParams =
+export type ProblemDetails = ApiActivityValueDefinitionTypes['ProblemDetails']
+export type DeleteValueDefinitionParams =
   ApiActivityValueDefinitionTypes['DefinitionByIdPath']
 
 export class DeleteActivityValueDefinitionUseCase implements IUseCase<

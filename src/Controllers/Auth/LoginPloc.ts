@@ -1,12 +1,13 @@
 import { Ploc } from '../../Domain/Ploc'
-import { type ILoginState, initialLoginState } from '../../Domain/IStates'
-import type { ApiAuthTypes } from '../../Domain'
-import type { LoginUserUseCase } from '../../Application/UseCases/Auth'
+import { type ILoginState, initialLoginState } from '../../Domain'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
+import type {
+  LoginUserUseCase,
+  TokenResponse,
+  ProblemDetails,
+  LoginCommand,
+} from '../../Application/UseCases/Auth/LoginUseCase'
 import { AuthPloc } from './AuthPloc'
-
-type LoginRequest = ApiAuthTypes['LoginCommand']
-type LoginResponse = ApiAuthTypes['TokenResponse']
-type LoginResponseError = ApiAuthTypes['ProblemDetails']
 
 export class LoginPloc extends Ploc<ILoginState> {
   private readonly loginUserUseCase: LoginUserUseCase
@@ -47,7 +48,7 @@ export class LoginPloc extends Ploc<ILoginState> {
     })
 
     try {
-      const request: LoginRequest = {
+      const request: LoginCommand = {
         email: this.state.email.trim(),
         password: this.state.password,
         deviceInfo: this.state.deviceInfo,
@@ -69,15 +70,16 @@ export class LoginPloc extends Ploc<ILoginState> {
         return
       }
 
-      const errorResult = result as LoginResponseError
+      const errorResult = result as ProblemDetails
       console.log('[LoginPloc] Login failed, errorResult:', errorResult)
+      const mappedErrors = mapProblemDetailsToErrors(errorResult)
       this.changeState({
         ...this.state,
         email: this.state.email,
         password: this.state.password,
-        errors: errorResult,
+        errors: mappedErrors,
         success: false,
-        message: errorResult.title!,
+        message: errorResult.title || 'Error al iniciar sesión.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -124,11 +126,11 @@ export class LoginPloc extends Ploc<ILoginState> {
   }
 
   private isLoginSuccess(
-    result: LoginResponse | LoginResponseError
-  ): result is LoginResponse {
+    result: TokenResponse | ProblemDetails
+  ): result is TokenResponse {
     return (
-      typeof (result as LoginResponse).accessToken === 'string' &&
-      typeof (result as LoginResponse).refreshToken === 'string'
+      typeof (result as TokenResponse).accessToken === 'string' &&
+      typeof (result as TokenResponse).refreshToken === 'string'
     )
   }
 

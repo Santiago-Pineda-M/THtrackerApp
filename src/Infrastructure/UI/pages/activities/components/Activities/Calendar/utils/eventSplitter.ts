@@ -1,9 +1,13 @@
 import type { LogEventView } from '../CalendarEvent'
 import type {
-  ActivityLogResponse,
-  ActivityResponse,
-  CategoryResponse,
+  ApiActivitiesTypes,
+  ApiCategoriesTypes,
+  ApiActivityLogsTypes,
 } from '../../../../../../../../Domain'
+
+type ActivityLogResponse = ApiActivityLogsTypes['ActivityLogResponse']
+type ActivityResponse = ApiActivitiesTypes['ActivityResponse']
+type CategoryResponse = ApiCategoriesTypes['CategoryResponse']
 
 interface SplitParams {
   log: ActivityLogResponse
@@ -22,7 +26,7 @@ export const splitEventByDay = ({
   parseDate,
   now,
 }: SplitParams): LogEventView[] => {
-  const startedAt = parseDate(log.startedAt)
+  const startedAt = parseDate(log.startedAt!)
   let endedAt = log.endedAt ? parseDate(log.endedAt) : now()
 
   // Ensure endedAt is after startedAt
@@ -46,7 +50,7 @@ export const splitEventByDay = ({
     fragments.push({
       id:
         fragments.length === 0
-          ? log.id
+          ? log.id!
           : `${log.id}-fragment-${fragments.length}`,
       title: activity ? activity.name || 'Actividad' : 'Desconocido',
       startedAt: new Date(currentStart),

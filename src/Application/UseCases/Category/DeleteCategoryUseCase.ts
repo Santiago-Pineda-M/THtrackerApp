@@ -7,13 +7,8 @@ import type { IUseCase } from '../../../Domain'
 import type { ICategoryService } from '../../Services/Category/ICategoryService'
 import type { ApiCategoriesTypes } from '../../../Domain'
 
-type DeleteCategoryRequest = ApiCategoriesTypes['DeleteCategoryIdPath']
-type ProblemDetails = ApiCategoriesTypes['ProblemDetails']
-
-/**
- * Output del caso de uso - puede ser éxito o error
- */
-export type DeleteCategoryOutput = void | ProblemDetails
+export type DeleteCategoryRequest = ApiCategoriesTypes['DeleteCategoryIdPath']
+export type ProblemDetails = ApiCategoriesTypes['ProblemDetails']
 
 /**
  * Caso de uso para eliminar una categoría existente.
@@ -21,7 +16,7 @@ export type DeleteCategoryOutput = void | ProblemDetails
  */
 export class DeleteCategoryUseCase implements IUseCase<
   DeleteCategoryRequest,
-  DeleteCategoryOutput
+  void | ProblemDetails
 > {
   private readonly categoryService: ICategoryService
 
@@ -29,7 +24,7 @@ export class DeleteCategoryUseCase implements IUseCase<
     this.categoryService = categoryService
   }
 
-  async execute(input: DeleteCategoryRequest): Promise<DeleteCategoryOutput> {
+  async execute(input: DeleteCategoryRequest): Promise<void | ProblemDetails> {
     return await this.categoryService.deleteCategory(input)
   }
 }

@@ -6,17 +6,16 @@
 import type { IUseCase, ApiUserSessionTypes } from '../../../Domain'
 import type { IUserSessionService } from '../../Services/UserSession/IUserSessionService'
 
-type ProblemDetails = ApiUserSessionTypes['ProblemDetails']
-type RevokeSessionRequest = ApiUserSessionTypes['RevokeSessionIdPath']
+export type ProblemDetails = ApiUserSessionTypes['ProblemDetails']
+export type RevokeSessionRequest = ApiUserSessionTypes['RevokeSessionIdPath']
 
-type RevokeSessionOutput = void | ProblemDetails
 /**
  * Caso de uso para revocar una sesión.
  * Utiliza el servicio de sesiones para enviar la solicitud a la API.
  */
 export class RevokeSessionUseCase implements IUseCase<
   RevokeSessionRequest,
-  RevokeSessionOutput
+  void | ProblemDetails
 > {
   private readonly userSessionService: IUserSessionService
 
@@ -24,7 +23,7 @@ export class RevokeSessionUseCase implements IUseCase<
     this.userSessionService = userSessionService
   }
 
-  async execute(input: RevokeSessionRequest): Promise<RevokeSessionOutput> {
+  async execute(input: RevokeSessionRequest): Promise<void | ProblemDetails> {
     const result = await this.userSessionService.revokeSession(input)
     return result
   }

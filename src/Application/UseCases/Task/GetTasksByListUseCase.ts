@@ -1,16 +1,14 @@
 import type { IUseCase, ApiTasksTypes } from '../../../Domain'
 import type { ITaskService } from '../../Services/Task/ITaskService'
 
-type TaskPaginatedResponse = ApiTasksTypes['TaskResponsePaginated']
-type ProblemDetails = ApiTasksTypes['ProblemDetails']
-
-type GetTasksByListRequest = ApiTasksTypes['TaskByListPath']
-
-export type GetTasksByListOutput = TaskPaginatedResponse | ProblemDetails
+export type TaskPaginatedResponse = ApiTasksTypes['TaskResponsePaginated']
+export type ProblemDetails = ApiTasksTypes['ProblemDetails']
+export type GetTasksByListRequest = ApiTasksTypes['TaskByListPath']
+export type GetTasksByListQuery = ApiTasksTypes['GetTasksByListQuery']
 
 export class GetTasksByListUseCase implements IUseCase<
-  GetTasksByListRequest,
-  GetTasksByListOutput
+  { request: GetTasksByListRequest; query: GetTasksByListQuery },
+  TaskPaginatedResponse | ProblemDetails
 > {
   private readonly taskService: ITaskService
 
@@ -18,8 +16,14 @@ export class GetTasksByListUseCase implements IUseCase<
     this.taskService = taskService
   }
 
-  async execute(request: GetTasksByListRequest): Promise<GetTasksByListOutput> {
-    const result = await this.taskService.getTasksByList(request)
+  async execute({
+    request,
+    query,
+  }: {
+    request: GetTasksByListRequest
+    query: GetTasksByListQuery
+  }): Promise<TaskPaginatedResponse | ProblemDetails> {
+    const result = await this.taskService.getTasksByList(request, query)
     return result
   }
 }

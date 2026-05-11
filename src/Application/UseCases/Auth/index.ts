@@ -2,10 +2,10 @@
  * APPLICATION LAYER - Auth Use Cases Barrel
  */
 
-export { LoginUserUseCase, type LoginOutput } from './LoginUseCase'
+export { LoginUserUseCase, type LoginCommand } from './LoginUseCase'
 export {
   RefreshTokenUseCases,
-  type RefreshTokenOutput,
+  type SubmitRefreshToken,
 } from './RefreshTokenUseCase'
 export { RegisterUseCases, type RegisterOutput } from './RegisterUsesCase'
 export {

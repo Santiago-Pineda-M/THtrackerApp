@@ -1,6 +1,11 @@
 import { Ploc, initialCalendarLogsState } from '../../Domain'
 import type { ICalendarLogsState } from '../../Domain'
-import type { GetCalendarLogsUseCase } from '../../Application/UseCases/ActivityLog'
+import type {
+  GetCalendarLogsUseCase,
+  ActivityLogPaginatedResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/ActivityLog/GetCalendarLogsUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class CalendarLogsPloc extends Ploc<ICalendarLogsState> {
   private readonly getCalendarLogsUseCase: GetCalendarLogsUseCase
@@ -11,8 +16,6 @@ export class CalendarLogsPloc extends Ploc<ICalendarLogsState> {
   }
 
   async loadWeek(date: Date) {
-    // Calculamos el inicio y fin de la semana (Lunes a Domingo o Domingo a Sábado)
-    // Para Google Calendar típicamente empieza el Domingo
     const startOfWeek = new Date(date)
     startOfWeek.setDate(date.getDate() - date.getDay()) // Domingo
     startOfWeek.setHours(0, 0, 0, 0)
@@ -25,27 +28,46 @@ export class CalendarLogsPloc extends Ploc<ICalendarLogsState> {
       ...this.state,
       currentWeekDate: startOfWeek,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
-    const result = await this.getCalendarLogsUseCase.execute({
-      startDate: startOfWeek,
-      endDate: endOfWeek,
-    })
-
-    if (result.success) {
-      this.changeState({
-        ...this.state,
-        logs: result.logs,
-        isLoading: false,
+    try {
+      const result = await this.getCalendarLogsUseCase.execute({
+        from: startOfWeek.toISOString(),
+        to: endOfWeek.toISOString(),
       })
-    } else {
+
+      if (this.isCalendarLogsSuccess(result)) {
+        this.changeState({
+          ...this.state,
+          logs: result,
+          isLoading: false,
+        })
+        return
+      }
+
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        error: result.error,
+        logs: null,
         isLoading: false,
+        errors: mappedErrors,
+      })
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
+      this.changeState({
+        ...this.state,
+        logs: null,
+        isLoading: false,
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isCalendarLogsSuccess(
+    result: ActivityLogPaginatedResponse | ProblemDetails
+  ): result is ActivityLogPaginatedResponse {
+    return 'items' in result
   }
 
   nextWeek() {

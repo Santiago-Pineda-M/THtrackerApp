@@ -1,15 +1,14 @@
 import type { IUseCase, ApiTaskListsTypes } from '../../../Domain'
 import type { ITaskListService } from '../../Services/TaskList/ITaskListService'
 
-type ProblemDetails = ApiTaskListsTypes['ProblemDetails']
-type GetTaskListsResponse = ApiTaskListsTypes['TaskListResponsePaginated']
-type GetTaskListsRequest = ApiTaskListsTypes['GetTaskListsRequest']
-
-export type GetTaskListsOutput = GetTaskListsResponse | ProblemDetails
+export type ProblemDetails = ApiTaskListsTypes['ProblemDetails']
+export type GetTaskListsRequest = ApiTaskListsTypes['GetTaskListsRequest']
+export type GetTaskListsResponse =
+  ApiTaskListsTypes['TaskListResponsePaginated']
 
 export class GetTaskListsUseCase implements IUseCase<
   GetTaskListsRequest,
-  GetTaskListsOutput
+  GetTaskListsResponse | ProblemDetails
 > {
   private readonly taskListService: ITaskListService
 
@@ -17,7 +16,9 @@ export class GetTaskListsUseCase implements IUseCase<
     this.taskListService = taskListService
   }
 
-  async execute(request: GetTaskListsRequest): Promise<GetTaskListsOutput> {
+  async execute(
+    request: GetTaskListsRequest
+  ): Promise<GetTaskListsResponse | ProblemDetails> {
     const result = await this.taskListService.getTaskLists(request)
 
     return result

@@ -8,7 +8,13 @@ import {
   type IActivityCreateFormState,
   initialActivityCreateFormState,
 } from '../../Domain'
-import type { CreateActivityUseCase } from '../../Application/UseCases/Activity'
+import type {
+  CreateActivityUseCase,
+  CreateActivityRequest,
+  ActivityResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/Activity/CreateActivityUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class ActivityCreateFormPloc extends Ploc<IActivityCreateFormState> {
   private readonly createActivityUseCase: CreateActivityUseCase
@@ -96,7 +102,7 @@ export class ActivityCreateFormPloc extends Ploc<IActivityCreateFormState> {
     })
 
     try {
-      const request = {
+      const request: CreateActivityRequest = {
         categoryId: this.state.categoryId,
         name: this.state.name.trim() || null,
         color: this.state.color.trim() || null,
@@ -105,7 +111,7 @@ export class ActivityCreateFormPloc extends Ploc<IActivityCreateFormState> {
 
       const result = await this.createActivityUseCase.execute(request)
 
-      if (result.id) {
+      if (this.isCreateActivitySuccess(result)) {
         this.changeState({
           ...initialActivityCreateFormState,
           success: true,
@@ -115,9 +121,10 @@ export class ActivityCreateFormPloc extends Ploc<IActivityCreateFormState> {
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        errors: result,
+        errors: mappedErrors,
         success: false,
         message: 'Error al crear la actividad.',
         isLoading: false,
@@ -132,6 +139,12 @@ export class ActivityCreateFormPloc extends Ploc<IActivityCreateFormState> {
         isLoading: false,
       })
     }
+  }
+
+  private isCreateActivitySuccess(
+    result: ActivityResponse | ProblemDetails
+  ): result is ActivityResponse {
+    return 'id' in result && 'name' in result
   }
 
   /**

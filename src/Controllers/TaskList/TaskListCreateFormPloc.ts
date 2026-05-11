@@ -8,7 +8,12 @@ import {
   type ITaskListCreateFormState,
   initialTaskListCreateFormState,
 } from '../../Domain'
-import type { CreateTaskListUseCase } from '../../Application/UseCases/TaskList/CreateTaskListUseCase'
+import type {
+  CreateTaskListUseCase,
+  CreateTaskListResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/TaskList/CreateTaskListUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class TaskListCreateFormPloc extends Ploc<ITaskListCreateFormState> {
   private readonly createTaskListUseCase: CreateTaskListUseCase
@@ -19,7 +24,7 @@ export class TaskListCreateFormPloc extends Ploc<ITaskListCreateFormState> {
   }
 
   /**
-   * Actualiza el nombre en el estado.
+   * Actualiza el nombre en el estado y limpia su error asociado.
    */
   updateName(name: string): void {
     const newErrors = { ...this.state.errors }
@@ -33,15 +38,21 @@ export class TaskListCreateFormPloc extends Ploc<ITaskListCreateFormState> {
     })
   }
 
-  updateDescription(description: string | null): void {
+  /**
+   * Actualiza la descripción en el estado.
+   */
+  updateUserId(userId: string): void {
     this.changeState({
       ...this.state,
-      description,
+      userId,
       success: false,
       message: '',
     })
   }
 
+  /**
+   * Actualiza el color en el estado.
+   */
   updateColor(color: string): void {
     this.changeState({
       ...this.state,
@@ -53,11 +64,18 @@ export class TaskListCreateFormPloc extends Ploc<ITaskListCreateFormState> {
 
   /**
    * Envía el formulario de creación.
+   * Primero valida localmente; si hay errores, no envía la petición.
    */
   async submitCreate(): Promise<void> {
-    // aplicamos la validacion antes de enviar el formulario:
-    this.validateForm()
-    if (Object.keys(this.state.errors).length > 0) {
+    // Validación local antes de enviar
+    const validationErrors = this.validateFormLocal()
+    if (Object.keys(validationErrors).length > 0) {
+      this.changeState({
+        ...this.state,
+        errors: validationErrors,
+        success: false,
+        message: 'Corrige los errores del formulario.',
+      })
       return
     }
 
@@ -71,11 +89,12 @@ export class TaskListCreateFormPloc extends Ploc<ITaskListCreateFormState> {
     try {
       const result = await this.createTaskListUseCase.execute({
         name: this.state.name,
-        description: this.state.description,
+        userId: this.state.userId,
         color: this.state.color,
       })
 
-      if (result.success) {
+      if (this.isCreateTaskListSuccess(result)) {
+        // Éxito: se resetea el formulario mostrando mensaje de confirmación
         this.changeState({
           ...initialTaskListCreateFormState,
           success: true,
@@ -85,11 +104,13 @@ export class TaskListCreateFormPloc extends Ploc<ITaskListCreateFormState> {
         return
       }
 
+      // Error controlado (ProblemDetails)
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        errors: {},
+        errors: mappedErrors,
         success: false,
-        message: result.error.title || 'Error al crear la lista de tareas.',
+        message: result.title || 'Error al crear la lista de tareas.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -105,24 +126,35 @@ export class TaskListCreateFormPloc extends Ploc<ITaskListCreateFormState> {
   }
 
   /**
-   * Valida el formulario de creación.
+   * Type guard para distinguir una respuesta exitosa de un ProblemDetails.
+   * CreateTaskListResponse debe tener una propiedad 'id' (o similar) que la diferencie.
    */
-  private validateForm(): void {
+  private isCreateTaskListSuccess(
+    result: CreateTaskListResponse | ProblemDetails
+  ): result is CreateTaskListResponse {
+    return 'id' in result
+  }
+
+  /**
+   * Valida el formulario localmente y retorna los errores.
+   * No modifica el estado, para mantener separada la validación de la actualización de UI.
+   */
+  private validateFormLocal(): Record<string, string[]> {
     const errors: Record<string, string[]> = {}
 
-    if (!this.state.name) {
+    if (!this.state.name || this.state.name.trim() === '') {
       errors.name = ['El nombre es requerido.']
     }
 
-    if (!this.state.description) {
-      errors.description = ['La descripción es requerida.']
-    }
+    // NOTA: Si la descripción es realmente requerida, descomenta esta validación.
+    // Si es opcional en el dominio, elimínala para no bloquear envíos válidos.
+    // if (!this.state.description || this.state.description.trim() === '') {
+    //   errors.description = ['La descripción es requerida.']
+    // }
 
-    this.changeState({
-      ...this.state,
-      errors,
-    })
+    return errors
   }
+
   /**
    * Resetea el estado del formulario.
    */

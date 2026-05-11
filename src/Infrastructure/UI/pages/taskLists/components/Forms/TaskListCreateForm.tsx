@@ -40,10 +40,6 @@ export const TaskListCreateForm: React.FC = () => {
     providerTaskListCreateFormPloc.updateName(e.target.value)
   }
 
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    providerTaskListCreateFormPloc.updateDescription(e.target.value || null)
-  }
-
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     providerTaskListCreateFormPloc.updateColor(e.target.value || '#ff4d4f')
   }
@@ -109,21 +105,6 @@ export const TaskListCreateForm: React.FC = () => {
                 value={state.name}
                 onChange={handleNameChange}
                 placeholder='Ej: Tareas de la casa'
-                disabled={state.isLoading}
-              />
-            </FormField>
-
-            <FormField
-              label='Descripción'
-              error={state.errors.description?.[0]}
-            >
-              <Input
-                type='text'
-                id='description'
-                name='description'
-                value={state.description || ''}
-                onChange={handleDescriptionChange}
-                placeholder='Ej: Lista de tareas para hacer en la casa'
                 disabled={state.isLoading}
               />
             </FormField>

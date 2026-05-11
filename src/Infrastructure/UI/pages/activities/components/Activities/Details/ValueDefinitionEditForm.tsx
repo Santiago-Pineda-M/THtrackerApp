@@ -37,7 +37,8 @@ export const ValueDefinitionEditForm: React.FC<
   const handleClose = () => {
     setIsModalOpen(false)
     if (state.success) {
-      providerActivityValueDefinitionsListPloc.loadDefinitions(activityId)
+      providerActivityValueDefinitionsListPloc.setActivityId(activityId)
+      providerActivityValueDefinitionsListPloc.loadDefinitions()
     }
     providerValueDefinitionEditFormPloc.reset()
   }

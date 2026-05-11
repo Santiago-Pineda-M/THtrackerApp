@@ -22,16 +22,18 @@ interface JwtPayload {
   exp?: number
 }
 
-export type LoginOutput =
-  | ApiAuthTypes['TokenResponse']
-  | ApiAuthTypes['ProblemDetails']
+export type TokenResponse = ApiAuthTypes['TokenResponse']
+
+export type ProblemDetails = ApiAuthTypes['ProblemDetails']
+
+export type LoginCommand = ApiAuthTypes['LoginCommand']
 
 /**
  * Inicia sesión, crea la AuthSession desde JWT claims, y la persiste.
  */
 export class LoginUserUseCase implements IUseCase<
-  ApiAuthTypes['LoginCommand'],
-  LoginOutput
+  LoginCommand,
+  TokenResponse | ProblemDetails
 > {
   private readonly authService: IAuthService
   private readonly authSessionRepo: IAuthSessionRepository
@@ -44,7 +46,9 @@ export class LoginUserUseCase implements IUseCase<
     this.authSessionRepo = authSessionRepo
   }
 
-  async execute(input: ApiAuthTypes['LoginCommand']): Promise<LoginOutput> {
+  async execute(
+    input: ApiAuthTypes['LoginCommand']
+  ): Promise<TokenResponse | ProblemDetails> {
     const result = await this.authService.login(input)
 
     if (!this.isSuccess(result)) return result

@@ -8,8 +8,13 @@ import {
   type IUserProfileDisplayState,
   initialUserProfileDisplayState,
 } from '../../Domain'
-import type { GetUserProfileUseCase } from '../../Application/UseCases/User'
+import type {
+  GetUserProfileUseCase,
+  UserProfileResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/User/GetUserProfileUseCase'
 import type { AuthPloc } from '../Auth/AuthPloc'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class UserProfileDisplayPloc extends Ploc<IUserProfileDisplayState> {
   private readonly getUserProfileUseCase: GetUserProfileUseCase
@@ -31,47 +36,53 @@ export class UserProfileDisplayPloc extends Ploc<IUserProfileDisplayState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
     try {
       const result = await this.getUserProfileUseCase.execute()
 
-      if (result.success) {
+      if (this.isUserProfileSuccess(result)) {
         // Actualizar la sesión con los datos del usuario
         await this.authPloc.updateUserSession({
-          name: result.user.name,
-          email: result.user.email,
+          name: result.name,
+          email: result.email,
         })
 
         this.changeState({
           ...this.state,
-          user: result.user,
+          user: result,
           isLoading: false,
-          error: null,
+          errors: {},
         })
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         user: null,
         isLoading: false,
-        error: result.error,
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
-      const error =
+      const message =
         err instanceof Error
-          ? { title: 'Error', detail: err.message }
-          : { title: 'Error', detail: 'Error desconocido al cargar el perfil' }
-
+          ? err.message
+          : 'Error desconocido al cargar el perfil'
       this.changeState({
         ...this.state,
         user: null,
         isLoading: false,
-        error,
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isUserProfileSuccess(
+    result: UserProfileResponse | ProblemDetails
+  ): result is UserProfileResponse {
+    return 'id' in result && 'email' in result
   }
 
   /**

@@ -12,11 +12,11 @@ import {
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
 import type { ITaskEditFormState } from '../../../../../../Domain/IStates'
-import type { ITaskItem } from '../../../../../../Domain/TaskList/ITaskListResponses'
+import type { ApiTasksTypes } from '../../../../../../Domain'
 import styles from './TaskEditForm.module.scss'
 
 interface TaskEditFormProps {
-  task: ITaskItem
+  task: ApiTasksTypes['TaskResponse']
   onSuccess?: () => void
 }
 
@@ -30,7 +30,7 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
 
   const handleOpen = () => {
     providerTaskEditFormPloc.reset()
-    providerTaskEditFormPloc.loadForEdit(task.id)
+    providerTaskEditFormPloc.loadForEdit(task.id!)
     setIsModalOpen(true)
   }
 
@@ -52,8 +52,7 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
 
   const handleSubmit = async () => {
     await providerTaskEditFormPloc.submitEdit({
-      id: task.id,
-      taskListId: task.taskListId,
+      id: task.id!,
       content: state.content,
       dueDate: state.showDueDate ? state.dueDate : undefined,
     })
@@ -119,7 +118,9 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
             </FormField>
 
             <FormField label='Establecer fecha de vencimiento'>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
                 <ToggleSwitch
                   checked={state.showDueDate}
                   onChange={handleToggleShowDueDate}
@@ -136,7 +137,9 @@ export const TaskEditForm: React.FC<TaskEditFormProps> = ({
               >
                 <DateTimePicker
                   value={state.dueDate}
-                  onChange={(val) => providerTaskEditFormPloc.updateDueDate(val)}
+                  onChange={(val) =>
+                    providerTaskEditFormPloc.updateDueDate(val)
+                  }
                   disabled={state.isLoading}
                 />
               </FormField>

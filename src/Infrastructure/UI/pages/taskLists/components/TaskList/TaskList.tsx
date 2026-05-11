@@ -1,8 +1,8 @@
-import { useMemo, useEffect, useRef, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import type {
-  ITaskItem,
-  ITaskListItem,
   ITasksState,
+  ApiTasksTypes,
+  ApiTaskListsTypes,
 } from '../../../../../../Domain'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
@@ -26,11 +26,11 @@ import {
 import styles from './TaskList.module.scss'
 
 // ---------------------------------------------------------------------------
-// TaskListItem
+// TaskListItem (sin cambios, solo ordenado)
 // ---------------------------------------------------------------------------
 
 interface TaskListItemProps {
-  task: ITaskItem
+  task: ApiTasksTypes['TaskResponse']
   isExpanded: boolean
   onToggle: () => Promise<void>
   onReload: () => void
@@ -116,11 +116,11 @@ const TaskListItem: React.FC<TaskListItemProps> = ({
 }
 
 // ---------------------------------------------------------------------------
-// TaskList
+// TaskList (CORREGIDO)
 // ---------------------------------------------------------------------------
 
 interface TaskListProps {
-  taskList: ITaskListItem
+  taskList: ApiTaskListsTypes['TaskListResponse']
   isExpanded?: boolean
   onToggleExpand?: () => void
 }
@@ -133,50 +133,49 @@ export const TaskList: React.FC<TaskListProps> = ({
   const { createTasksPloc, createTaskTogglePloc, providerTaskListsPloc } =
     useDependencies()
 
-  const tasksPloc = useMemo(() => createTasksPloc(), [createTasksPloc])
-  const taskTogglePloc = useMemo(
-    () => createTaskTogglePloc(),
-    [createTaskTogglePloc]
-  )
+  // -------------------------------
+  // Plocs estables sin usar ref.current en render
+  // -------------------------------
+  const [tasksPloc] = useState(() => createTasksPloc())
+  const [taskTogglePloc] = useState(() => createTaskTogglePloc())
 
   const state = usePlocState<ITasksState>(tasksPloc)
 
-  const isMountedRef = useRef(true)
+  // Todos los hooks deben estar aquí, antes de cualquier early return
+  const hasId = !!taskList.id
+
   useEffect(() => {
-    isMountedRef.current = true
-    return () => {
-      isMountedRef.current = false
+    if (hasId) {
+      tasksPloc.loadTasks(taskList.id!)
     }
-  }, [])
+  }, [hasId, taskList.id, tasksPloc])
 
-  useEffect(() => {
-    tasksPloc.loadTasks(taskList.id)
-  }, [taskList.id, tasksPloc])
-
-  const handleToggleTask = async (taskId: string) => {
-    try {
-      await taskTogglePloc.toggle(taskId)
-      if (isMountedRef.current) {
-        await tasksPloc.loadTasks(taskList.id)
+  const handleToggleTask = useCallback(
+    async (taskId: string) => {
+      try {
+        await taskTogglePloc.toggle(taskId)
+        await tasksPloc.loadTasks(taskList.id!)
+      } catch {
+        // El PLOC expone el error en su estado
       }
-    } catch {
-      // El PLOC expone el error en su estado; no se necesita manejo adicional aquí
-    }
-  }
-
-  const handleListActionSuccess = () => {
-    providerTaskListsPloc.loadTaskLists()
-  }
-
-  // ✅ Sin mutación del array original, memoizado
-  const sortedTasks = useMemo(
-    () =>
-      [...(state.tasks ?? [])].sort((a, b) => {
-        if (a.isCompleted !== b.isCompleted) return a.isCompleted ? 1 : -1
-        return b.content.localeCompare(a.content)
-      }),
-    [state.tasks]
+    },
+    [taskTogglePloc, tasksPloc, taskList.id]
   )
+
+  const handleListActionSuccess = useCallback(() => {
+    providerTaskListsPloc.loadTaskLists()
+  }, [providerTaskListsPloc])
+
+  // Memoizamos después de todos los hooks
+  const sortedTasks = useMemo(() => {
+    const items = state.tasks?.items ?? []
+    return [...items].sort((a, b) => {
+      if (a.isCompleted !== b.isCompleted) return a.isCompleted ? 1 : -1
+      if (a.createdAt && b.createdAt)
+        return b.createdAt.localeCompare(a.createdAt)
+      return 0
+    })
+  }, [state.tasks?.items])
 
   const totalCount = sortedTasks.length
   const completedCount = useMemo(
@@ -188,6 +187,11 @@ export const TaskList: React.FC<TaskListProps> = ({
 
   const visibleTasks = isExpanded ? sortedTasks : sortedTasks.slice(0, 3)
   const hiddenCount = isExpanded ? 0 : sortedTasks.length - visibleTasks.length
+
+  const hasErrors = state.errors && Object.keys(state.errors).length > 0
+
+  // Ahora el early return es legal, después de todos los hooks
+  if (!hasId) return null
 
   const cardClass = [
     styles.cardContainer,
@@ -201,10 +205,7 @@ export const TaskList: React.FC<TaskListProps> = ({
       h={isExpanded ? 4 : 2}
       w={isExpanded ? 3 : 2}
       className={cardClass}
-      style={{
-        zIndex: isExpanded ? 20 : 1,
-        viewTransitionName: `task-list-${taskList.id}`,
-      }}
+      style={{ zIndex: isExpanded ? 20 : 1 }}
     >
       {/* Header */}
       <div className={styles.cardHeader}>
@@ -245,16 +246,6 @@ export const TaskList: React.FC<TaskListProps> = ({
         </div>
       )}
 
-      {/* Descripción */}
-      {isExpanded && taskList.description && (
-        <Text
-          muted
-          size='sm'
-          className={styles.description}
-        >
-          {taskList.description}
-        </Text>
-      )}
       <Divider className={styles.dividerTop} />
 
       {/* Lista de tareas */}
@@ -268,7 +259,7 @@ export const TaskList: React.FC<TaskListProps> = ({
           </Text>
         )}
 
-        {!state.isLoading && state.error && (
+        {!state.isLoading && hasErrors && (
           <Text
             size='xs'
             className={styles.errorText}
@@ -277,7 +268,7 @@ export const TaskList: React.FC<TaskListProps> = ({
           </Text>
         )}
 
-        {!state.isLoading && !state.error && sortedTasks.length === 0 && (
+        {!state.isLoading && !hasErrors && sortedTasks.length === 0 && (
           <Text
             size='xs'
             muted
@@ -287,14 +278,14 @@ export const TaskList: React.FC<TaskListProps> = ({
         )}
 
         {!state.isLoading &&
-          !state.error &&
+          !hasErrors &&
           visibleTasks.map((task) => (
             <TaskListItem
               key={task.id}
               task={task}
               isExpanded={isExpanded}
-              onToggle={() => handleToggleTask(task.id)}
-              onReload={() => tasksPloc.loadTasks(taskList.id)}
+              onToggle={() => handleToggleTask(task.id!)}
+              onReload={() => tasksPloc.loadTasks(taskList.id!)}
             />
           ))}
 
@@ -330,8 +321,8 @@ export const TaskList: React.FC<TaskListProps> = ({
           </div>
         )}
         <TaskCreateForm
-          taskListId={taskList.id}
-          onSuccess={() => tasksPloc.loadTasks(taskList.id)}
+          taskListId={taskList.id!}
+          onSuccess={() => tasksPloc.loadTasks(taskList.id!)}
         />
       </div>
     </Card>

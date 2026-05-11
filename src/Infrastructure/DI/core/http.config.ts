@@ -3,8 +3,9 @@ import { TokenRefreshStrategy } from '../../Adapters/http/TokenRefreshStrategy'
 import { RequestCache } from '../../Adapters/http/RequestCache'
 import { InflightDeduplicator } from '../../Adapters/http/InflightDeduplicator'
 import { authSessionRepository } from './storage.config'
-import { isoToExpiresInSeconds } from '../../../Domain'
-import type { TokenResponse } from '../../../Domain'
+import { isoToExpiresInSeconds, type ApiAuthTypes } from '../../../Domain'
+
+type TokenResponse = ApiAuthTypes['TokenResponse']
 
 const API_URL =
   import.meta.env.VITE_API_URL || 'https://thtracker-api.onrender.com'

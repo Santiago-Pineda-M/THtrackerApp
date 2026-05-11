@@ -1,14 +1,12 @@
 import type { IUseCase, ApiTaskListsTypes } from '../../../Domain'
 import type { ITaskListService } from '../../Services/TaskList/ITaskListService'
 
-type DeleteTaskListRequest = ApiTaskListsTypes['TaskListIdPath']
-type ProblemDetails = ApiTaskListsTypes['ProblemDetails']
-
-export type DeleteTaskListOutput = void | ProblemDetails
+export type DeleteTaskListRequest = ApiTaskListsTypes['TaskListIdPath']
+export type ProblemDetails = ApiTaskListsTypes['ProblemDetails']
 
 export class DeleteTaskListUseCase implements IUseCase<
   DeleteTaskListRequest,
-  DeleteTaskListOutput
+  void | ProblemDetails
 > {
   private readonly taskListService: ITaskListService
 
@@ -16,7 +14,9 @@ export class DeleteTaskListUseCase implements IUseCase<
     this.taskListService = taskListService
   }
 
-  async execute(request: DeleteTaskListRequest): Promise<DeleteTaskListOutput> {
+  async execute(
+    request: DeleteTaskListRequest
+  ): Promise<void | ProblemDetails> {
     const result = await this.taskListService.deleteTaskList(request)
     return result
   }

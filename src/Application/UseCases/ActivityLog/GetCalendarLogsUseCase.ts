@@ -5,10 +5,11 @@
 import type { IUseCase, ApiActivityLogsTypes } from '../../../Domain'
 import type { IActivityLogService } from '../../Services/ActivityLog/IActivityLogService'
 
-type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
-type ActivityLogPaginatedResponse =
+export type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
+export type ActivityLogPaginatedResponse =
   ApiActivityLogsTypes['ActivityLogResponsePaginated']
-type GetActivityLogsRequest = ApiActivityLogsTypes['GetActivityLogsParams']
+export type GetActivityLogsRequest =
+  ApiActivityLogsTypes['GetActivityLogsParams']
 
 export class GetCalendarLogsUseCase implements IUseCase<
   GetActivityLogsRequest,

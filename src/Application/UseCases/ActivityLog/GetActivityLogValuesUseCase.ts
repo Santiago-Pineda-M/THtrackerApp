@@ -5,10 +5,10 @@
 import type { IUseCase, ApiActivityLogsTypes } from '../../../Domain'
 import type { IActivityLogService } from '../../Services/ActivityLog/IActivityLogService'
 
-type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
-type LogValueResponsePaginated =
+export type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
+export type LogValueResponsePaginated =
   ApiActivityLogsTypes['LogValueResponsePaginated']
-type GetActivityLogValuesRequest =
+export type GetActivityLogValuesRequest =
   ApiActivityLogsTypes['GetActivityLogValuesParams']
 
 export class GetActivityLogValuesUseCase implements IUseCase<

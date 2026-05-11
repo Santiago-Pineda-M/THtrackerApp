@@ -1,17 +1,14 @@
 import type { IUseCase, ApiTaskListsTypes } from '../../../Domain'
 import type { ITaskListService } from '../../Services/TaskList/ITaskListService'
 
-type UpdateTaskListRequest = ApiTaskListsTypes['UpdateTaskListCommand']
-type ProblemDetails = ApiTaskListsTypes['ProblemDetails']
-type UpdateTaskListResponse = ApiTaskListsTypes['TaskListResponse']
-
-type UpdateTaskListParams = ApiTaskListsTypes['TaskListIdPath']
-
-export type UpdateTaskListOutput = UpdateTaskListResponse | ProblemDetails
+export type UpdateTaskListRequest = ApiTaskListsTypes['UpdateTaskListCommand']
+export type ProblemDetails = ApiTaskListsTypes['ProblemDetails']
+export type UpdateTaskListResponse = ApiTaskListsTypes['TaskListResponse']
+export type UpdateTaskListParams = ApiTaskListsTypes['TaskListIdPath']
 
 export class UpdateTaskListUseCase implements IUseCase<
   UpdateTaskListRequest,
-  UpdateTaskListOutput
+  UpdateTaskListResponse | ProblemDetails
 > {
   private readonly taskListService: ITaskListService
 
@@ -19,7 +16,9 @@ export class UpdateTaskListUseCase implements IUseCase<
     this.taskListService = taskListService
   }
 
-  async execute(request: UpdateTaskListRequest): Promise<UpdateTaskListOutput> {
+  async execute(
+    request: UpdateTaskListRequest
+  ): Promise<UpdateTaskListResponse | ProblemDetails> {
     const params: UpdateTaskListParams = {
       id: request.id!,
     }

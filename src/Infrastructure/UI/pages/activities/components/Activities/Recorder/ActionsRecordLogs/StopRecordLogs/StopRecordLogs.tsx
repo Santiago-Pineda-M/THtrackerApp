@@ -78,7 +78,7 @@ export const StopRecordLogs = () => {
     setFormValues({})
 
     // Prepare the stop workflow which loads definitions for this activity
-    const log = activeState.logs.find((l) => l.id === logId)
+    const log = activeState.logs?.items?.find((l) => l.id === logId)
     if (log) {
       providerActivityLogStopPloc.prepareStop(log)
     }
@@ -86,26 +86,30 @@ export const StopRecordLogs = () => {
 
   const handleConfirm = () => {
     if (selectedLog) {
-      const payload = Object.entries(formValues)
+      const items = Object.entries(formValues)
         .filter(
-          ([value]) => value !== null && value !== undefined && value !== ''
+          ([, value]) => value !== null && value !== undefined && value !== ''
         )
         .map(([id, value]) => ({
-          valueDefinitionId: id,
+          id,
           value: value as string,
         }))
-      providerActivityLogStopPloc.stopAndSaveValues(selectedLog.id, payload)
+      providerActivityLogStopPloc.stopAndSaveValues(selectedLog.id, { items })
     }
   }
 
-  const isValidForm = stopState.definitions.every((def) => {
+  const isValidForm = stopState.definitions?.items?.every((def) => {
     if (!def.isRequired) return true
+    if (!def.id) return true
     const val = formValues[def.id]
     return val !== undefined && val !== null && val !== ''
   })
 
-  const getLogActivityName = (activityId: string) => {
-    const activity = activitiesState.activities.find((a) => a.id === activityId)
+  const getLogActivityName = (activityId: string | undefined) => {
+    if (!activityId) return 'Actividad desconocida'
+    const activity = activitiesState.activities?.items?.find(
+      (a) => a.id === activityId
+    )
     return activity?.name || 'Actividad desconocida'
   }
 
@@ -120,7 +124,9 @@ export const StopRecordLogs = () => {
             name='Square'
           />
         }
-        disabled={activeState.logs.length === 0}
+        disabled={
+          !activeState.logs?.items || activeState.logs.items.length === 0
+        }
         onClick={() => setIsSelectionModalOpen(true)}
         className={styles.btn}
       ></Button>
@@ -137,14 +143,15 @@ export const StopRecordLogs = () => {
               <Spinner size='lg' />
               <Text>Cargando registros activos...</Text>
             </div>
-          ) : activeState.logs.length > 0 ? (
-            activeState.logs.map((log) => {
+          ) : activeState.logs?.items && activeState.logs.items.length > 0 ? (
+            activeState.logs.items.map((log) => {
+              if (!log.id || !log.activityId) return null
               const activityName = getLogActivityName(log.activityId)
               return (
                 <div
                   key={log.id}
                   className={styles.listItem}
-                  onClick={() => handleSelect(log.id, activityName)}
+                  onClick={() => handleSelect(log.id!, activityName)}
                 >
                   <div className={styles.activityInfo}>
                     <Icon
@@ -177,7 +184,7 @@ export const StopRecordLogs = () => {
       >
         <div className={styles.confirmationBox}>
           <Text size='lg'>
-            Â¿Estás seguro de que quieres detener{' '}
+            ¿Estás seguro de que quieres detener{' '}
             <Text
               as='span'
               weight='bold'
@@ -194,51 +201,57 @@ export const StopRecordLogs = () => {
               <Text size='sm'>Cargando valores requeridos...</Text>
             </div>
           ) : (
-            stopState.definitions.length > 0 && (
+            stopState.definitions?.items &&
+            stopState.definitions.items.length > 0 && (
               <div className={styles.formContainer}>
-                {stopState.definitions.map((def) => (
-                  <div
-                    key={def.id}
-                    className={styles.formField}
-                  >
-                    <Label htmlFor={def.id}>
-                      {def.name} {def.isRequired && '*'}
-                    </Label>
-                    {def.valueType === 'Boolean' ? (
-                      <ToggleSwitch
-                        checked={formValues[def.id] === 'true'}
-                        onChange={(checked: boolean) =>
-                          setFormValues((p) => ({
-                            ...p,
-                            [def.id]: checked.toString(),
-                          }))
-                        }
-                      />
-                    ) : (
-                      <Input
-                        id={def.id}
-                        type={def.valueType === 'Number' ? 'number' : 'text'}
-                        value={formValues[def.id] || ''}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setFormValues((p) => ({
-                            ...p,
-                            [def.id]: e.target.value,
-                          }))
-                        }
-                        placeholder={
-                          def.unit ? `Ej: x ${def.unit}` : `Ingresa ${def.name}`
-                        }
-                      />
-                    )}
-                  </div>
-                ))}
+                {stopState.definitions.items.map((def) => {
+                  if (!def.id) return null
+                  return (
+                    <div
+                      key={def.id}
+                      className={styles.formField}
+                    >
+                      <Label htmlFor={def.id}>
+                        {def.name} {def.isRequired && '*'}
+                      </Label>
+                      {def.valueType === 'Boolean' ? (
+                        <ToggleSwitch
+                          checked={formValues[def.id] === 'true'}
+                          onChange={(checked: boolean) =>
+                            setFormValues((p) => ({
+                              ...p,
+                              [def.id!]: checked.toString(),
+                            }))
+                          }
+                        />
+                      ) : (
+                        <Input
+                          id={def.id}
+                          type={def.valueType === 'Number' ? 'number' : 'text'}
+                          value={formValues[def.id] || ''}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setFormValues((p) => ({
+                              ...p,
+                              [def.id!]: e.target.value,
+                            }))
+                          }
+                          placeholder={
+                            def.unit
+                              ? `Ej: x ${def.unit}`
+                              : `Ingresa ${def.name}`
+                          }
+                        />
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             )
           )}
 
-          {stopState.error && (
+          {stopState.errors && (
             <Text color='danger'>
-              {stopState.error.title || 'Error al detener actividad'}
+              {stopState.errors?.title || 'Error al detener actividad'}
             </Text>
           )}
 

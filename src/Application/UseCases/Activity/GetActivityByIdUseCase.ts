@@ -6,9 +6,9 @@
 import type { IUseCase, ApiActivitiesTypes } from '../../../Domain'
 import type { IActivityService } from '../../Services/Activity/IActivityService'
 
-type ActivityResponse = ApiActivitiesTypes['ActivityResponse']
-type ApiErrorResponse = ApiActivitiesTypes['ProblemDetails']
-type GetActivityByIdInput = ApiActivitiesTypes['GetActivityIdPath']
+export type ActivityResponse = ApiActivitiesTypes['ActivityResponse']
+export type ProblemDetails = ApiActivitiesTypes['ProblemDetails']
+export type GetActivityByIdInput = ApiActivitiesTypes['GetActivityIdPath']
 
 /**
  * Caso de uso para obtener una actividad específica por su ID.
@@ -16,7 +16,7 @@ type GetActivityByIdInput = ApiActivitiesTypes['GetActivityIdPath']
  */
 export class GetActivityByIdUseCase implements IUseCase<
   GetActivityByIdInput,
-  ActivityResponse | ApiErrorResponse
+  ActivityResponse | ProblemDetails
 > {
   private readonly activityService: IActivityService
 
@@ -26,7 +26,7 @@ export class GetActivityByIdUseCase implements IUseCase<
 
   async execute(
     input: GetActivityByIdInput
-  ): Promise<ActivityResponse | ApiErrorResponse> {
+  ): Promise<ActivityResponse | ProblemDetails> {
     const result = await this.activityService.getActivityById(input)
     return result
   }

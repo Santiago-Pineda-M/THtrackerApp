@@ -1,20 +1,25 @@
 export {
   GetCategoriesUseCase,
-  type GetCategoriesOutput,
+  type CategoryResponsePaginatedResponse,
+  type GetCategoriesRequest,
 } from './GetCategoriesUseCase'
 export {
   GetCategoryByIdUseCase,
-  type GetCategoryByIdOutput,
+  type CategoryResponse as GetCategoryByIdCategoryResponse,
+  type GetCategoryByIdInput,
 } from './GetCategoryByIdUseCase'
 export {
   CreateCategoryUseCase,
-  type CreateCategoryOutput,
+  type CreateCategoryCommand,
+  type CategoryResponse as CreateCategoryCategoryResponse,
 } from './CreateCategoryUseCase'
 export {
   UpdateCategoryUseCase,
-  type UpdateCategoryOutput,
+  type CategoryResponse as UpdateCategoryCategoryResponse,
+  type UpdateCategoryCommand,
+  type UpdateCategoryIdPath,
 } from './UpdateCategoryUseCase'
 export {
   DeleteCategoryUseCase,
-  type DeleteCategoryOutput,
+  type DeleteCategoryRequest,
 } from './DeleteCategoryUseCase'

@@ -1,8 +1,2 @@
-export {
-  GetUserProfileUseCase,
-  type GetUserProfileOutput,
-} from './GetUserProfileUseCase'
-export {
-  UpdateUserProfileUseCase,
-  type UpdateUserProfileOutput,
-} from './UpdateUserProfileUseCase'
+export { GetUserProfileUseCase } from './GetUserProfileUseCase'
+export { UpdateUserProfileUseCase } from './UpdateUserProfileUseCase'

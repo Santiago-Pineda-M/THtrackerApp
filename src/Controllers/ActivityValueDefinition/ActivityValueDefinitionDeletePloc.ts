@@ -8,7 +8,11 @@ import {
   type IValueDefinitionDeleteState,
   initialValueDefinitionDeleteState,
 } from '../../Domain'
-import type { DeleteActivityValueDefinitionUseCase } from '../../Application/UseCases/ActivityValueDefinition'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
+import type {
+  DeleteActivityValueDefinitionUseCase,
+  ProblemDetails,
+} from '../../Application/UseCases/ActivityValueDefinition/DeleteActivityValueDefinitionUseCase'
 
 export class ActivityValueDefinitionDeletePloc extends Ploc<IValueDefinitionDeleteState> {
   private readonly deleteValueDefinitionUseCase: DeleteActivityValueDefinitionUseCase
@@ -28,20 +32,22 @@ export class ActivityValueDefinitionDeletePloc extends Ploc<IValueDefinitionDele
       ...this.state,
       isLoading: true,
       success: false,
-      error: null,
+      errors: {},
     })
 
     try {
       const result = await this.deleteValueDefinitionUseCase.execute({
         activityId,
-        id,
+        definitionId: id,
       })
 
-      if (result.success) {
+      if (this.isDeleteDefinitionError(result)) {
+        const mappedErrors = mapProblemDetailsToErrors(result)
         this.changeState({
           ...this.state,
           isLoading: false,
-          success: true,
+          success: false,
+          errors: mappedErrors,
         })
         return
       }
@@ -49,8 +55,7 @@ export class ActivityValueDefinitionDeletePloc extends Ploc<IValueDefinitionDele
       this.changeState({
         ...this.state,
         isLoading: false,
-        success: false,
-        error: result.error,
+        success: true,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -58,9 +63,15 @@ export class ActivityValueDefinitionDeletePloc extends Ploc<IValueDefinitionDele
         ...this.state,
         isLoading: false,
         success: false,
-        error: { title: 'Error', detail: message },
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isDeleteDefinitionError(
+    result: void | ProblemDetails
+  ): result is ProblemDetails {
+    return typeof result === 'object' && result !== null && 'type' in result
   }
 
   /**

@@ -6,22 +6,17 @@
 import type { IUseCase, ApiUserTypes } from '../../../Domain'
 import type { IUserService } from '../../Services/User/IUserService'
 
-type UpdateUserProfileRequest = ApiUserTypes['UpdateUserCommand']
-type UserResponse = ApiUserTypes['UserResponse']
-type ProblemDetails = ApiUserTypes['ProblemDetails']
-
-/**
- * Output del caso de uso - puede ser éxito o error
- */
-export type UpdateUserProfileOutput = UserResponse | ProblemDetails
+export type UpdateUserProfileCommand = ApiUserTypes['UpdateUserCommand']
+export type UserResponse = ApiUserTypes['UserResponse']
+export type ProblemDetails = ApiUserTypes['ProblemDetails']
 
 /**
  * Caso de uso para actualizar el perfil del usuario autenticado.
  * PUT /api/v1/users/me
  */
 export class UpdateUserProfileUseCase implements IUseCase<
-  UpdateUserProfileRequest,
-  UpdateUserProfileOutput
+  UpdateUserProfileCommand,
+  UserResponse | ProblemDetails
 > {
   private readonly userService: IUserService
 
@@ -30,8 +25,8 @@ export class UpdateUserProfileUseCase implements IUseCase<
   }
 
   async execute(
-    input: UpdateUserProfileRequest
-  ): Promise<UpdateUserProfileOutput> {
+    input: UpdateUserProfileCommand
+  ): Promise<UserResponse | ProblemDetails> {
     const result = await this.userService.updateProfile(input)
     return result
   }

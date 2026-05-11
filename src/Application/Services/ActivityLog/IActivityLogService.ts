@@ -42,7 +42,7 @@ export interface IActivityLogService {
   ): Promise<ActivityLogResponse | ProblemDetails>
   saveActivityLogValues(
     id: SaveActivityLogValuesParams,
-    request: SaveLogValuesCommand[]
+    request: SaveLogValuesCommand
   ): Promise<void | ProblemDetails>
   getActivityLogValues(
     id: GetActivityLogValuesParams

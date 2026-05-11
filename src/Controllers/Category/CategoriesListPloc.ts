@@ -8,7 +8,12 @@ import {
   type ICategoriesListState,
   initialCategoriesListState,
 } from '../../Domain'
-import type { GetCategoriesUseCase } from '../../Application/UseCases/Category'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
+import type {
+  GetCategoriesUseCase,
+  CategoryResponsePaginatedResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/Category/GetCategoriesUseCase'
 
 export class CategoriesListPloc extends Ploc<ICategoriesListState> {
   private readonly getCategoriesUseCase: GetCategoriesUseCase
@@ -25,44 +30,51 @@ export class CategoriesListPloc extends Ploc<ICategoriesListState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
     try {
       const result = await this.getCategoriesUseCase.execute()
 
-      if (result.items && result.items.length > 0) {
+      if (this.isCategoriesSuccess(result)) {
         this.changeState({
           ...this.state,
-          categories: result },
+          categories: result,
           isLoading: false,
-          error: null,
+          errors: {},
         })
         return
       }
 
+      const errorResult = result as ProblemDetails
+      const mappedErrors = mapProblemDetailsToErrors(errorResult)
       this.changeState({
         ...this.state,
         categories: null,
         isLoading: false,
-        error: { result },
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
-      const error =
+      const message =
         err instanceof Error
-          ? { title: 'Error', detail: err.message }
-          : {
-              title: 'Error',
-              detail: 'Error desconocido al cargar las categorías',
-            }
-
+          ? err.message
+          : 'Error desconocido al cargar las categorías'
       this.changeState({
         ...this.state,
-        categories: [],
+        categories: null,
         isLoading: false,
-        error,
+        errors: { general: [message] },
       })
     }
+  }
+
+  /**
+   * Type guard para verificar si el resultado es una respuesta exitosa de categorías.
+   */
+  private isCategoriesSuccess(
+    result: CategoryResponsePaginatedResponse | ProblemDetails
+  ): result is CategoryResponsePaginatedResponse {
+    return 'items' in result
   }
 
   /**

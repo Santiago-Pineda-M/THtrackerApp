@@ -1,7 +1,9 @@
 import { Ploc } from '../../Domain/Ploc'
-import { AuthStatus } from '../../Domain'
-import type { IAuthState } from '../../Domain'
-import { initialAuthState } from '../../Domain'
+import {
+  AuthStatus,
+  initialAuthState,
+  type IAuthState,
+} from '../../Domain/IStates'
 import type { IAuthSessionRepository } from '../../Domain/Repositories/IAuthSessionRepository'
 
 // Importar tipos de la nueva arquitectura

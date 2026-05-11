@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import { Button } from '../UI/components/atoms'
 

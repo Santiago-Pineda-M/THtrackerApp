@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Button,
   Text,
@@ -74,7 +74,7 @@ export const ActivityEdit: React.FC<ActivityEditProps> = ({ activityId }) => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? 'Â¡Éxito!' : 'Editar Actividad'}
+        title={state.success ? '¡Éxito!' : 'Editar Actividad'}
       >
         {state.success ? (
           <div className={styles.successContainer}>

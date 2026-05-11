@@ -3,7 +3,7 @@ import { usePlocState } from '../../../../../../../../Hooks/usePlocState'
 import { useEffect } from 'react'
 import type {
   IActivityDetailState,
-  ActivityLogResponse,
+  ApiActivityLogsTypes,
 } from '../../../../../../../../../Domain'
 import { Chronometer, Text, Spinner } from '../../../../../../../components'
 import styles from './ChronometerRecordLogs.module.scss'
@@ -11,13 +11,13 @@ import styles from './ChronometerRecordLogs.module.scss'
 export const ChronometerRecordLogs = ({
   log,
 }: {
-  log: ActivityLogResponse
+  log: ApiActivityLogsTypes['ActivityLogResponse']
 }) => {
   const { providerActivityDetailPloc, providerDateProvider } = useDependencies()
   const state = usePlocState<IActivityDetailState>(providerActivityDetailPloc)
 
   useEffect(() => {
-    providerActivityDetailPloc.loadActivity(log.activityId)
+    providerActivityDetailPloc.loadActivity(log.activityId!)
   }, [log.activityId, providerActivityDetailPloc])
 
   if (state.isLoading) {
@@ -29,13 +29,13 @@ export const ChronometerRecordLogs = ({
     )
   }
 
-  if (state.error) {
+  if (state.errors && Object.keys(state.errors).length > 0) {
     return (
       <Text
         size='lg'
         color='danger'
       >
-        Error al cargar
+        {Object.values(state.errors).join(', ')}
       </Text>
     )
   }
@@ -52,7 +52,7 @@ export const ChronometerRecordLogs = ({
         {state.activity?.name || 'Actividad desconocida'}
       </Text>
       <Chronometer
-        time={providerDateProvider.parse(log.startedAt).getTime()}
+        time={providerDateProvider.parse(log.startedAt!).getTime()}
         textProps={{
           size: 'lg',
           weight: 'bold',

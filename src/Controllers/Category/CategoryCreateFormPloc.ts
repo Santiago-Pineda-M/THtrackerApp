@@ -8,7 +8,13 @@ import {
   type ICategoryCreateFormState,
   initialCategoryCreateFormState,
 } from '../../Domain'
-import type { CreateCategoryUseCase } from '../../Application/UseCases/Category'
+import type {
+  CreateCategoryUseCase,
+  CreateCategoryCommand,
+  CategoryResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/Category/CreateCategoryUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class CategoryCreateFormPloc extends Ploc<ICategoryCreateFormState> {
   private readonly createCategoryUseCase: CreateCategoryUseCase
@@ -69,14 +75,14 @@ export class CategoryCreateFormPloc extends Ploc<ICategoryCreateFormState> {
     })
 
     try {
-      const request = {
+      const request: CreateCategoryCommand = {
         name: this.state.name.trim() || null,
         color: this.state.color.trim() || null,
       }
 
       const result = await this.createCategoryUseCase.execute(request)
 
-      if (result.success) {
+      if (this.isCreateCategorySuccess(result)) {
         this.changeState({
           ...initialCategoryCreateFormState,
           success: true,
@@ -87,19 +93,13 @@ export class CategoryCreateFormPloc extends Ploc<ICategoryCreateFormState> {
       }
 
       // Error del servidor
-      const errorResult = result.error
-      const rawErrors = errorResult.errors ?? {
-        general: [errorResult.title || errorResult.detail],
-      }
-      const errors = this.normalizeErrorKeys(
-        rawErrors as Record<string, string[]>
-      )
+      const mappedErrors = mapProblemDetailsToErrors(result)
 
       this.changeState({
         ...this.state,
-        errors,
+        errors: mappedErrors,
         success: false,
-        message: errorResult.title || 'Error al crear la categoría.',
+        message: result.title || 'Error al crear la categoría.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -112,6 +112,12 @@ export class CategoryCreateFormPloc extends Ploc<ICategoryCreateFormState> {
         isLoading: false,
       })
     }
+  }
+
+  private isCreateCategorySuccess(
+    result: CategoryResponse | ProblemDetails
+  ): result is CategoryResponse {
+    return 'id' in result && 'name' in result
   }
 
   /**
@@ -129,15 +135,5 @@ export class CategoryCreateFormPloc extends Ploc<ICategoryCreateFormState> {
     }
 
     return errors
-  }
-
-  private normalizeErrorKeys(
-    errors: Record<string, string[]>
-  ): Record<string, string[]> {
-    const normalized: Record<string, string[]> = {}
-    for (const [key, value] of Object.entries(errors)) {
-      normalized[key.toLowerCase()] = value
-    }
-    return normalized
   }
 }

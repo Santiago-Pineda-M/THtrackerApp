@@ -12,11 +12,9 @@ import type {
 import type { IAuthService } from '../../Services/Auth/IAuthService'
 import { isoToExpiresInSeconds } from '../../../Domain'
 
-type SubmitRefreshToken = ApiAuthTypes['SubmitRefreshToken']
-type TokenResponse = ApiAuthTypes['TokenResponse']
-type ProblemDetails = ApiAuthTypes['ProblemDetails']
-
-export type RefreshTokenOutput = TokenResponse | ProblemDetails
+export type SubmitRefreshToken = ApiAuthTypes['SubmitRefreshToken']
+export type TokenResponse = ApiAuthTypes['TokenResponse']
+export type ProblemDetails = ApiAuthTypes['ProblemDetails']
 
 /**
  * Caso de uso para renovar tokens de autenticación.
@@ -24,7 +22,7 @@ export type RefreshTokenOutput = TokenResponse | ProblemDetails
  */
 export class RefreshTokenUseCases implements IUseCase<
   SubmitRefreshToken,
-  RefreshTokenOutput
+  TokenResponse | ProblemDetails
 > {
   private readonly authService: IAuthService
   private readonly authSessionRepo: IAuthSessionRepository
@@ -37,7 +35,9 @@ export class RefreshTokenUseCases implements IUseCase<
     this.authSessionRepo = authSessionRepo
   }
 
-  async execute(input: SubmitRefreshToken): Promise<RefreshTokenOutput> {
+  async execute(
+    input: SubmitRefreshToken
+  ): Promise<TokenResponse | ProblemDetails> {
     const result = await this.authService.refreshToken(input)
 
     if (!this.isSuccess(result)) return result

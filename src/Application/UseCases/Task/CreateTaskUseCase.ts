@@ -1,15 +1,14 @@
 import type { IUseCase, ApiTasksTypes } from '../../../Domain'
 import type { ITaskService } from '../../Services/Task/ITaskService'
 
-type ICreateTaskRequest = ApiTasksTypes['CreateTaskCommand']
-type ICreateTaskResponse = ApiTasksTypes['TaskResponse']
-type ApiErrorResponse = ApiTasksTypes['ProblemDetails']
+export type CreateTaskCommand = ApiTasksTypes['CreateTaskCommand']
 
-export type CreateTaskOutput = ICreateTaskResponse | ApiErrorResponse
+export type TaskResponse = ApiTasksTypes['TaskResponse']
+export type ProblemDetails = ApiTasksTypes['ProblemDetails']
 
 export class CreateTaskUseCase implements IUseCase<
-  ICreateTaskRequest,
-  CreateTaskOutput
+  CreateTaskCommand,
+  TaskResponse | ProblemDetails
 > {
   private readonly taskService: ITaskService
 
@@ -17,7 +16,9 @@ export class CreateTaskUseCase implements IUseCase<
     this.taskService = taskService
   }
 
-  async execute(request: ICreateTaskRequest): Promise<CreateTaskOutput> {
+  async execute(
+    request: CreateTaskCommand
+  ): Promise<TaskResponse | ProblemDetails> {
     const result = await this.taskService.createTask(request)
     return result
   }

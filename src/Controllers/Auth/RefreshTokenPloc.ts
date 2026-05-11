@@ -1,12 +1,12 @@
 import { Ploc } from '../../Domain/Ploc'
-import {
-  type IRefreshTokenState,
-  initialRefreshTokenState,
-} from '../../Domain/IStates'
+import { type IRefreshTokenState, initialRefreshTokenState } from '../../Domain'
 import type {
   RefreshTokenUseCases,
-  GetSessionUseCase,
-} from '../../Application/UseCases/Auth'
+  TokenResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/Auth/RefreshTokenUseCase'
+import { GetSessionUseCase } from '../../Application/UseCases/Auth/GetSessionUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 /**
  * CONTROLLER LAYER - RefreshTokenPloc
@@ -35,7 +35,7 @@ export class RefreshTokenPloc extends Ploc<IRefreshTokenState> {
         ...this.state,
         isRefreshing: false,
         success: false,
-        error: { title: 'Error', detail: 'No hay sesión activa' },
+        errors: { general: ['No hay sesión activa'] },
       })
       return
     }
@@ -44,7 +44,7 @@ export class RefreshTokenPloc extends Ploc<IRefreshTokenState> {
       ...this.state,
       isRefreshing: true,
       success: false,
-      error: null,
+      errors: {},
     })
 
     try {
@@ -52,32 +52,39 @@ export class RefreshTokenPloc extends Ploc<IRefreshTokenState> {
         refreshToken: session.refreshToken,
       })
 
-      if ('accessToken' in result && 'refreshToken' in result) {
+      if (this.isRefreshTokenSuccess(result)) {
         this.changeState({
           ...this.state,
           isRefreshing: false,
           success: true,
-          error: null,
+          errors: {},
         })
       } else {
+        const errorResult = result as ProblemDetails
+        const mappedErrors = mapProblemDetailsToErrors(errorResult)
         this.changeState({
           ...this.state,
           isRefreshing: false,
           success: false,
-          error: result,
+          errors: mappedErrors,
         })
       }
     } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Error al renovar el token'
       this.changeState({
         ...this.state,
         isRefreshing: false,
         success: false,
-        error: {
-          title: 'Error',
-          detail: 'Error al refresh el token: ' + error,
-        },
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isRefreshTokenSuccess(
+    result: TokenResponse | ProblemDetails
+  ): result is TokenResponse {
+    return 'accessToken' in result && 'refreshToken' in result
   }
 
   /**

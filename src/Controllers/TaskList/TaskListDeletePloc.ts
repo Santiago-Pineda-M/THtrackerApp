@@ -8,7 +8,11 @@ import {
   type ITaskListDeleteState,
   initialTaskListDeleteState,
 } from '../../Domain'
-import type { DeleteTaskListUseCase } from '../../Application/UseCases/TaskList/DeleteTaskListUseCase'
+import type {
+  DeleteTaskListUseCase,
+  ProblemDetails,
+} from '../../Application/UseCases/TaskList/DeleteTaskListUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class TaskListDeletePloc extends Ploc<ITaskListDeleteState> {
   private readonly deleteTaskListUseCase: DeleteTaskListUseCase
@@ -26,17 +30,19 @@ export class TaskListDeletePloc extends Ploc<ITaskListDeleteState> {
       ...this.state,
       isLoading: true,
       success: false,
-      error: null,
+      errors: {},
     })
 
     try {
       const result = await this.deleteTaskListUseCase.execute({ id })
 
-      if (result.success) {
+      if (this.isTaskListDeleteError(result)) {
+        const mappedErrors = mapProblemDetailsToErrors(result)
         this.changeState({
           ...this.state,
           isLoading: false,
-          success: true,
+          success: false,
+          errors: mappedErrors,
         })
         return
       }
@@ -44,8 +50,7 @@ export class TaskListDeletePloc extends Ploc<ITaskListDeleteState> {
       this.changeState({
         ...this.state,
         isLoading: false,
-        success: false,
-        error: result.error,
+        success: true,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -53,9 +58,18 @@ export class TaskListDeletePloc extends Ploc<ITaskListDeleteState> {
         ...this.state,
         isLoading: false,
         success: false,
-        error: { title: 'Error', detail: message },
+        errors: { general: [message] },
       })
     }
+  }
+
+  /**
+   * Type guard para verificar si el resultado es un error.
+   */
+  private isTaskListDeleteError(
+    result: ProblemDetails | void
+  ): result is ProblemDetails {
+    return typeof result === 'object' && result !== null && 'type' in result
   }
 
   /**

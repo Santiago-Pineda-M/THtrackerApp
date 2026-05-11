@@ -8,8 +8,13 @@ import {
   type ITaskCreateFormState,
   initialTaskCreateFormState,
 } from '../../Domain'
-import type { CreateTaskUseCase } from '../../Application/UseCases/Task/CreateTaskUseCase'
-import type { ICreateTaskRequest } from '../../Domain/TaskList'
+import type {
+  CreateTaskCommand,
+  CreateTaskUseCase,
+  ProblemDetails,
+  TaskResponse,
+} from '../../Application/UseCases/Task/CreateTaskUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
   private readonly createTaskUseCase: CreateTaskUseCase
@@ -59,9 +64,7 @@ export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
 
     if (newShowDueDate && !newDueDate) {
       const now = new Date()
-      // Añadir 1 hora
       const defaultDate = new Date(now.getTime() + 60 * 60 * 1000)
-      // Formato YYYY-MM-DDTHH:mm para datetime-local
       newDueDate = new Date(
         defaultDate.getTime() - defaultDate.getTimezoneOffset() * 60000
       )
@@ -78,8 +81,9 @@ export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
 
   /**
    * Envía el formulario de creación.
+   * @param request - Comando base con los datos de la tarea. Se complementa con la fecha de vencimiento opcional.
    */
-  async submitCreate(request: ICreateTaskRequest): Promise<void> {
+  async submitCreate(request: CreateTaskCommand): Promise<void> {
     this.changeState({
       ...this.state,
       errors: {},
@@ -88,12 +92,13 @@ export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
     })
 
     try {
+      // Construir la fecha de vencimiento solo si está habilitada y es válida
       let dueDate: string | undefined = undefined
       if (this.state.showDueDate && this.state.dueDate) {
         try {
           dueDate = new Date(this.state.dueDate).toISOString()
         } catch {
-          // Si la fecha es inválida
+          // Fecha inválida: se deja undefined
         }
       }
 
@@ -102,7 +107,8 @@ export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
         dueDate,
       })
 
-      if (result.success) {
+      if (this.isTaskResponse(result)) {
+        // Éxito: se resetea el formulario mostrando mensaje de éxito
         this.changeState({
           ...initialTaskCreateFormState,
           success: true,
@@ -112,11 +118,13 @@ export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
         return
       }
 
+      // Error controlado (ProblemDetails)
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        errors: {},
+        errors: mappedErrors,
         success: false,
-        message: result.error.title || 'Error al crear la tarea.',
+        message: result.title || 'Error al crear la tarea.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -129,6 +137,15 @@ export class TaskCreateFormPloc extends Ploc<ITaskCreateFormState> {
         isLoading: false,
       })
     }
+  }
+
+  /**
+   * Type guard para distinguir una respuesta exitosa de un ProblemDetails.
+   */
+  private isTaskResponse(
+    result: TaskResponse | ProblemDetails
+  ): result is TaskResponse {
+    return 'id' in result
   }
 
   /**

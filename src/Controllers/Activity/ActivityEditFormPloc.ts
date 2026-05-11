@@ -8,10 +8,21 @@ import {
   type IActivityEditFormState,
   initialActivityEditFormState,
 } from '../../Domain'
+
+import type {
+  GetActivityByIdUseCase,
+  ActivityResponse as GetActivityByIdActivityResponse,
+  ProblemDetails as ProblemDetailsGet,
+} from '../../Application/UseCases/Activity/GetActivityByIdUseCase'
+
 import type {
   UpdateActivityUseCase,
-  GetActivityByIdUseCase,
-} from '../../Application/UseCases/Activity'
+  ActivityResponse as UpdateActivityActivityResponse,
+  ProblemDetails as ProblemDetailsUpdate,
+  UpdateActivityRequest,
+} from '../../Application/UseCases/Activity/UpdateActivityUseCase'
+
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class ActivityEditFormPloc extends Ploc<IActivityEditFormState> {
   private readonly updateActivityUseCase: UpdateActivityUseCase
@@ -42,29 +53,31 @@ export class ActivityEditFormPloc extends Ploc<IActivityEditFormState> {
     try {
       const result = await this.getActivityByIdUseCase.execute({ id })
 
-      if (result.success) {
-        const { categoryId, name, color, allowOverlap } = result.activity
+      if (this.isGetActivitySuccess(result)) {
+        const { categoryId, name, color, allowOverlap } = result
         this.changeState({
           ...this.state,
-          categoryId,
-          name: name || '',
-          color: color || '',
-          allowOverlap,
+          categoryId: categoryId ?? '',
+          name: name ?? '',
+          color: color ?? '',
+          allowOverlap: allowOverlap ?? false,
           initialValues: {
-            categoryId,
-            name: name || '',
-            color: color || '',
-            allowOverlap,
+            categoryId: categoryId ?? '',
+            name: name ?? '',
+            color: color ?? '',
+            allowOverlap: allowOverlap ?? false,
           },
           isLoading: false,
         })
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         isLoading: false,
-        message: result.error.title || 'No se pudo cargar la actividad.',
+        message: result.title || 'No se pudo cargar la actividad.',
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -72,6 +85,7 @@ export class ActivityEditFormPloc extends Ploc<IActivityEditFormState> {
         ...this.state,
         isLoading: false,
         message,
+        errors: { general: [message] },
       })
     }
   }
@@ -139,7 +153,7 @@ export class ActivityEditFormPloc extends Ploc<IActivityEditFormState> {
     })
 
     try {
-      const request = {
+      const request: UpdateActivityRequest = {
         id: this.state.id,
         name: this.state.name.trim() || null,
         color: this.state.color.trim() || null,
@@ -148,18 +162,18 @@ export class ActivityEditFormPloc extends Ploc<IActivityEditFormState> {
 
       const result = await this.updateActivityUseCase.execute(request)
 
-      if (result.success) {
-        const updatedActivity = result.activity
+      if (this.isUpdateActivitySuccess(result)) {
+        const updatedActivity = result
         this.changeState({
           ...this.state,
-          name: updatedActivity.name || '',
-          color: updatedActivity.color || '',
-          allowOverlap: updatedActivity.allowOverlap,
+          name: updatedActivity.name ?? '',
+          color: updatedActivity.color ?? '',
+          allowOverlap: updatedActivity.allowOverlap ?? false,
           initialValues: {
-            categoryId: updatedActivity.categoryId,
-            name: updatedActivity.name || '',
-            color: updatedActivity.color || '',
-            allowOverlap: updatedActivity.allowOverlap,
+            categoryId: updatedActivity.categoryId ?? '',
+            name: updatedActivity.name ?? '',
+            color: updatedActivity.color ?? '',
+            allowOverlap: updatedActivity.allowOverlap ?? false,
           },
           success: true,
           message: 'Actividad actualizada correctamente.',
@@ -169,19 +183,13 @@ export class ActivityEditFormPloc extends Ploc<IActivityEditFormState> {
       }
 
       // Error del servidor
-      const errorResult = result.error
-      const rawErrors = errorResult.errors ?? {
-        general: [errorResult.title || errorResult.detail],
-      }
-      const errors = this.normalizeErrorKeys(
-        rawErrors as Record<string, string[]>
-      )
+      const mappedErrors = mapProblemDetailsToErrors(result)
 
       this.changeState({
         ...this.state,
-        errors,
+        errors: mappedErrors,
         success: false,
-        message: errorResult.title || 'Error al actualizar la actividad.',
+        message: result.title || 'Error al actualizar la actividad.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -213,13 +221,15 @@ export class ActivityEditFormPloc extends Ploc<IActivityEditFormState> {
     return errors
   }
 
-  private normalizeErrorKeys(
-    errors: Record<string, string[]>
-  ): Record<string, string[]> {
-    const normalized: Record<string, string[]> = {}
-    for (const [key, value] of Object.entries(errors)) {
-      normalized[key.toLowerCase()] = value
-    }
-    return normalized
+  private isGetActivitySuccess(
+    result: GetActivityByIdActivityResponse | ProblemDetailsGet
+  ): result is GetActivityByIdActivityResponse {
+    return 'id' in result && 'name' in result
+  }
+
+  private isUpdateActivitySuccess(
+    result: UpdateActivityActivityResponse | ProblemDetailsUpdate
+  ): result is UpdateActivityActivityResponse {
+    return 'id' in result && 'name' in result
   }
 }

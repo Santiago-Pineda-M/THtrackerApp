@@ -23,7 +23,11 @@ export const ActivityProperties: React.FC<ActivityPropertiesProps> = ({
   )
 
   useEffect(() => {
-    providerActivityValueDefinitionsListPloc.loadDefinitions(activityId)
+    if (!activityId) {
+      return
+    }
+    providerActivityValueDefinitionsListPloc.setActivityId(activityId)
+    providerActivityValueDefinitionsListPloc.loadDefinitions()
   }, [activityId, providerActivityValueDefinitionsListPloc])
 
   return (
@@ -37,9 +41,9 @@ export const ActivityProperties: React.FC<ActivityPropertiesProps> = ({
       </div>
       {state.isLoading ? (
         <Spinner size='sm' />
-      ) : state.definitions.length > 0 ? (
+      ) : (state.definitions?.items?.length ?? 0 > 0) ? (
         <ul className={styles.list}>
-          {state.definitions.map((def) => (
+          {state.definitions?.items?.map((def) => (
             <li
               key={def.id}
               className={styles.item}
@@ -63,11 +67,11 @@ export const ActivityProperties: React.FC<ActivityPropertiesProps> = ({
                 <div className={styles.buttons}>
                   <ValueDefinitionEditForm
                     activityId={activityId}
-                    definitionId={def.id}
+                    definitionId={def.id || ''}
                   />
                   <ValueDefinitionDelete
                     activityId={activityId}
-                    definitionId={def.id}
+                    definitionId={def.id || ''}
                     definitionName={def.name || 'Propiedad'}
                   />
                 </div>

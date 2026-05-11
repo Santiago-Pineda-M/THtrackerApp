@@ -1,10 +1,20 @@
-import { Ploc, initialActivityLogsListState } from '../../Domain'
-import type { IActivityLogsListState } from '../../Domain'
-import type {
+import {
+  Ploc,
+  initialActivityLogsListState,
+  type IActivityLogsListState,
+} from '../../Domain'
+import {
   GetActivityLogsUseCase,
+  type ActivityLogResponsePaginated,
+  type ProblemDetails,
+  // type GetActivityLogsRequest,
+} from '../../Application/UseCases/ActivityLog/GetActivityLogsUseCase'
+import {
   StartActivityLogUseCase,
-  StopActivityLogUseCase,
-} from '../../Application/UseCases/ActivityLog'
+  type ActivityLogResponse,
+} from '../../Application/UseCases/ActivityLog/StartActivityLogUseCase'
+import { StopActivityLogUseCase } from '../../Application/UseCases/ActivityLog/StopActivityLogUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class ActivityLogsListPloc extends Ploc<IActivityLogsListState> {
   private readonly getActivityLogsUseCase: GetActivityLogsUseCase
@@ -27,22 +37,37 @@ export class ActivityLogsListPloc extends Ploc<IActivityLogsListState> {
       ...this.state,
       activityId,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
-    const result = await this.getActivityLogsUseCase.execute({ activityId })
-
-    if (result.success) {
-      this.changeState({
-        ...this.state,
-        logs: result.logs,
-        isLoading: false,
+    try {
+      const result = await this.getActivityLogsUseCase.execute({
+        activityId,
       })
-    } else {
+
+      if (this.isActivityLogsSuccess(result)) {
+        this.changeState({
+          ...this.state,
+          logs: result,
+          isLoading: false,
+        })
+        return
+      }
+
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        error: result.error,
+        logs: null,
         isLoading: false,
+        errors: mappedErrors,
+      })
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
+      this.changeState({
+        ...this.state,
+        logs: null,
+        isLoading: false,
+        errors: { general: [message] },
       })
     }
   }
@@ -50,50 +75,89 @@ export class ActivityLogsListPloc extends Ploc<IActivityLogsListState> {
   async startLog() {
     if (!this.state.activityId) return
 
-    this.changeState({ ...this.state, isLoading: true, error: null })
+    this.changeState({ ...this.state, isLoading: true, errors: {} })
 
-    const result = await this.startActivityLogUseCase.execute({
-      activityId: this.state.activityId,
-    })
-
-    if (result.success) {
-      // Añadir el nuevo registro al inicio de la lista
-      this.changeState({
-        ...this.state,
-        logs: [result.log, ...this.state.logs],
-        isLoading: false,
+    try {
+      const result = await this.startActivityLogUseCase.execute({
+        activityId: this.state.activityId,
       })
-    } else {
+
+      if (this.isActivityLogSuccess(result)) {
+        this.changeState({
+          ...this.state,
+          logs: this.state.logs
+            ? {
+                ...this.state.logs,
+                items: [result, ...(this.state.logs.items || [])],
+              }
+            : { items: [result] },
+          isLoading: false,
+        })
+        return
+      }
+
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        error: result.error,
         isLoading: false,
+        errors: mappedErrors,
+      })
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
+      this.changeState({
+        ...this.state,
+        isLoading: false,
+        errors: { general: [message] },
       })
     }
   }
 
   async stopLog(logId: string) {
-    this.changeState({ ...this.state, isLoading: true, error: null })
+    this.changeState({ ...this.state, isLoading: true, errors: {} })
 
-    const result = await this.stopActivityLogUseCase.execute({ logId })
+    try {
+      const result = await this.stopActivityLogUseCase.execute({ id: logId })
 
-    if (result.success) {
-      // Actualizar el log en la lista con la hora de fin y la duración calculada
-      const updatedLogs = this.state.logs.map((log) =>
-        log.id === logId ? result.log : log
-      )
+      if (this.isActivityLogSuccess(result)) {
+        const updatedLogs = this.state.logs?.items?.map((log) =>
+          log.id === logId ? result : log
+        )
+        this.changeState({
+          ...this.state,
+          logs: this.state.logs
+            ? { ...this.state.logs, items: updatedLogs }
+            : null,
+          isLoading: false,
+        })
+        return
+      }
+
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        logs: updatedLogs,
         isLoading: false,
+        errors: mappedErrors,
       })
-    } else {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
       this.changeState({
         ...this.state,
-        error: result.error,
         isLoading: false,
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isActivityLogsSuccess(
+    result: ActivityLogResponsePaginated | ProblemDetails
+  ): result is ActivityLogResponsePaginated {
+    return 'items' in result
+  }
+
+  private isActivityLogSuccess(
+    result: ActivityLogResponse | ProblemDetails
+  ): result is ActivityLogResponse {
+    return 'id' in result && 'activityId' in result
   }
 
   reset() {

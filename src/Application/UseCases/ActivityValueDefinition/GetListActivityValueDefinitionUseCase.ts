@@ -6,15 +6,12 @@
 import type { IUseCase, ApiActivityValueDefinitionTypes } from '../../../Domain'
 import type { IActivityValueDefinitionService } from '../../Services/ActivityValueDefinition/IActivityValueDefinitionService'
 
-type ProblemDetails = ApiActivityValueDefinitionTypes['ProblemDetails']
-
-type GetListActivityValueDefinitionPath =
+export type ProblemDetails = ApiActivityValueDefinitionTypes['ProblemDetails']
+export type GetListActivityValueDefinitionPath =
   ApiActivityValueDefinitionTypes['DefinitionsPath']
-
-type GetListActivityValueDefinitionFilters =
+export type GetListActivityValueDefinitionFilters =
   ApiActivityValueDefinitionTypes['DefinitionFilterPath']
-
-type GetListActivityValueDefinitionPaginatedResponse =
+export type GetListActivityValueDefinitionPaginatedResponse =
   ApiActivityValueDefinitionTypes['ActivityValueDefinitionResponsePaginated']
 
 export class GetListActivityValueDefinitionUseCase implements IUseCase<

@@ -90,7 +90,7 @@ export const ActivityCreate: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? 'Â¡Éxito!' : 'Nueva Actividad'}
+        title={state.success ? '¡Éxito!' : 'Nueva Actividad'}
       >
         {state.success ? (
           <div className={styles.successContainer}>
@@ -128,7 +128,7 @@ export const ActivityCreate: React.FC = () => {
                 className={styles.select}
               >
                 <option value=''>Selecciona una categoría</option>
-                {categoriesState.categories.map((cat) => (
+                {categoriesState.categories?.items?.map((cat) => (
                   <option
                     key={cat.id}
                     value={cat.id}

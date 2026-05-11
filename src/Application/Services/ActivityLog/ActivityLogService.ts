@@ -112,7 +112,7 @@ export class ActivityLogService implements IActivityLogService {
 
   async saveActivityLogValues(
     id: SaveActivityLogValuesParams,
-    requests: SaveLogValuesCommand[]
+    requests: SaveLogValuesCommand
   ): Promise<void | ProblemDetails> {
     try {
       const response = await this.httpClient.post<void | ProblemDetails>(

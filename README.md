@@ -32,15 +32,15 @@
 
 ## ✨ Características Principales
 
-| Feature | Descripción |
-|---------|-------------|
-| 📋 **Gestión de Tareas** | Ciclo de vida completo de tareas diarias |
-| 📊 **Log de Actividades** | Seguimiento detallado de actividad por día |
-| 💰 **Seguimiento Financiero** | Control de ingresos y gastos personales |
-| 📱 **PWA / Offline** | Instalable en cualquier dispositivo, funciona sin internet |
-| 🏗️ **Clean Architecture** | Separación clara de capas: Domain, Application, Infrastructure |
-| 🔄 **Patrón Ploc** | Estado predecible y reactivo sin boilerplate |
-| 🌙 **UI Responsiva** | Diseño adaptable mobile-first |
+| Feature                       | Descripción                                                    |
+| ----------------------------- | -------------------------------------------------------------- |
+| 📋 **Gestión de Tareas**      | Ciclo de vida completo de tareas diarias                       |
+| 📊 **Log de Actividades**     | Seguimiento detallado de actividad por día                     |
+| 💰 **Seguimiento Financiero** | Control de ingresos y gastos personales                        |
+| 📱 **PWA / Offline**          | Instalable en cualquier dispositivo, funciona sin internet     |
+| 🏗️ **Clean Architecture**     | Separación clara de capas: Domain, Application, Infrastructure |
+| 🔄 **Patrón Ploc**            | Estado predecible y reactivo sin boilerplate                   |
+| 🌙 **UI Responsiva**          | Diseño adaptable mobile-first                                  |
 
 ---
 
@@ -134,6 +134,7 @@ UI (pages/components)
 ## 🚀 Inicio Rápido
 
 ### Prerrequisitos
+
 - Node.js `>= 18.x`
 - npm `>= 9.x` o pnpm
 
@@ -220,6 +221,7 @@ git push origin feat/nueva-funcionalidad
 ```
 
 Este proyecto usa **Conventional Commits**. Ejemplos:
+
 - `feat:` — nueva funcionalidad
 - `fix:` — corrección de bug
 - `docs:` — cambios en documentación
@@ -229,9 +231,9 @@ Este proyecto usa **Conventional Commits**. Ejemplos:
 
 ## 📡 Ecosistema THtracker
 
-| Repositorio | Descripción | Estado |
-|-------------|-------------|--------|
-| **THtrackerApp** (este repo) | Frontend PWA — React + TypeScript | ✅ Activo |
+| Repositorio                                                             | Descripción                             | Estado    |
+| ----------------------------------------------------------------------- | --------------------------------------- | --------- |
+| **THtrackerApp** (este repo)                                            | Frontend PWA — React + TypeScript       | ✅ Activo |
 | **[THtracker-api](https://github.com/Santiago-Pineda-M/THtracker-api)** | Backend API — .NET + Clean Architecture | ✅ Activo |
 
 ---
@@ -248,6 +250,6 @@ Este proyecto usa **Conventional Commits**. Ejemplos:
 
 <div align="center">
 
-*Si este proyecto te fue útil, considera darle una ⭐*
+_Si este proyecto te fue útil, considera darle una ⭐_
 
 </div>

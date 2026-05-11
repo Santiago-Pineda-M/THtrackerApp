@@ -12,12 +12,12 @@
  * SRP: solo sabe refrescar tokens. No conoce el storage, no conoce React.
  */
 
-import type { TokenResponse } from '../../../Domain'
+import type { ApiAuthTypes } from '../../../Domain'
 
 export type GetRefreshTokenFn = () => Promise<string | null>
 export type OnSessionRefreshedFn = (
   newAccessToken: string,
-  response: TokenResponse
+  response: ApiAuthTypes['TokenResponse']
 ) => Promise<void>
 
 export class TokenRefreshStrategy {
@@ -91,7 +91,7 @@ export class TokenRefreshStrategy {
         )
       }
 
-      const result: TokenResponse = await response.json()
+      const result: ApiAuthTypes['TokenResponse'] = await response.json()
       if (!result.accessToken || !result.refreshToken)
         throw new Error('Respuesta de refresh incompleta')
 

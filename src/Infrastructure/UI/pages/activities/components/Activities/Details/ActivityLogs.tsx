@@ -4,8 +4,10 @@ import { Modal } from '../../../../../components/molecules'
 import { useDependencies } from '../../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../../Hooks/usePlocState'
 import type { IActivityLogsListState } from '../../../../../../../Domain/IStates'
-import type { ActivityLogResponse } from '../../../../../../../Domain'
+import type { ApiActivityLogsTypes } from '../../../../../../../Domain'
 import styles from './ActivityLogs.module.scss'
+
+type ActivityLogResponse = ApiActivityLogsTypes['ActivityLogResponse']
 
 interface ActivityLogsProps {
   activityId: string
@@ -16,7 +18,7 @@ interface LogDetailData {
   formattedStartDate: string
   formattedStartTime: string
   formattedEndTime: string | null
-  formattedDuration: string
+  durationMinutes: number | null
 }
 
 function formatDuration(minutes: number | null): string {
@@ -35,15 +37,16 @@ function formatDuration(minutes: number | null): string {
   return `${pad(mins)}:${pad(secs)}`
 }
 
-function parseDurationToUnits(
-  minutes: number | null
-): { hours: number; minutes: number; seconds: number } | null {
-  if (!minutes) return null
-  const totalSeconds = Math.round(minutes * 60)
-  const hours = Math.floor(totalSeconds / 3600)
-  const mins = Math.floor((totalSeconds % 3600) / 60)
-  const secs = totalSeconds % 60
-  return { hours, minutes: mins, seconds: secs }
+function calculateDurationMinutes(
+  startedAt: string,
+  endedAt: string | null,
+  now: Date
+): number | null {
+  const start = new Date(startedAt)
+  const end = endedAt ? new Date(endedAt) : now
+  const diffMs = end.getTime() - start.getTime()
+  if (diffMs < 0) return null
+  return diffMs / 60000
 }
 
 export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
@@ -59,8 +62,14 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
   }, [activityId, providerActivityLogsListPloc])
 
   const handleLogClick = (log: ActivityLogResponse) => {
+    if (!log.startedAt || !log.id) return
     const startDate = providerDateProvider.parse(log.startedAt)
     const endDate = log.endedAt ? providerDateProvider.parse(log.endedAt) : null
+    const durationMinutes = calculateDurationMinutes(
+      log.startedAt,
+      log.endedAt ?? null,
+      providerDateProvider.now()
+    )
 
     setSelectedLog({
       log,
@@ -69,7 +78,7 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
       formattedEndTime: endDate
         ? providerDateProvider.formatTime(endDate)
         : null,
-      formattedDuration: formatDuration(log.durationMinutes),
+      durationMinutes,
     })
   }
 
@@ -92,7 +101,7 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
           <div className={styles.loadingContainer}>
             <Spinner size='md' />
           </div>
-        ) : state.logs.length === 0 ? (
+        ) : !state.logs?.items || state.logs.items.length === 0 ? (
           <div className={styles.emptyState}>
             <Text>Aún no hay registros para esta actividad.</Text>
           </div>
@@ -112,11 +121,17 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
                 </tr>
               </thead>
               <tbody>
-                {state.logs.map((log) => {
+                {state.logs.items.map((log) => {
+                  if (!log.startedAt || !log.id) return null
                   const startDate = providerDateProvider.parse(log.startedAt)
                   const endDate = log.endedAt
                     ? providerDateProvider.parse(log.endedAt)
                     : null
+                  const durationMinutes = calculateDurationMinutes(
+                    log.startedAt,
+                    log.endedAt ?? null,
+                    providerDateProvider.now()
+                  )
 
                   return (
                     <tr
@@ -141,15 +156,11 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
                         </Text>
                       </td>
                       <td>
-                        <Text size='sm'>
-                          {formatDuration(log.durationMinutes)}
-                        </Text>
+                        <Text size='sm'>{formatDuration(durationMinutes)}</Text>
                       </td>
                       <td>
-                        <Badge
-                          variant={log.durationMinutes ? 'default' : 'success'}
-                        >
-                          {log.durationMinutes ? 'Completado' : 'En curso'}
+                        <Badge variant={log.endedAt ? 'default' : 'success'}>
+                          {log.endedAt ? 'Completado' : 'En curso'}
                         </Badge>
                       </td>
                     </tr>
@@ -182,49 +193,12 @@ export const ActivityLogs: React.FC<ActivityLogsProps> = ({ activityId }) => {
             </div>
             <div className={styles.detailRow}>
               <Text weight='medium'>Duración:</Text>
-              <Badge
-                variant={
-                  selectedLog.log.durationMinutes ? 'default' : 'success'
-                }
-              >
-                {selectedLog.log.durationMinutes
-                  ? (() => {
-                      const d = parseDurationToUnits(
-                        selectedLog.log.durationMinutes
-                      )
-                      if (!d) return selectedLog.formattedDuration
-                      const pad = (n: number) => n.toString().padStart(2, '0')
-                      return `${pad(d.hours)}:${pad(d.minutes)}:${pad(d.seconds)}`
-                    })()
+              <Badge variant={selectedLog.log.endedAt ? 'default' : 'success'}>
+                {selectedLog.log.endedAt
+                  ? formatDuration(selectedLog.durationMinutes)
                   : 'En curso'}
               </Badge>
             </div>
-            {selectedLog.log.values && selectedLog.log.values.length > 0 && (
-              <div className={styles.valuesSection}>
-                <Text
-                  weight='medium'
-                  className={styles.valuesTitle}
-                >
-                  Valores registrados:
-                </Text>
-                <div className={styles.valuesList}>
-                  {selectedLog.log.values.map((value) => (
-                    <div
-                      key={value.id}
-                      className={styles.valueItem}
-                    >
-                      <Text
-                        size='sm'
-                        color='secondary'
-                      >
-                        ID: {value.valueDefinitionId}
-                      </Text>
-                      <Text size='sm'>Valor: {value.value || 'Sin valor'}</Text>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         )}
       </Modal>

@@ -8,7 +8,12 @@ import {
   type IUserSessionsListState,
   initialUserSessionsListState,
 } from '../../Domain'
-import type { GetUserSessionsUseCase } from '../../Application/UseCases/UserSession'
+import type {
+  GetUserSessionsUseCase,
+  UserSessionResponsePaginated,
+  ProblemDetails,
+} from '../../Application/UseCases/UserSession/GetUserSessionsUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class UserSessionsListPloc extends Ploc<IUserSessionsListState> {
   private readonly getUserSessionsUseCase: GetUserSessionsUseCase
@@ -25,34 +30,50 @@ export class UserSessionsListPloc extends Ploc<IUserSessionsListState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
     try {
-      const result = await this.getUserSessionsUseCase.execute()
+      const result = await this.getUserSessionsUseCase.execute({})
 
+      if (this.isUserSessionsSuccess(result)) {
+        this.changeState({
+          ...this.state,
+          sessions: result,
+          isLoading: false,
+        })
+        return
+      }
+
+      // Error controlado (ProblemDetails)
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        sessions: result.sessions,
+        // No sobrescribir sessions a null para evitar parpadeos en la UI
         isLoading: false,
-        error: null,
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
-      const error =
+      const message =
         err instanceof Error
-          ? { title: 'Error', detail: err.message }
-          : {
-              title: 'Error',
-              detail: 'Error desconocido al cargar las sesiones',
-            }
-
+          ? err.message
+          : 'Error desconocido al cargar las sesiones'
       this.changeState({
         ...this.state,
-        sessions: [],
+        // Tampoco sobrescribir sessions a null en errores inesperados
         isLoading: false,
-        error,
+        errors: { general: [message] },
       })
     }
+  }
+
+  /**
+   * Type guard para verificar que la respuesta es exitosa (contiene 'items').
+   */
+  private isUserSessionsSuccess(
+    result: UserSessionResponsePaginated | ProblemDetails
+  ): result is UserSessionResponsePaginated {
+    return 'items' in result
   }
 
   /**

@@ -1,6 +1,14 @@
-import { Ploc, initialActivityLogStartState } from '../../Domain'
-import type { IActivityLogStartState } from '../../Domain'
-import type { StartActivityLogUseCase } from '../../Application/UseCases/ActivityLog'
+import {
+  Ploc,
+  initialActivityLogStartState,
+  type IActivityLogStartState,
+} from '../../Domain'
+import type {
+  StartActivityLogUseCase,
+  ActivityLogResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/ActivityLog/StartActivityLogUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 /**
  * CONTROLLER LAYER - PLOC para gestionar el inicio de registros de actividad
@@ -22,27 +30,46 @@ export class ActivityLogStartPloc extends Ploc<IActivityLogStartState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
       success: false,
       newLog: null,
     })
 
-    const result = await this.startActivityLogUseCase.execute({ activityId })
+    try {
+      const result = await this.startActivityLogUseCase.execute({ activityId })
 
-    if (result.success) {
+      if (this.isStartLogSuccess(result)) {
+        this.changeState({
+          ...this.state,
+          isLoading: false,
+          success: true,
+          newLog: result,
+        })
+        return
+      }
+
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         isLoading: false,
-        success: true,
-        newLog: result.log,
+        success: false,
+        errors: mappedErrors,
       })
-    } else {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
       this.changeState({
         ...this.state,
         isLoading: false,
-        error: result.error,
+        success: false,
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isStartLogSuccess(
+    result: ActivityLogResponse | ProblemDetails
+  ): result is ActivityLogResponse {
+    return 'id' in result && 'activityId' in result
   }
 
   /**

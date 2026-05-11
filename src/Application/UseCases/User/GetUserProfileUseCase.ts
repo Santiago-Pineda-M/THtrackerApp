@@ -6,13 +6,8 @@
 import type { IUseCase, ApiUserTypes } from '../../../Domain'
 import type { IUserService } from '../../Services/User/IUserService'
 
-type UserProfileResponse = ApiUserTypes['UserResponse']
-type ProblemDetails = ApiUserTypes['ProblemDetails']
-
-/**
- * Output del caso de uso - puede ser éxito o error
- */
-export type GetUserProfileOutput = UserProfileResponse | ProblemDetails
+export type UserProfileResponse = ApiUserTypes['UserResponse']
+export type ProblemDetails = ApiUserTypes['ProblemDetails']
 
 /**
  * Caso de uso para obtener el perfil del usuario autenticado.
@@ -20,7 +15,7 @@ export type GetUserProfileOutput = UserProfileResponse | ProblemDetails
  */
 export class GetUserProfileUseCase implements IUseCase<
   void,
-  GetUserProfileOutput
+  UserProfileResponse | ProblemDetails
 > {
   private readonly userService: IUserService
 
@@ -28,7 +23,7 @@ export class GetUserProfileUseCase implements IUseCase<
     this.userService = userService
   }
 
-  async execute(): Promise<GetUserProfileOutput> {
+  async execute(): Promise<UserProfileResponse | ProblemDetails> {
     const result = await this.userService.getProfile()
 
     return result

@@ -241,7 +241,13 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   } = useMemo(() => parseValue(value), [value])
 
   const handleChange = useCallback(
-    (updates: { y?: number; m?: number; d?: number; h?: number; min?: number }) => {
+    (updates: {
+      y?: number
+      m?: number
+      d?: number
+      h?: number
+      min?: number
+    }) => {
       const ny = updates.y ?? year
       const nm = updates.m ?? month
       const nh = updates.h ?? hour
@@ -261,14 +267,35 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     return Array.from({ length: 11 }, (_, i) => cur + i)
   }, [])
 
-  const daysInMonth = useMemo(() => new Date(year, month, 0).getDate(), [year, month])
-  const days = useMemo(() => Array.from({ length: daysInMonth }, (_, i) => i + 1), [daysInMonth])
+  const daysInMonth = useMemo(
+    () => new Date(year, month, 0).getDate(),
+    [year, month]
+  )
+  const days = useMemo(
+    () => Array.from({ length: daysInMonth }, (_, i) => i + 1),
+    [daysInMonth]
+  )
 
-  const handleDay = useCallback((v: number) => handleChange({ d: v }), [handleChange])
-  const handleMonth = useCallback((v: number) => handleChange({ m: v }), [handleChange])
-  const handleYear = useCallback((v: number) => handleChange({ y: v }), [handleChange])
-  const handleHour = useCallback((v: number) => handleChange({ h: v }), [handleChange])
-  const handleMinute = useCallback((v: number) => handleChange({ min: v }), [handleChange])
+  const handleDay = useCallback(
+    (v: number) => handleChange({ d: v }),
+    [handleChange]
+  )
+  const handleMonth = useCallback(
+    (v: number) => handleChange({ m: v }),
+    [handleChange]
+  )
+  const handleYear = useCallback(
+    (v: number) => handleChange({ y: v }),
+    [handleChange]
+  )
+  const handleHour = useCallback(
+    (v: number) => handleChange({ h: v }),
+    [handleChange]
+  )
+  const handleMinute = useCallback(
+    (v: number) => handleChange({ min: v }),
+    [handleChange]
+  )
 
   return (
     <fieldset

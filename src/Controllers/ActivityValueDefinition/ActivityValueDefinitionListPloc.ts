@@ -1,14 +1,14 @@
-/**
- * CONTROLLER LAYER - ActivityValueDefinitionListPloc
- * PLOC para gestionar la lista de definiciones de valores.
- */
-
 import { Ploc } from '../../Domain/Ploc'
 import {
   type IActivityValueDefinitionsState,
   initialActivityValueDefinitionsState,
 } from '../../Domain'
-import type { GetListActivityValueDefinitionUseCase } from '../../Application/UseCases/ActivityValueDefinition'
+import type {
+  GetListActivityValueDefinitionUseCase,
+  GetListActivityValueDefinitionPaginatedResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/ActivityValueDefinition/GetListActivityValueDefinitionUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class ActivityValueDefinitionListPloc extends Ploc<IActivityValueDefinitionsState> {
   private readonly getValueDefinitionsUseCase: GetListActivityValueDefinitionUseCase
@@ -21,50 +21,76 @@ export class ActivityValueDefinitionListPloc extends Ploc<IActivityValueDefiniti
   }
 
   /**
-   * Carga las definiciones de una actividad.
+   * Establece el ID de la actividad para la cual se cargarán las definiciones.
    */
-  async loadDefinitions(activityId: string): Promise<void> {
+  setActivityId(activityId: string): void {
     this.changeState({
       ...this.state,
       activityId,
+    })
+  }
+
+  /**
+   * Carga las definiciones de valor de la actividad configurada.
+   */
+  async loadDefinitions(): Promise<void> {
+    if (!this.state.activityId) {
+      this.changeState({
+        ...this.state,
+        isLoading: false,
+        errors: { general: ['No se ha especificado el ID de la actividad.'] },
+      })
+      return
+    }
+
+    this.changeState({
+      ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
     try {
       const result = await this.getValueDefinitionsUseCase.execute({
-        activityId,
+        filters: {
+          pageNumber: 1,
+          pageSize: 100,
+        },
+        path: {
+          activityId: this.state.activityId,
+        },
       })
 
-      if (result.success) {
+      if (this.isValueDefinitionsSuccess(result)) {
         this.changeState({
           ...this.state,
-          definitions: result.definitions,
+          definitions: result,
           isLoading: false,
         })
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        definitions: [],
         isLoading: false,
-        error: result.error,
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
       this.changeState({
         ...this.state,
-        definitions: [],
         isLoading: false,
-        error: { title: 'Error', detail: message },
+        errors: { general: [message] },
       })
     }
   }
 
-  /**
-   * Resetea el estado.
-   */
+  private isValueDefinitionsSuccess(
+    result: GetListActivityValueDefinitionPaginatedResponse | ProblemDetails
+  ): result is GetListActivityValueDefinitionPaginatedResponse {
+    return 'items' in result
+  }
+
   reset(): void {
     this.changeState(initialActivityValueDefinitionsState)
   }

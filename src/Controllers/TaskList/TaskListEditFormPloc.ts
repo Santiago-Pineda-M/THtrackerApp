@@ -8,9 +8,18 @@ import {
   type ITaskListEditFormState,
   initialTaskListEditFormState,
 } from '../../Domain'
-import type { GetTaskListByIdUseCase } from '../../Application/UseCases/TaskList/GetTaskListByIdUseCase'
-import type { UpdateTaskListUseCase } from '../../Application/UseCases/TaskList/UpdateTaskListUseCase'
-import type { IUpdateTaskListRequest } from '../../Domain/TaskList'
+import type {
+  GetTaskListByIdUseCase,
+  TaskListResponse,
+  ProblemDetails as GetTaskListByIdProblemDetails,
+} from '../../Application/UseCases/TaskList/GetTaskListByIdUseCase'
+import type {
+  UpdateTaskListUseCase,
+  UpdateTaskListRequest,
+  UpdateTaskListResponse,
+  ProblemDetails as UpdateTaskListProblemDetails,
+} from '../../Application/UseCases/TaskList/UpdateTaskListUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class TaskListEditFormPloc extends Ploc<ITaskListEditFormState> {
   private readonly getTaskListByIdUseCase: GetTaskListByIdUseCase
@@ -38,25 +47,23 @@ export class TaskListEditFormPloc extends Ploc<ITaskListEditFormState> {
     try {
       const result = await this.getTaskListByIdUseCase.execute({ id })
 
-      if (result.success) {
+      if (this.isTaskListResponse(result)) {
         this.changeState({
           ...this.state,
-          id: result.taskList.id,
-          name: result.taskList.name,
-          description: result.taskList.description,
+          id: result.id!,
+          name: result.name!,
+          color: result.color || '#000000', // Valor por defecto si es null
           isLoading: false,
         })
         return
       }
 
+      // Error controlado (ProblemDetails)
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         isLoading: false,
-        errors: {
-          general: [
-            result.error.detail || 'Error al cargar la lista de tareas',
-          ],
-        },
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -69,7 +76,7 @@ export class TaskListEditFormPloc extends Ploc<ITaskListEditFormState> {
   }
 
   /**
-   * Actualiza el nombre en el estado.
+   * Actualiza el nombre en el estado y limpia su error asociado.
    */
   updateName(name: string): void {
     const newErrors = { ...this.state.errors }
@@ -84,21 +91,21 @@ export class TaskListEditFormPloc extends Ploc<ITaskListEditFormState> {
   }
 
   /**
-   * Actualiza la descripción en el estado.
+   * Actualiza el color en el estado y limpia su error asociado.
    */
-  updateDescription(description: string | null): void {
+  updateColor(color: string): void {
+    const newErrors = { ...this.state.errors }
+    delete newErrors.color
     this.changeState({
       ...this.state,
-      description,
+      color,
+      errors: newErrors,
       success: false,
       message: '',
     })
   }
 
-  /**
-   * Envía el formulario de edición.
-   */
-  async submitEdit(request: IUpdateTaskListRequest): Promise<void> {
+  async submitEdit(): Promise<void> {
     this.changeState({
       ...this.state,
       errors: {},
@@ -106,10 +113,17 @@ export class TaskListEditFormPloc extends Ploc<ITaskListEditFormState> {
       isLoading: true,
     })
 
+    //construir el request a partir del estado actual
+    const request: UpdateTaskListRequest = {
+      id: this.state.id!,
+      name: this.state.name,
+      color: this.state.color,
+    }
+
     try {
       const result = await this.updateTaskListUseCase.execute(request)
 
-      if (result.success) {
+      if (this.isTaskListResponse(result)) {
         this.changeState({
           ...this.state,
           success: true,
@@ -119,12 +133,13 @@ export class TaskListEditFormPloc extends Ploc<ITaskListEditFormState> {
         return
       }
 
+      // Error controlado (ProblemDetails)
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        errors: {},
+        errors: mappedErrors,
         success: false,
-        message:
-          result.error.title || 'Error al actualizar la lista de tareas.',
+        message: result.title || 'Error al actualizar la lista de tareas.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -137,6 +152,20 @@ export class TaskListEditFormPloc extends Ploc<ITaskListEditFormState> {
         isLoading: false,
       })
     }
+  }
+
+  /**
+   * Type guard para distinguir una respuesta exitosa de un ProblemDetails.
+   * Tanto TaskListResponse como UpdateTaskListResponse deben tener 'id'.
+   */
+  private isTaskListResponse(
+    result:
+      | TaskListResponse
+      | UpdateTaskListResponse
+      | GetTaskListByIdProblemDetails
+      | UpdateTaskListProblemDetails
+  ): result is TaskListResponse | UpdateTaskListResponse {
+    return 'id' in result
   }
 
   /**

@@ -33,7 +33,9 @@ export const ValueDefinitionDelete: React.FC<ValueDefinitionDeleteProps> = ({
   const handleClose = () => {
     setIsModalOpen(false)
     if (state.success) {
-      providerActivityValueDefinitionsListPloc.loadDefinitions(activityId)
+      providerActivityValueDefinitionsListPloc.setActivityId(activityId)
+
+      providerActivityValueDefinitionsListPloc.loadDefinitions()
     }
     providerValueDefinitionDeletePloc.reset()
   }
@@ -73,7 +75,7 @@ export const ValueDefinitionDelete: React.FC<ValueDefinitionDeleteProps> = ({
           </div>
         ) : (
           <div className={styles.modalContent}>
-            {state.error && (
+            {state.errors && (
               <Text
                 size='sm'
                 className={styles.errorMessage}
@@ -81,7 +83,7 @@ export const ValueDefinitionDelete: React.FC<ValueDefinitionDeleteProps> = ({
                   color: '#ef4444',
                 }}
               >
-                {state.error.title || 'Error al eliminar la propiedad.'}
+                {state.errors.title || 'Error al eliminar la propiedad.'}
               </Text>
             )}
 

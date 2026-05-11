@@ -4,30 +4,20 @@
  */
 
 import { Ploc } from '../../Domain/Ploc'
-
-export interface ICategoryDeleteState {
-  isLoading: boolean
-  success: boolean
-  error: {
-    title?: string
-    detail?: string
-  } | null
-  message: string
-}
-
-export const initialCategoryDeleteState: ICategoryDeleteState = {
-  isLoading: false,
-  success: false,
-  error: null,
-  message: '',
-}
+import {
+  type ICategoryDeleteState,
+  initialCategoryDeleteState,
+} from '../../Domain'
+import type {
+  DeleteCategoryUseCase,
+  ProblemDetails,
+} from '../../Application/UseCases/Category/DeleteCategoryUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class CategoryDeletePloc extends Ploc<ICategoryDeleteState> {
-  private readonly deleteCategoryUseCase: import('../../Application/UseCases/Category').DeleteCategoryUseCase
+  private readonly deleteCategoryUseCase: DeleteCategoryUseCase
 
-  constructor(
-    deleteCategoryUseCase: import('../../Application/UseCases/Category').DeleteCategoryUseCase
-  ) {
+  constructor(deleteCategoryUseCase: DeleteCategoryUseCase) {
     super(initialCategoryDeleteState)
     this.deleteCategoryUseCase = deleteCategoryUseCase
   }
@@ -39,20 +29,19 @@ export class CategoryDeletePloc extends Ploc<ICategoryDeleteState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
-      message: '',
+      errors: {},
     })
 
     try {
       const result = await this.deleteCategoryUseCase.execute({ id })
 
-      if (result.success) {
+      if (this.isCategoryDeleteError(result)) {
+        const mappedErrors = mapProblemDetailsToErrors(result)
         this.changeState({
           ...this.state,
           isLoading: false,
-          success: true,
-          message: 'Categoría eliminada correctamente.',
-          error: null,
+          success: false,
+          errors: mappedErrors,
         })
         return
       }
@@ -60,27 +49,29 @@ export class CategoryDeletePloc extends Ploc<ICategoryDeleteState> {
       this.changeState({
         ...this.state,
         isLoading: false,
-        success: false,
-        error: result.error,
-        message: result.error.title || 'Error al eliminar la categoría.',
+        success: true,
       })
     } catch (err: unknown) {
-      const error =
+      const message =
         err instanceof Error
-          ? { title: 'Error', detail: err.message }
-          : {
-              title: 'Error',
-              detail: 'Error desconocido al eliminar la categoría',
-            }
-
+          ? err.message
+          : 'Error desconocido al eliminar la categoría'
       this.changeState({
         ...this.state,
         isLoading: false,
         success: false,
-        error,
-        message: error.detail || 'Error desconocido',
+        errors: { general: [message] },
       })
     }
+  }
+
+  /**
+   * Type guard para verificar si el resultado es un error.
+   */
+  private isCategoryDeleteError(
+    result: void | ProblemDetails
+  ): result is ProblemDetails {
+    return typeof result === 'object' && result !== null && 'type' in result
   }
 
   /**

@@ -9,10 +9,10 @@ import type { IActivityService } from '../../Services/Activity/IActivityService'
 /**
  * Input del caso de uso
  */
-type UpdateActivityRequest = ApiActivitiesTypes['UpdateActivityCommand']
-type ActivityResponse = ApiActivitiesTypes['ActivityResponse']
-type ApiErrorResponse = ApiActivitiesTypes['ProblemDetails']
-type UpdateActivityPath = ApiActivitiesTypes['UpdateActivityPath']
+export type UpdateActivityRequest = ApiActivitiesTypes['UpdateActivityCommand']
+export type ActivityResponse = ApiActivitiesTypes['ActivityResponse']
+export type ProblemDetails = ApiActivitiesTypes['ProblemDetails']
+export type UpdateActivityPath = ApiActivitiesTypes['UpdateActivityPath']
 
 /**
  * Caso de uso para actualizar una actividad existente.
@@ -20,7 +20,7 @@ type UpdateActivityPath = ApiActivitiesTypes['UpdateActivityPath']
  */
 export class UpdateActivityUseCase implements IUseCase<
   UpdateActivityRequest,
-  ActivityResponse | ApiErrorResponse
+  ActivityResponse | ProblemDetails
 > {
   private readonly activityService: IActivityService
 
@@ -30,7 +30,7 @@ export class UpdateActivityUseCase implements IUseCase<
 
   async execute(
     input: UpdateActivityRequest
-  ): Promise<ActivityResponse | ApiErrorResponse> {
+  ): Promise<ActivityResponse | ProblemDetails> {
     const path: UpdateActivityPath = { id: input.id || '' }
     return await this.activityService.updateActivity(path, input)
   }

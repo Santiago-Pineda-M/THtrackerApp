@@ -1,7 +1,12 @@
 import { Ploc } from '../../Domain/Ploc'
 import { type IRegisterState, initialRegisterState } from '../../Domain/IStates'
-import { isApiError, type IRegisterRequest, type ILoginResponseError } from '../../Domain'
-import type { RegisterUseCases } from '../../Application/UseCases/Auth'
+import {
+  type RegisterCommand,
+  type UserResponse,
+  type ProblemDetails,
+  type RegisterUseCases,
+} from '../../Application/UseCases/Auth/RegisterUsesCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class RegisterPloc extends Ploc<IRegisterState> {
   private readonly registerUseCases: RegisterUseCases
@@ -50,14 +55,14 @@ export class RegisterPloc extends Ploc<IRegisterState> {
     })
 
     try {
-      const request: IRegisterRequest = {
+      const request: RegisterCommand = {
         name: name.trim(),
         email: email.trim(),
         password,
       }
       const result = await this.registerUseCases.execute(request)
 
-      if (!isApiError(result)) {
+      if (this.isRegisterSuccess(result)) {
         // Registro exitoso
         this.changeState({
           ...this.state,
@@ -73,19 +78,17 @@ export class RegisterPloc extends Ploc<IRegisterState> {
         return
       }
 
-      // Error en registro
-      const errorResult = result as ILoginResponseError
-      const rawErrors = errorResult.errors ?? { general: [errorResult.title] }
-      const errors = this.normalizeErrorKeys(rawErrors)
+      const errorResult = result as ProblemDetails
+      const mappedErrors = mapProblemDetailsToErrors(errorResult)
       this.changeState({
         ...this.state,
         name,
         email,
         password,
         confirmPassword,
-        errors,
+        errors: mappedErrors,
         success: false,
-        message: errorResult.title,
+        message: errorResult.title || 'Error al crear la cuenta.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -103,6 +106,12 @@ export class RegisterPloc extends Ploc<IRegisterState> {
         isLoading: false,
       })
     }
+  }
+
+  private isRegisterSuccess(
+    result: UserResponse | ProblemDetails
+  ): result is UserResponse {
+    return 'id' in result && 'email' in result
   }
 
   updateName(name: string): void {
@@ -130,9 +139,6 @@ export class RegisterPloc extends Ploc<IRegisterState> {
     this.changeState({ ...this.state, confirmPassword, errors: newErrors })
   }
 
-  /**
-   * Resetea el estado del formulario de registro.
-   */
   reset(): void {
     this.changeState(initialRegisterState)
   }
@@ -182,15 +188,5 @@ export class RegisterPloc extends Ploc<IRegisterState> {
 
   private hasValidPassword(password: string): boolean {
     return /[A-Z]/.test(password) && /[0-9]/.test(password)
-  }
-
-  private normalizeErrorKeys(
-    errors: Record<string, string[]>
-  ): Record<string, string[]> {
-    const normalized: Record<string, string[]> = {}
-    for (const [key, value] of Object.entries(errors)) {
-      normalized[key.toLowerCase()] = value
-    }
-    return normalized
   }
 }

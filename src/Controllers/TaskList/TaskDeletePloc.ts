@@ -1,11 +1,10 @@
-/**
- * CONTROLLER LAYER - TaskDeletePloc
- * PLOC para la eliminación de tareas.
- */
-
 import { Ploc } from '../../Domain/Ploc'
 import { type ITaskDeleteState, initialTaskDeleteState } from '../../Domain'
-import type { DeleteTaskUseCase } from '../../Application/UseCases/Task/DeleteTaskUseCase'
+import type {
+  DeleteTaskUseCase,
+  DeleteTaskRequest,
+} from '../../Application/UseCases/Task/DeleteTaskUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class TaskDeletePloc extends Ploc<ITaskDeleteState> {
   private readonly deleteTaskUseCase: DeleteTaskUseCase
@@ -18,18 +17,19 @@ export class TaskDeletePloc extends Ploc<ITaskDeleteState> {
   /**
    * Elimina una tarea por su ID.
    */
-  async deleteTask(id: string, taskListId: string): Promise<void> {
+  async deleteTask(DeleteTaskRequest: DeleteTaskRequest): Promise<void> {
     this.changeState({
       ...this.state,
       isLoading: true,
       success: false,
-      error: null,
+      errors: {},
     })
 
     try {
-      const result = await this.deleteTaskUseCase.execute({ id, taskListId })
+      const result = await this.deleteTaskUseCase.execute(DeleteTaskRequest)
 
-      if (result.success) {
+      // En el nuevo patrón, la eliminación exitosa devuelve void (undefined)
+      if (!result) {
         this.changeState({
           ...this.state,
           isLoading: false,
@@ -38,11 +38,15 @@ export class TaskDeletePloc extends Ploc<ITaskDeleteState> {
         return
       }
 
+      // Si hay respuesta, es un ProblemDetails (error)
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         isLoading: false,
         success: false,
-        error: result.error,
+        errors: mappedErrors,
+        // Opcional: puedes almacenar un mensaje resumen (requiere que el estado tenga `message`)
+        // message: result.title || 'Error al eliminar la tarea.',
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -50,14 +54,11 @@ export class TaskDeletePloc extends Ploc<ITaskDeleteState> {
         ...this.state,
         isLoading: false,
         success: false,
-        error: { title: 'Error', detail: message },
+        errors: { general: [message] },
       })
     }
   }
 
-  /**
-   * Resetea el estado.
-   */
   reset(): void {
     this.changeState(initialTaskDeleteState)
   }

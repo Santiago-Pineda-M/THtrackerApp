@@ -6,17 +6,10 @@
 import type { IUseCase, ApiCategoriesTypes } from '../../../Domain'
 import type { ICategoryService } from '../../Services/Category/ICategoryService'
 
-type ProblemDetails = ApiCategoriesTypes['ProblemDetails']
-type CategoryResponsePaginatedResponse =
+export type ProblemDetails = ApiCategoriesTypes['ProblemDetails']
+export type CategoryResponsePaginatedResponse =
   ApiCategoriesTypes['CategoryPaginatedResponse']
-type GetCategoriesRequest = ApiCategoriesTypes['GetCategoriesFilters']
-
-/**
- * Output del caso de uso - puede ser éxito o error
- */
-export type GetCategoriesOutput =
-  | CategoryResponsePaginatedResponse
-  | ProblemDetails
+export type GetCategoriesRequest = ApiCategoriesTypes['GetCategoriesFilters']
 
 /**
  * Caso de uso para obtener todas las categorías del usuario autenticado.
@@ -24,7 +17,7 @@ export type GetCategoriesOutput =
  */
 export class GetCategoriesUseCase implements IUseCase<
   GetCategoriesRequest,
-  GetCategoriesOutput
+  CategoryResponsePaginatedResponse | ProblemDetails
 > {
   private readonly categoryService: ICategoryService
 
@@ -32,7 +25,9 @@ export class GetCategoriesUseCase implements IUseCase<
     this.categoryService = categoryService
   }
 
-  async execute(filters?: GetCategoriesRequest): Promise<GetCategoriesOutput> {
+  async execute(
+    filters?: GetCategoriesRequest
+  ): Promise<CategoryResponsePaginatedResponse | ProblemDetails> {
     return await this.categoryService.getCategories(filters)
   }
 }

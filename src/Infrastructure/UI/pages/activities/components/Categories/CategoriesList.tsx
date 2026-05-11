@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Card, Divider } from '../../../../components'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
@@ -15,7 +15,7 @@ export const CategoriesList: React.FC = () => {
 
   useEffect(() => {
     providerCategoriesListPloc.loadCategories()
-  }, [categoriesListState.categories.length, providerCategoriesListPloc])
+  }, [providerCategoriesListPloc])
 
   return (
     <Card
@@ -26,12 +26,15 @@ export const CategoriesList: React.FC = () => {
     >
       <Divider spacing='none' />
       <ul className={styles.list}>
-        {categoriesListState.categories.map((category) => (
-          <CategoriesListItem
-            key={category.id}
-            category={category}
-          />
-        ))}
+        {categoriesListState.categories?.items?.map((category) => {
+          if (!category.id) return null
+          return (
+            <CategoriesListItem
+              key={category.id}
+              category={category}
+            />
+          )
+        })}
       </ul>
       <Divider spacing='none' />
       <div className={styles.footerActions}>

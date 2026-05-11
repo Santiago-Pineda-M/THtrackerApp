@@ -5,9 +5,9 @@
 import type { IUseCase, ApiActivityLogsTypes } from '../../../Domain'
 import type { IActivityLogService } from '../../Services/ActivityLog/IActivityLogService'
 
-type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
-type ActivityLogResponse = ApiActivityLogsTypes['ActivityLogResponse']
-type StartActivityCommand = ApiActivityLogsTypes['StartActivityCommand']
+export type ProblemDetails = ApiActivityLogsTypes['ProblemDetails']
+export type ActivityLogResponse = ApiActivityLogsTypes['ActivityLogResponse']
+export type StartActivityCommand = ApiActivityLogsTypes['StartActivityCommand']
 
 export class StartActivityLogUseCase implements IUseCase<
   StartActivityCommand,

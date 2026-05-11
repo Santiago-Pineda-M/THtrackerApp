@@ -7,21 +7,17 @@ import type { IUseCase } from '../../../Domain'
 import type { ICategoryService } from '../../Services/Category/ICategoryService'
 import type { ApiCategoriesTypes } from '../../../Domain'
 
-type CreateCategoryCommand = ApiCategoriesTypes['CreateCategoryCommand']
-type CategoryResponse = ApiCategoriesTypes['CategoryResponse']
-type ProblemDetails = ApiCategoriesTypes['ProblemDetails']
+export type CreateCategoryCommand = ApiCategoriesTypes['CreateCategoryCommand']
+export type CategoryResponse = ApiCategoriesTypes['CategoryResponse']
+export type ProblemDetails = ApiCategoriesTypes['ProblemDetails']
 
-/**
- * Output del caso de uso - puede ser éxito o error
- */
-export type CreateCategoryOutput = CategoryResponse | ProblemDetails
 /**
  * Caso de uso para crear una nueva categoría.
  * POST /api/v1/categories
  */
 export class CreateCategoryUseCase implements IUseCase<
   CreateCategoryCommand,
-  CreateCategoryOutput
+  CategoryResponse | ProblemDetails
 > {
   private readonly categoryService: ICategoryService
 
@@ -29,7 +25,9 @@ export class CreateCategoryUseCase implements IUseCase<
     this.categoryService = categoryService
   }
 
-  async execute(input: CreateCategoryCommand): Promise<CreateCategoryOutput> {
+  async execute(
+    input: CreateCategoryCommand
+  ): Promise<CategoryResponse | ProblemDetails> {
     const request: CreateCategoryCommand = {
       name: input.name,
       color: input.color,

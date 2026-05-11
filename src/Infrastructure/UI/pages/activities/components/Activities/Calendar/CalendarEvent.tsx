@@ -1,7 +1,9 @@
 import React from 'react'
 import styles from './CalendarEvent.module.scss'
 
-import type { ActivityLogResponse } from '../../../../../../../Domain'
+import type { ApiActivityLogsTypes } from '../../../../../../../Domain'
+
+type ActivityLogResponse = ApiActivityLogsTypes['ActivityLogResponse']
 
 export interface LogEventView {
   id: string

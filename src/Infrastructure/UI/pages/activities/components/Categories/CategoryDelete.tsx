@@ -1,37 +1,50 @@
-﻿import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Button, Text, Modal, Icon } from '../../../../components'
 import { useDependencies } from '../../../../../Context/useDependencies'
 import { usePlocState } from '../../../../../Hooks/usePlocState'
-import type { ICategory } from '../../../../../../Domain'
-import type { ICategoryDeleteState } from '../../../../../../Controllers/Category/CategoryDeletePloc'
+import type { ApiCategoriesTypes } from '../../../../../../Domain'
+import type { ICategoryDeleteState } from '../../../../../../Domain/IStates'
 import styles from './CategoryDelete.module.scss'
 
+type CategoryType = ApiCategoriesTypes['CategoryResponse']
+
 interface CategoryDeleteProps {
-  category: ICategory
+  category: CategoryType
 }
 
 export const CategoryDelete: React.FC<CategoryDeleteProps> = ({ category }) => {
+  // 1. TODOS los hooks deben ir aquí, sin condiciones
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { providerCategoryDeletePloc, providerCategoriesListPloc } =
     useDependencies()
   const state = usePlocState<ICategoryDeleteState>(providerCategoryDeletePloc)
 
-  const handleOpen = () => {
+  const handleOpen = useCallback(() => {
     providerCategoryDeletePloc.reset()
     setIsModalOpen(true)
-  }
+  }, [providerCategoryDeletePloc])
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsModalOpen(false)
     if (state.success) {
-      providerCategoriesListPloc.loadCategories() // Reload ONLY after closing the success message
+      providerCategoriesListPloc.loadCategories()
     }
     providerCategoryDeletePloc.reset()
-  }
+  }, [state.success, providerCategoryDeletePloc, providerCategoriesListPloc])
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
+    // Evitar spam si ya está cargando
+    if (state.isLoading) return
+    // category.id podría ser undefined, pero el early return lo impide en práctica
+    if (!category.id) return
     await providerCategoryDeletePloc.deleteCategory(category.id)
-  }
+  }, [state.isLoading, providerCategoryDeletePloc, category.id])
+
+  // Verificar si hay errores (antes era state.errors > 0, lo que es incorrecto)
+  const hasErrors = state.errors && Object.keys(state.errors).length > 0
+
+  // 2. Ahora sí podemos hacer el early return de forma segura
+  if (!category.id) return null
 
   return (
     <>
@@ -49,36 +62,32 @@ export const CategoryDelete: React.FC<CategoryDeleteProps> = ({ category }) => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleClose}
-        title={state.success ? 'Â¡Éxito!' : 'Eliminar Categoría'}
+        title={state.success ? '¡Éxito!' : 'Eliminar Categoría'}
       >
         {state.success ? (
           <div className={styles['success-container']}>
-            <Text>
-              {state.message || 'La categoría se ha eliminado con éxito.'}
-            </Text>
+            <Text>La categoría se ha eliminado con éxito.</Text>
             <div className={styles['success-actions']}>
               <Button onClick={handleClose}>Cerrar</Button>
             </div>
           </div>
         ) : (
           <div className={styles['modal-content']}>
-            {state.message && (
+            {hasErrors && (
               <Text
                 size='sm'
                 style={{
-                  color: state.error
-                    ? 'var(--danger-color, #ff4d4f)'
-                    : 'var(--success-color, #52c41a)',
+                  color: 'var(--danger-color, #ff4d4f)',
                   marginBottom: '16px',
                   display: 'block',
                 }}
               >
-                {state.message}
+                {state.errors?.[0] || 'Error al eliminar la categoría.'}
               </Text>
             )}
 
             <Text className={styles['modal-text']}>
-              Â¿Estás seguro de que deseas eliminar la categoría{' '}
+              ¿Estás seguro de que deseas eliminar la categoría{' '}
               <strong>{category.name}</strong>?
             </Text>
 

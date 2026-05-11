@@ -5,7 +5,12 @@
 
 import { Ploc } from '../../Domain/Ploc'
 import { type ITaskToggleState, initialTaskToggleState } from '../../Domain'
-import type { ToggleTaskUseCase } from '../../Application/UseCases/Task/ToggleTaskUseCase'
+import type {
+  ToggleTaskUseCase,
+  ToggleTaskResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/Task/ToggleTaskUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class TaskTogglePloc extends Ploc<ITaskToggleState> {
   private readonly toggleTaskUseCase: ToggleTaskUseCase
@@ -24,13 +29,13 @@ export class TaskTogglePloc extends Ploc<ITaskToggleState> {
       taskId: id,
       isLoading: true,
       success: false,
-      error: null,
+      errors: {},
     })
 
     try {
       const result = await this.toggleTaskUseCase.execute({ id })
 
-      if (result.success) {
+      if (this.isToggleTaskSuccess(result)) {
         this.changeState({
           ...this.state,
           isLoading: false,
@@ -39,11 +44,12 @@ export class TaskTogglePloc extends Ploc<ITaskToggleState> {
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         isLoading: false,
         success: false,
-        error: result.error,
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -51,9 +57,15 @@ export class TaskTogglePloc extends Ploc<ITaskToggleState> {
         ...this.state,
         isLoading: false,
         success: false,
-        error: { title: 'Error', detail: message },
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isToggleTaskSuccess(
+    result: ToggleTaskResponse | ProblemDetails
+  ): result is ToggleTaskResponse {
+    return 'id' in result && 'content' in result
   }
 
   /**

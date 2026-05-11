@@ -5,9 +5,17 @@
 
 import { Ploc } from '../../Domain/Ploc'
 import { type ITaskEditFormState, initialTaskEditFormState } from '../../Domain'
-import type { GetTaskByIdUseCase } from '../../Application/UseCases/Task/GetTaskByIdUseCase'
-import type { UpdateTaskUseCase } from '../../Application/UseCases/Task/UpdateTaskUseCase'
-import type { IUpdateTaskRequest } from '../../Domain/TaskList'
+import type {
+  GetTaskByIdUseCase,
+  TaskResponse,
+  ProblemDetails as GetTaskByIdProblemDetails,
+} from '../../Application/UseCases/Task/GetTaskByIdUseCase'
+import type {
+  UpdateTaskUseCase,
+  UpdateTaskRequest,
+  ProblemDetails as UpdateTaskProblemDetails,
+} from '../../Application/UseCases/Task/UpdateTaskUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
   private readonly getTaskByIdUseCase: GetTaskByIdUseCase
@@ -35,11 +43,11 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
     try {
       const result = await this.getTaskByIdUseCase.execute({ id })
 
-      if (result.success) {
+      if (this.isTaskResponse(result)) {
         let formattedDueDate = ''
-        if (result.task.dueDate) {
+        if (result.dueDate) {
           try {
-            const date = new Date(result.task.dueDate)
+            const date = new Date(result.dueDate)
             // Formato YYYY-MM-DDTHH:mm para input datetime-local
             formattedDueDate = new Date(
               date.getTime() - date.getTimezoneOffset() * 60000
@@ -53,22 +61,22 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
 
         this.changeState({
           ...this.state,
-          id: result.task.id,
-          taskListId: result.task.taskListId,
-          content: result.task.content,
+          id: result.id!,
+          taskListId: result.taskListId!,
+          content: result.content!,
           dueDate: formattedDueDate,
-          showDueDate: !!result.task.dueDate,
+          showDueDate: !!result.dueDate,
           isLoading: false,
         })
         return
       }
 
+      // Error controlado (ProblemDetails)
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
         isLoading: false,
-        errors: {
-          general: [result.error.detail || 'Error al cargar la tarea'],
-        },
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -136,8 +144,9 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
 
   /**
    * Envía el formulario de edición.
+   * @param request - Comando base con los datos actualizados (incluye id, taskListId, content, etc.)
    */
-  async submitEdit(request: IUpdateTaskRequest): Promise<void> {
+  async submitEdit(request: UpdateTaskRequest): Promise<void> {
     this.changeState({
       ...this.state,
       errors: {},
@@ -151,7 +160,7 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
         try {
           dueDate = new Date(this.state.dueDate).toISOString()
         } catch {
-          // Si la fecha es inválida
+          // Fecha inválida: se deja undefined
         }
       }
 
@@ -160,7 +169,7 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
         dueDate,
       })
 
-      if (result.success) {
+      if (this.isTaskResponse(result)) {
         this.changeState({
           ...this.state,
           success: true,
@@ -170,11 +179,13 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
         return
       }
 
+      // Error controlado (ProblemDetails)
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        errors: {},
+        errors: mappedErrors,
         success: false,
-        message: result.error.title || 'Error al actualizar la tarea.',
+        message: result.title || 'Error al actualizar la tarea.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -187,6 +198,16 @@ export class TaskEditFormPloc extends Ploc<ITaskEditFormState> {
         isLoading: false,
       })
     }
+  }
+
+  /**
+   * Type guard para distinguir una respuesta exitosa (TaskResponse) de un ProblemDetails.
+   * TaskResponse contiene la propiedad 'id'; ProblemDetails no.
+   */
+  private isTaskResponse(
+    result: TaskResponse | UpdateTaskProblemDetails | GetTaskByIdProblemDetails
+  ): result is TaskResponse {
+    return 'id' in result
   }
 
   /**

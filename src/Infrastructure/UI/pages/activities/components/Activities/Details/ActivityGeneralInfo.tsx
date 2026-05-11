@@ -28,20 +28,20 @@ export const ActivityGeneralInfo: React.FC<ActivityGeneralInfoProps> = ({
 
   useEffect(() => {
     providerActivityDetailPloc.loadActivity(activityId)
-    if (categoriesState.categories.length === 0) {
+    if (categoriesState.categories?.items?.length === 0) {
       providerCategoriesListPloc.loadCategories()
     }
   }, [
     activityId,
     providerActivityDetailPloc,
     providerCategoriesListPloc,
-    categoriesState.categories.length,
+    categoriesState.categories?.items?.length,
   ])
 
   const { activity } = activityState
   if (!activity) return null
 
-  const category = categoriesState.categories.find(
+  const category = categoriesState.categories?.items?.find(
     (c) => c.id === activity.categoryId
   )
   const activityColor = activity.color || '#c5c5c5'
@@ -127,9 +127,9 @@ export const ActivityGeneralInfo: React.FC<ActivityGeneralInfoProps> = ({
       </div>
 
       <div className={styles.actions}>
-        <ActivityEdit activityId={activity.id} />
+        <ActivityEdit activityId={activity.id!} />
         <ActivityDelete
-          activityId={activity.id}
+          activityId={activity.id!}
           activityName={activity.name || 'Sin nombre'}
         />
       </div>

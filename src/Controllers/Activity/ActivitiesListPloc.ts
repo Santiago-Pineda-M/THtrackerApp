@@ -8,7 +8,12 @@ import {
   type IActivitiesListState,
   initialActivitiesListState,
 } from '../../Domain'
-import type { GetActivitiesUseCase } from '../../Application/UseCases/Activity'
+import {
+  type GetActivitiesUseCase,
+  type ActivityPaginatedResponse,
+  type ProblemDetails,
+} from '../../Application/UseCases/Activity/GetActivitiesUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class ActivitiesListPloc extends Ploc<IActivitiesListState> {
   private readonly getActivitiesUseCase: GetActivitiesUseCase
@@ -25,7 +30,7 @@ export class ActivitiesListPloc extends Ploc<IActivitiesListState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
     try {
@@ -34,38 +39,41 @@ export class ActivitiesListPloc extends Ploc<IActivitiesListState> {
         pageSize: 10,
       })
 
-      if (result.items) {
+      if (this.isActivitiesSuccess(result)) {
         this.changeState({
           ...this.state,
-          activities: result.items,
+          activities: result,
           isLoading: false,
-          error: null,
+          errors: {},
         })
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        activities: [],
+        activities: null,
         isLoading: false,
-        error: result.error,
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
-      const error =
+      const message =
         err instanceof Error
-          ? { title: 'Error', detail: err.message }
-          : {
-              title: 'Error',
-              detail: 'Error desconocido al cargar las actividades',
-            }
-
+          ? err.message
+          : 'Error desconocido al cargar las actividades'
       this.changeState({
         ...this.state,
-        activities: [],
+        activities: null,
         isLoading: false,
-        error,
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isActivitiesSuccess(
+    result: ActivityPaginatedResponse | ProblemDetails
+  ): result is ActivityPaginatedResponse {
+    return 'items' in result
   }
 
   /**

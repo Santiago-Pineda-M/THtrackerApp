@@ -46,7 +46,7 @@ export class ActivityService implements IActivityService {
     try {
       const response = await this.httpClient.get<
         ActivityResponse | ApiErrorResponse
-      >(`${this.baseUrl}/${id}`, { cacheTtl: 5 * 60 * 1000 })
+      >(`${this.baseUrl}/${id.id}`, { cacheTtl: 5 * 60 * 1000 })
       if (response.status === 200) return response.data as ActivityResponse
       return response.data as ApiErrorResponse
     } catch (error) {

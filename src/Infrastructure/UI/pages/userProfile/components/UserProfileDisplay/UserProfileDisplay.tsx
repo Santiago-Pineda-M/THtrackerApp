@@ -46,7 +46,9 @@ export const UserProfileDisplay: React.FC = () => {
     )
   }
 
-  if (state.error) {
+  // saver si el dicionario d eerrores tiene contenido
+  if (state.errors && Object.keys(state.errors).length > 0) {
+    const errorMessages = Object.values(state.errors)
     return (
       <Card
         h={2}
@@ -57,9 +59,7 @@ export const UserProfileDisplay: React.FC = () => {
           size='sm'
           className='error'
         >
-          {state.error.detail ||
-            state.error.title ||
-            'Error al cargar el perfil'}
+          {errorMessages.join(', ') || 'Error al cargar el perfil'}
         </Text>
       </Card>
     )

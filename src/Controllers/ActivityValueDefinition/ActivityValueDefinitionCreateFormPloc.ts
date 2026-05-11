@@ -8,7 +8,12 @@ import {
   type IValueDefinitionCreateFormState,
   initialValueDefinitionCreateFormState,
 } from '../../Domain'
-import type { CreateActivityValueDefinitionUseCase } from '../../Application/UseCases/ActivityValueDefinition'
+import type {
+  CreateActivityValueDefinitionUseCase,
+  ProblemDetails,
+  ActivityValueDefinitionResponse,
+} from '../../Application/UseCases/ActivityValueDefinition/CreateActivityValueDefinitionUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class ActivityValueDefinitionCreateFormPloc extends Ploc<IValueDefinitionCreateFormState> {
   private readonly createValueDefinitionUseCase: CreateActivityValueDefinitionUseCase
@@ -97,7 +102,7 @@ export class ActivityValueDefinitionCreateFormPloc extends Ploc<IValueDefinition
 
       const result = await this.createValueDefinitionUseCase.execute(request)
 
-      if (result.success) {
+      if (this.isCreateDefinitionSuccess(result)) {
         this.changeState({
           ...this.state,
           success: true,
@@ -107,19 +112,12 @@ export class ActivityValueDefinitionCreateFormPloc extends Ploc<IValueDefinition
         return
       }
 
-      const errorResult = result.error
-      const rawErrors = errorResult.errors ?? {
-        general: [errorResult.title || errorResult.detail],
-      }
-      const errors = this.normalizeErrorKeys(
-        rawErrors as Record<string, string[]>
-      )
-
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        errors,
+        errors: mappedErrors,
         success: false,
-        message: errorResult.title || 'Error al crear la definición.',
+        message: result.title || 'Error al crear la definición.',
         isLoading: false,
       })
     } catch (err: unknown) {
@@ -132,6 +130,12 @@ export class ActivityValueDefinitionCreateFormPloc extends Ploc<IValueDefinition
         isLoading: false,
       })
     }
+  }
+
+  private isCreateDefinitionSuccess(
+    result: ActivityValueDefinitionResponse | ProblemDetails
+  ): result is ActivityValueDefinitionResponse {
+    return 'id' in result && 'name' in result
   }
 
   /**
@@ -147,15 +151,5 @@ export class ActivityValueDefinitionCreateFormPloc extends Ploc<IValueDefinition
       errors.name = ['El nombre es requerido']
     }
     return errors
-  }
-
-  private normalizeErrorKeys(
-    errors: Record<string, string[]>
-  ): Record<string, string[]> {
-    const normalized: Record<string, string[]> = {}
-    for (const [key, value] of Object.entries(errors)) {
-      normalized[key.toLowerCase()] = value
-    }
-    return normalized
   }
 }

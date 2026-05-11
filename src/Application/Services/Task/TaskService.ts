@@ -9,6 +9,7 @@ type ProblemDetails = ApiTasksTypes['ProblemDetails']
 
 type TaskByListPath = ApiTasksTypes['TaskByListPath']
 type TaskIdPath = ApiTasksTypes['TaskIdPath']
+type GetTasksByListQuery = ApiTasksTypes['GetTasksByListQuery']
 
 export class TaskService implements ITaskService {
   private readonly httpClient: IHttpClient
@@ -19,12 +20,15 @@ export class TaskService implements ITaskService {
   }
 
   async getTasksByList(
-    path: TaskByListPath
+    path: TaskByListPath,
+    query: GetTasksByListQuery
   ): Promise<TaskResponsePaginated | ProblemDetails> {
     try {
       const response = await this.httpClient.get<
         TaskResponsePaginated | ProblemDetails
-      >(`${this.baseUrl}/by-task-list/${path.taskListId}`)
+      >(`${this.baseUrl}/by-task-list/${path.taskListId}`, {
+        params: query,
+      })
       if (response.status === 200) return response.data as TaskResponsePaginated
       return response.data as ProblemDetails
     } catch (error) {

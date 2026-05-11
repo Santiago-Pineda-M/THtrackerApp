@@ -6,10 +6,10 @@
 import type { IUseCase, ApiActivityValueDefinitionTypes } from '../../../Domain'
 import type { IActivityValueDefinitionService } from '../../Services/ActivityValueDefinition/IActivityValueDefinitionService'
 
-type ProblemDetails = ApiActivityValueDefinitionTypes['ProblemDetails']
-type CreateValueDefinitionCommand =
+export type ProblemDetails = ApiActivityValueDefinitionTypes['ProblemDetails']
+export type CreateValueDefinitionCommand =
   ApiActivityValueDefinitionTypes['CreateValueDefinitionCommand']
-type ActivityValueDefinitionResponse =
+export type ActivityValueDefinitionResponse =
   ApiActivityValueDefinitionTypes['ActivityValueDefinitionResponse']
 
 export class CreateActivityValueDefinitionUseCase implements IUseCase<

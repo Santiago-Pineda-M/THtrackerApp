@@ -5,7 +5,12 @@
 
 import { Ploc } from '../../Domain/Ploc'
 import { type ITaskListsState, initialTaskListsState } from '../../Domain'
-import type { GetTaskListsUseCase } from '../../Application/UseCases/TaskList/GetTaskListsUseCase'
+import type {
+  GetTaskListsUseCase,
+  GetTaskListsResponse,
+  ProblemDetails,
+} from '../../Application/UseCases/TaskList/GetTaskListsUseCase'
+import { mapProblemDetailsToErrors } from '../ErrorMapper'
 
 export class TaskListsPloc extends Ploc<ITaskListsState> {
   private readonly getTaskListsUseCase: GetTaskListsUseCase
@@ -22,44 +27,49 @@ export class TaskListsPloc extends Ploc<ITaskListsState> {
     this.changeState({
       ...this.state,
       isLoading: true,
-      error: null,
+      errors: {},
     })
 
     try {
-      const result = await this.getTaskListsUseCase.execute({})
+      const result = await this.getTaskListsUseCase.execute({
+        pageNumber: 0,
+        pageSize: 100,
+      })
 
-      if (result.success) {
+      if (this.isTaskListsSuccess(result)) {
         this.changeState({
           ...this.state,
-          taskLists: result.taskLists,
+          taskLists: result,
           isLoading: false,
-          error: null,
         })
         return
       }
 
+      const mappedErrors = mapProblemDetailsToErrors(result)
       this.changeState({
         ...this.state,
-        taskLists: [],
+        taskLists: null,
         isLoading: false,
-        error: result.error,
+        errors: mappedErrors,
       })
     } catch (err: unknown) {
-      const error =
+      const message =
         err instanceof Error
-          ? { title: 'Error', detail: err.message }
-          : {
-              title: 'Error',
-              detail: 'Error desconocido al cargar las listas de tareas',
-            }
-
+          ? err.message
+          : 'Error desconocido al cargar las listas de tareas'
       this.changeState({
         ...this.state,
-        taskLists: [],
+        taskLists: null,
         isLoading: false,
-        error,
+        errors: { general: [message] },
       })
     }
+  }
+
+  private isTaskListsSuccess(
+    result: GetTaskListsResponse | ProblemDetails
+  ): result is GetTaskListsResponse {
+    return 'items' in result
   }
 
   /**

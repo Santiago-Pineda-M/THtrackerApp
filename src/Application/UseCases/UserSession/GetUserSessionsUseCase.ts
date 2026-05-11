@@ -9,14 +9,11 @@ import type { IUserSessionService } from '../../Services/UserSession/IUserSessio
 /**
  * Output del caso de uso.
  */
-type ProblemDetails = ApiUserSessionTypes['ProblemDetails']
-type UserSessionResponsePaginated =
+export type ProblemDetails = ApiUserSessionTypes['ProblemDetails']
+export type UserSessionResponsePaginated =
   ApiUserSessionTypes['UserSessionResponsePaginated']
-type GetUserSessionsRequest = ApiUserSessionTypes['GetUserSessionsFilters']
-
-export type GetUserSessionsOutput =
-  | UserSessionResponsePaginated
-  | ProblemDetails
+export type GetUserSessionsRequest =
+  ApiUserSessionTypes['GetUserSessionsFilters']
 
 /**
  * Caso de uso para obtener las sesiones activas del usuario.
@@ -24,7 +21,7 @@ export type GetUserSessionsOutput =
  */
 export class GetUserSessionsUseCase implements IUseCase<
   GetUserSessionsRequest,
-  GetUserSessionsOutput
+  void | ProblemDetails
 > {
   private readonly userSessionService: IUserSessionService
 
@@ -34,7 +31,7 @@ export class GetUserSessionsUseCase implements IUseCase<
 
   async execute(
     request: GetUserSessionsRequest
-  ): Promise<GetUserSessionsOutput> {
+  ): Promise<UserSessionResponsePaginated | ProblemDetails> {
     const sessions = await this.userSessionService.getUserSessions(request)
     return sessions
   }
