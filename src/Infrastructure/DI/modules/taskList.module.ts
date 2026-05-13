@@ -28,6 +28,7 @@ import {
 import { TaskListService } from '../../../Application/Services/TaskList/TaskListService'
 import { TaskService } from '../../../Application/Services/Task/TaskService'
 import { httpClient } from '../core/http.config'
+import { authSessionRepository } from '../core/storage.config'
 
 // ── Services (Singletons) ──────────────────────────────────────────────────────
 
@@ -43,6 +44,8 @@ export const getTaskService = (): TaskService => {
   return _taskService
 }
 
+// ── Auth Session Use Cases (Singletons) ─────────────────────────────────────────
+
 // ── TaskList Use Cases (Singletons) ───────────────────────────────────────────
 
 let _getTaskListsUC: GetTaskListsUseCase | null = null
@@ -55,7 +58,10 @@ const getGetTaskListByIdUC = () =>
 
 let _createTaskListUC: CreateTaskListUseCase | null = null
 const getCreateTaskListUC = () =>
-  (_createTaskListUC ??= new CreateTaskListUseCase(getTaskListService()))
+  (_createTaskListUC ??= new CreateTaskListUseCase(
+    getTaskListService(),
+    authSessionRepository
+  ))
 
 let _updateTaskListUC: UpdateTaskListUseCase | null = null
 const getUpdateTaskListUC = () =>
