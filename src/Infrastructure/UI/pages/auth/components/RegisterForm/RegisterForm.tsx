@@ -17,13 +17,11 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   const navigate = useNavigate()
   const hasNavigated = useRef(false)
 
-  // Reset register state when component mounts
   useEffect(() => {
     providerRegisterPloc.reset()
     hasNavigated.current = false
   }, [providerRegisterPloc])
 
-  // Redirect to login after successful registration
   useEffect(() => {
     if (state.success && !hasNavigated.current) {
       hasNavigated.current = true

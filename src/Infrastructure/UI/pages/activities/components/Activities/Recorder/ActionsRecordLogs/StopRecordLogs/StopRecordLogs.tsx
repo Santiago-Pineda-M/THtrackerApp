@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
   Button,
   Icon,
@@ -45,31 +45,9 @@ export const StopRecordLogs = () => {
     activityName: string
   } | null>(null)
 
-  useEffect(() => {
-    if (isSelectionModalOpen) {
-      providerActiveActivityLogsPloc.loadActiveLogs()
-      providerActivitiesListPloc.loadActivities()
-    }
-  }, [
-    isSelectionModalOpen,
-    providerActiveActivityLogsPloc,
-    providerActivitiesListPloc,
-  ])
-
-  useEffect(() => {
-    if (stopState.success) {
-      setTimeout(() => {
-        setIsConfirmationModalOpen(false)
-        setIsSelectionModalOpen(false)
-        providerActiveActivityLogsPloc.loadActiveLogs()
-        providerActivityLogStopPloc.reset()
-      }, 0)
-    }
-  }, [
-    stopState.success,
-    providerActiveActivityLogsPloc,
-    providerActivityLogStopPloc,
-  ])
+  const handleOpenSelection = () => {
+    setIsSelectionModalOpen(true)
+  }
 
   const handleSelect = (logId: string, activityName: string) => {
     setSelectedLog({ id: logId, activityName })
@@ -77,7 +55,6 @@ export const StopRecordLogs = () => {
     setIsConfirmationModalOpen(true)
     setFormValues({})
 
-    // Prepare the stop workflow which loads definitions for this activity
     const log = activeState.logs?.items?.find((l) => l.id === logId)
     if (log) {
       providerActivityLogStopPloc.prepareStop(log)
@@ -95,6 +72,12 @@ export const StopRecordLogs = () => {
           value: value as string,
         }))
       providerActivityLogStopPloc.stopAndSaveValues(selectedLog.id, { items })
+      // errors es un diccionario de errores
+      const errors = stopState.errors
+      if (Object.keys(errors).length === 0) {
+        providerActiveActivityLogsPloc.loadActiveLogs()
+      }
+      providerActivityLogStopPloc.reset()
     }
   }
 
@@ -127,9 +110,9 @@ export const StopRecordLogs = () => {
         disabled={
           !activeState.logs?.items || activeState.logs.items.length === 0
         }
-        onClick={() => setIsSelectionModalOpen(true)}
+        onClick={() => handleOpenSelection()}
         className={styles.btn}
-      ></Button>
+      />
 
       {/* Selection Modal */}
       <Modal
