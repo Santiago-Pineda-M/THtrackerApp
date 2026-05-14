@@ -65,7 +65,7 @@ export const TaskListDelete: React.FC<TaskListDeleteProps> = ({
           </div>
         ) : (
           <div className={styles['modal-content']}>
-            {state.errors && (
+            {state.errors && Object.keys(state.errors).length > 0 && (
               <Text
                 size='sm'
                 style={{

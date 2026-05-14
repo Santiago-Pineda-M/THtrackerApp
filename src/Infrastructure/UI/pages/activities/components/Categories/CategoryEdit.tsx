@@ -20,7 +20,6 @@ interface CategoryEditProps {
 }
 
 export const CategoryEdit: React.FC<CategoryEditProps> = ({ category }) => {
-  if (!category.id) return null
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { providerCategoryEditFormPloc, providerCategoriesListPloc } =
     useDependencies()
@@ -30,7 +29,7 @@ export const CategoryEdit: React.FC<CategoryEditProps> = ({ category }) => {
 
   const handleOpen = () => {
     providerCategoryEditFormPloc.reset()
-    providerCategoryEditFormPloc.initializeForm(category.id || '')
+    providerCategoryEditFormPloc.initializeForm(category.id!)
     setIsModalOpen(true)
   }
 
@@ -53,6 +52,8 @@ export const CategoryEdit: React.FC<CategoryEditProps> = ({ category }) => {
   const handleSubmit = async () => {
     await providerCategoryEditFormPloc.submit()
   }
+
+  if (!category.id) return null
 
   return (
     <>

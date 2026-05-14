@@ -106,6 +106,7 @@ export class TaskListCreateFormPloc extends Ploc<ITaskListCreateFormState> {
 
       // Error controlado (ProblemDetails)
       const mappedErrors = mapProblemDetailsToErrors(result)
+      // console.log(mappedErrors)
       this.changeState({
         ...this.state,
         errors: mappedErrors,

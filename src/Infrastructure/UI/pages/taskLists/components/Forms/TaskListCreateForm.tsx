@@ -77,19 +77,16 @@ export const TaskListCreateForm: React.FC = () => {
           </div>
         ) : (
           <>
-            {state.message && (
+            {state.message && Object.keys(state.errors).length > 0 && (
               <Text
                 size='sm'
                 style={{
-                  color:
-                    Object.keys(state.errors).length > 0
-                      ? 'var(--danger-color, #ff4d4f)'
-                      : 'var(--success-color, #52c41a)',
+                  color: 'var(--danger-color, #ff4d4f)',
                   marginBottom: '16px',
                   display: 'block',
                 }}
               >
-                {state.message}
+                {Object.values(state.errors).join(', ')}
               </Text>
             )}
 
@@ -111,7 +108,8 @@ export const TaskListCreateForm: React.FC = () => {
 
             <FormField
               label='Color'
-              error={state.errors.color?.[0]}
+              required
+              error={state.errors.Color?.[0]}
             >
               <Input
                 type='color'

@@ -128,6 +128,16 @@
   align-items: center;
 }
 
+.headerTopLeftCorner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: $space-xxxl;
+  height: $space-xxxl;
+  z-index: -1;
+  transform: translateX(-50%) translateY(-50%) rotate(45deg);
+}
+
 .footerActions {
   display: flex;
   gap: $space-md;

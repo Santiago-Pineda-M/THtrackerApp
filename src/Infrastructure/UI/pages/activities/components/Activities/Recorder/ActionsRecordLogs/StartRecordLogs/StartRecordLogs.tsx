@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
   Button,
   Icon,
@@ -40,27 +40,6 @@ export const StartRecordLogs = () => {
     color: string | null
   } | null>(null)
 
-  useEffect(() => {
-    if (isSelectionModalOpen) {
-      providerActivitiesListPloc.loadActivities()
-    }
-  }, [isSelectionModalOpen, providerActivitiesListPloc])
-
-  useEffect(() => {
-    if (startState.success) {
-      setTimeout(() => {
-        setIsConfirmationModalOpen(false)
-        setIsSelectionModalOpen(false)
-        providerActiveActivityLogsPloc.loadActiveLogs()
-        providerActivityLogStartPloc.reset()
-      }, 0)
-    }
-  }, [
-    startState.success,
-    providerActiveActivityLogsPloc,
-    providerActivityLogStartPloc,
-  ])
-
   // Filter activities that are NOT currently active
   const inactiveActivities =
     listState.activities?.items?.filter(
@@ -83,9 +62,18 @@ export const StartRecordLogs = () => {
     setIsConfirmationModalOpen(true)
   }
 
-  const handleConfirm = () => {
-    if (selectedActivity) {
-      providerActivityLogStartPloc.startLog(selectedActivity.id)
+  const handleConfirm = async () => {
+    if (!selectedActivity) return
+    await providerActivityLogStartPloc.startLog(selectedActivity.id)
+
+    // es un dicionarop el errors
+    if (!startState.errors || Object.keys(startState.errors).length === 0) {
+      await Promise.all([
+        providerActivitiesListPloc.loadActivities(),
+        providerActiveActivityLogsPloc.loadActiveLogs(),
+      ])
+      setIsConfirmationModalOpen(false)
+      setSelectedActivity(null)
     }
   }
 
@@ -170,9 +158,10 @@ export const StartRecordLogs = () => {
             ?
           </Text>
 
-          {startState.errors && (
+          {startState.errors && Object.keys(startState.errors).length > 0 && (
             <Text color='danger'>
-              {startState.errors?.[0] || 'Error al iniciar actividad'}
+              {Object.values(startState.errors).join(', ') ||
+                'Error al iniciar actividad'}
             </Text>
           )}
 

@@ -61,22 +61,27 @@ export const StopRecordLogs = () => {
     }
   }
 
-  const handleConfirm = () => {
-    if (selectedLog) {
-      const items = Object.entries(formValues)
-        .filter(
-          ([, value]) => value !== null && value !== undefined && value !== ''
-        )
-        .map(([id, value]) => ({
-          id,
-          value: value as string,
-        }))
-      providerActivityLogStopPloc.stopAndSaveValues(selectedLog.id, { items })
-      // errors es un diccionario de errores
-      const errors = stopState.errors
-      if (Object.keys(errors).length === 0) {
-        providerActiveActivityLogsPloc.loadActiveLogs()
-      }
+  const handleConfirm = async () => {
+    if (!selectedLog) return
+
+    const items = Object.entries(formValues)
+      .filter(
+        ([, value]) => value !== null && value !== undefined && value !== ''
+      )
+      .map(([id, value]) => ({ id, value: value as string }))
+
+    await providerActivityLogStopPloc.stopAndSaveValues(selectedLog.id, {
+      items,
+    })
+
+    if (!stopState.errors || Object.keys(stopState.errors).length === 0) {
+      await Promise.all([
+        providerActiveActivityLogsPloc.loadActiveLogs(),
+        providerActivitiesListPloc.loadActivities(),
+      ])
+      setIsConfirmationModalOpen(false)
+      setSelectedLog(null)
+      setFormValues({})
       providerActivityLogStopPloc.reset()
     }
   }
@@ -231,10 +236,11 @@ export const StopRecordLogs = () => {
               </div>
             )
           )}
-
-          {stopState.errors && (
+          {/* errors es un diccionario */}
+          {stopState.errors && Object.keys(stopState.errors).length > 0 && (
             <Text color='danger'>
-              {stopState.errors?.title || 'Error al detener actividad'}
+              {Object.values(stopState.errors).join(', ') ||
+                'Error al detener actividad'}
             </Text>
           )}
 

@@ -26,7 +26,7 @@ import {
 import styles from './TaskList.module.scss'
 
 // ---------------------------------------------------------------------------
-// TaskListItem (sin cambios, solo ordenado)
+// TaskListItem (la lista de tareas tiene un color, aplicar ese color badge )
 // ---------------------------------------------------------------------------
 
 interface TaskListItemProps {
@@ -116,7 +116,7 @@ const TaskListItem: React.FC<TaskListItemProps> = ({
 }
 
 // ---------------------------------------------------------------------------
-// TaskList (CORREGIDO)
+// TaskList
 // ---------------------------------------------------------------------------
 
 interface TaskListProps {
@@ -208,123 +208,130 @@ export const TaskList: React.FC<TaskListProps> = ({
       style={{ zIndex: isExpanded ? 20 : 1 }}
     >
       {/* Header */}
-      <div className={styles.cardHeader}>
-        <div className={styles.headerTitle}>
-          <Text
-            as='h3'
-            size='lg'
-            weight='bold'
+      <>
+        {/* un div que pinta la esqquina superior isquierda de la card de el color de la lista */}
+        <div
+          className={styles.headerTopLeftCorner}
+          style={{ backgroundColor: taskList.color ?? '' }}
+        />
+        <div className={styles.cardHeader}>
+          <div className={styles.headerTitle}>
+            <Text
+              as='h3'
+              size='lg'
+              weight='bold'
+            >
+              {taskList.name}
+            </Text>
+            {isExpanded && (
+              <Badge variant={progress === 100 ? 'success' : 'info'}>
+                {completedCount}/{totalCount} Tareas
+              </Badge>
+            )}
+          </div>
+          <Button
+            variant='ghost'
+            size='sm'
+            onClick={onToggleExpand}
           >
-            {taskList.name}
-          </Text>
-          {isExpanded && (
+            <Icon
+              name={isExpanded ? 'Minimize' : 'Maximize'}
+              size={16}
+            />
+          </Button>
+        </div>
+
+        {/* Barra de progreso */}
+        {isExpanded && (
+          <div className={styles.progressWrapper}>
+            <ProgressBar
+              value={progress}
+              label={`${progress}% completado`}
+              variant={progress === 100 ? 'success' : 'default'}
+            />
+          </div>
+        )}
+
+        <Divider className={styles.dividerTop} />
+
+        {/* Lista de tareas */}
+        <div className={styles.taskListContainer}>
+          {state.isLoading && (
+            <Text
+              size='xs'
+              muted
+            >
+              Cargando...
+            </Text>
+          )}
+
+          {!state.isLoading && hasErrors && (
+            <Text
+              size='xs'
+              className={styles.errorText}
+            >
+              Error al cargar las tareas
+            </Text>
+          )}
+
+          {!state.isLoading && !hasErrors && sortedTasks.length === 0 && (
+            <Text
+              size='xs'
+              muted
+            >
+              No hay tareas
+            </Text>
+          )}
+
+          {!state.isLoading &&
+            !hasErrors &&
+            visibleTasks.map((task) => (
+              <TaskListItem
+                key={task.id}
+                task={task}
+                isExpanded={isExpanded}
+                onToggle={() => handleToggleTask(task.id!)}
+                onReload={() => tasksPloc.loadTasks(taskList.id!)}
+              />
+            ))}
+
+          {hiddenCount > 0 && (
+            <Text
+              size='xs'
+              muted
+            >
+              + {hiddenCount} más...
+            </Text>
+          )}
+        </div>
+
+        <Divider className={styles.dividerBottom} />
+
+        {/* Footer */}
+        <div className={styles.footer}>
+          {!isExpanded && (
             <Badge variant={progress === 100 ? 'success' : 'info'}>
               {completedCount}/{totalCount} Tareas
             </Badge>
           )}
-        </div>
-        <Button
-          variant='ghost'
-          size='sm'
-          onClick={onToggleExpand}
-        >
-          <Icon
-            name={isExpanded ? 'Minimize' : 'Maximize'}
-            size={16}
-          />
-        </Button>
-      </div>
-
-      {/* Barra de progreso */}
-      {isExpanded && (
-        <div className={styles.progressWrapper}>
-          <ProgressBar
-            value={progress}
-            label={`${progress}% completado`}
-            variant={progress === 100 ? 'success' : 'default'}
+          {isExpanded && (
+            <div className={styles.footerActions}>
+              <TaskListEditForm
+                taskList={taskList}
+                onSuccess={handleListActionSuccess}
+              />
+              <TaskListDelete
+                taskList={taskList}
+                onSuccess={handleListActionSuccess}
+              />
+            </div>
+          )}
+          <TaskCreateForm
+            taskListId={taskList.id!}
+            onSuccess={() => tasksPloc.loadTasks(taskList.id!)}
           />
         </div>
-      )}
-
-      <Divider className={styles.dividerTop} />
-
-      {/* Lista de tareas */}
-      <div className={styles.taskListContainer}>
-        {state.isLoading && (
-          <Text
-            size='xs'
-            muted
-          >
-            Cargando...
-          </Text>
-        )}
-
-        {!state.isLoading && hasErrors && (
-          <Text
-            size='xs'
-            className={styles.errorText}
-          >
-            Error al cargar las tareas
-          </Text>
-        )}
-
-        {!state.isLoading && !hasErrors && sortedTasks.length === 0 && (
-          <Text
-            size='xs'
-            muted
-          >
-            No hay tareas
-          </Text>
-        )}
-
-        {!state.isLoading &&
-          !hasErrors &&
-          visibleTasks.map((task) => (
-            <TaskListItem
-              key={task.id}
-              task={task}
-              isExpanded={isExpanded}
-              onToggle={() => handleToggleTask(task.id!)}
-              onReload={() => tasksPloc.loadTasks(taskList.id!)}
-            />
-          ))}
-
-        {hiddenCount > 0 && (
-          <Text
-            size='xs'
-            muted
-          >
-            + {hiddenCount} más...
-          </Text>
-        )}
-      </div>
-
-      <Divider className={styles.dividerBottom} />
-
-      {/* Footer */}
-      <div className={styles.footer}>
-        {!isExpanded && (
-          <Badge variant={progress === 100 ? 'success' : 'info'}>
-            {completedCount}/{totalCount} Tareas
-          </Badge>
-        )}
-        {isExpanded && (
-          <div className={styles.footerActions}>
-            <TaskListEditForm
-              taskList={taskList}
-              onSuccess={handleListActionSuccess}
-            />
-            <TaskListDelete
-              taskList={taskList}
-              onSuccess={handleListActionSuccess}
-            />
-          </div>
-        )}
-        <TaskCreateForm
-          taskListId={taskList.id!}
-          onSuccess={() => tasksPloc.loadTasks(taskList.id!)}
-        />
-      </div>
+      </>
     </Card>
   )
 }
